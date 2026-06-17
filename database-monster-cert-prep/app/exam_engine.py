@@ -83,7 +83,7 @@ def create_panic_quiz(
 
 def load_exam_config(path_or_name: str | Path) -> dict[str, Any]:
     path = Path(path_or_name)
-    if not path.is_absolute():
+    if not path.is_absolute() and not path.exists():
         path = EXAMS_DIR / path
     if path.suffix.lower() != ".json":
         path = path.with_suffix(".json")
@@ -147,4 +147,3 @@ def write_default_exam_configs() -> list[Path]:
 if __name__ == "__main__":
     created = write_default_exam_configs()
     print(f"Created {len(created)} exam configurations.")
-

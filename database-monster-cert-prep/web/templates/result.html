@@ -29,9 +29,18 @@
     <p><strong>Your answer:</strong> {{ item.selected_answer if item.selected_answer is not none else 'Unanswered' }}</p>
     <p><strong>Correct answer:</strong> {{ item.correct_answer }}</p>
     <p>{{ item.explanation }}</p>
+    {% if not item.is_correct and item.why_wrong_answers %}
+    <details>
+      <summary>Why the distractors are wrong</summary>
+      <ul>
+        {% for choice, reason in item.why_wrong_answers.items() %}
+        <li><strong>{{ choice }}:</strong> {{ reason }}</li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
     {% if not item.is_correct %}<p class="review-link">Review: {{ item.recommended_review|join(' · ') }}</p>{% endif %}
   </article>
   {% endfor %}
 </div>
 {% endblock %}
-

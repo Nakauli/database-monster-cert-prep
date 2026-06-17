@@ -17,9 +17,12 @@ def reset_database(database_path: Path = DEFAULT_DB) -> None:
     database_path.parent.mkdir(parents=True, exist_ok=True)
     if database_path.exists():
         database_path.unlink()
-    with sqlite3.connect(database_path) as connection:
+    connection = sqlite3.connect(database_path)
+    try:
         connection.executescript(SETUP_SQL.read_text(encoding="utf-8"))
         connection.commit()
+    finally:
+        connection.close()
 
 
 def copy_practice_database(destination: Path) -> Path:
@@ -52,7 +55,8 @@ def run_sql_file(
     if "mysql" in sql_path.name.lower():
         raise ValueError("This is a MySQL reference lab and cannot run in SQLite.")
     results: list[dict[str, Any]] = []
-    with sqlite3.connect(database_path) as connection:
+    connection = sqlite3.connect(database_path)
+    try:
         connection.execute("PRAGMA foreign_keys = ON")
         for number, statement in enumerate(_statements(sql_path.read_text(encoding="utf-8")), start=1):
             compact = " ".join(
@@ -86,5 +90,6 @@ def run_sql_file(
                     raise
         if connection.in_transaction:
             connection.commit()
+    finally:
+        connection.close()
     return results
-

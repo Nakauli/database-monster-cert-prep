@@ -136,6 +136,16 @@ def print_report(report: dict[str, Any]) -> None:
         print(f"   Correct: {detail['correct_answer']}")
         print(f"   Why: {detail['explanation']}")
         if not detail["is_correct"]:
+            if detail["selected_answer"] is not None:
+                selected_values = (
+                    detail["selected_answer"]
+                    if isinstance(detail["selected_answer"], list)
+                    else [detail["selected_answer"]]
+                )
+                for selected in selected_values:
+                    reason = detail["why_wrong_answers"].get(selected)
+                    if reason:
+                        print(f"   Why '{selected}' is wrong: {reason}")
             print(f"   Review: {', '.join(detail['recommended_review'])}")
 
 
