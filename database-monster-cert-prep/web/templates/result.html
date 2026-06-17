@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Results · Database Monster{% endblock %}
+{% block content %}
+<section class="result-hero">
+  <p class="eyebrow">Attempt complete</p>
+  <div class="result-score">{{ "%.1f"|format(report.percentage) }}%</div>
+  <h1>{% if report.exam_ready %}Exam-ready range.{% elif report.passed %}Pass range—now make it repeatable.{% else %}Good data. Now repair the weak spots.{% endif %}</h1>
+  <p>{{ report.correct }}/{{ report.total }} correct. {{ report.recommendation }}</p>
+  <a class="button primary" href="{{ url_for('index') }}">Back to dashboard</a>
+</section>
+
+<section class="panel">
+  <p class="eyebrow">Topic breakdown</p>
+  {% for topic, stats in report.by_topic|dictsort %}
+  <div class="topic-row">
+    <div><strong>{{ topic }}</strong><span>{{ stats.correct }}/{{ stats.total }}</span></div>
+    <div class="bar"><i style="width: {{ stats.percentage }}%"></i></div>
+    <b>{{ "%.0f"|format(stats.percentage) }}%</b>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="section-heading"><div><p class="eyebrow">Answer review</p><h2>Learn from every item</h2></div></section>
+<div class="answer-review">
+  {% for item in report.details %}
+  <article class="answer-card {{ 'correct' if item.is_correct else 'wrong' }}">
+    <div class="answer-status">{{ 'Correct' if item.is_correct else 'Needs repair' }} · {{ item.topic }}</div>
+    <h3>{{ loop.index }}. {{ item.question }}</h3>
+    <p><strong>Your answer:</strong> {{ item.selected_answer if item.selected_answer is not none else 'Unanswered' }}</p>
+    <p><strong>Correct answer:</strong> {{ item.correct_answer }}</p>
+    <p>{{ item.explanation }}</p>
+    {% if not item.is_correct %}<p class="review-link">Review: {{ item.recommended_review|join(' · ') }}</p>{% endif %}
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}
+

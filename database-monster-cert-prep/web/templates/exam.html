@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · Database Monster{% endblock %}
+{% block content %}
+<section class="exam-header">
+  <div>
+    <p class="eyebrow">Timed simulation</p>
+    <h1>{{ title }}</h1>
+  </div>
+  <div id="timer" class="timer">{{ "%02d:00"|format(duration_minutes) }}</div>
+</section>
+
+<form id="exam-form" method="post" action="{{ url_for('submit_exam') }}">
+  <input type="hidden" name="question_ids" value='{{ question_ids|tojson }}'>
+  <input type="hidden" name="answers" id="answers-input">
+  <input type="hidden" name="elapsed_seconds" id="elapsed-input">
+  <input type="hidden" name="mode" value="{{ mode }}">
+
+  <section class="exam-layout">
+    <article class="question-panel">
+      <div class="question-meta"><span id="counter"></span><span id="topic"></span><span id="difficulty"></span></div>
+      <h2 id="question-text"></h2>
+      <div id="choice-list" class="choice-list"></div>
+      <p id="multi-hint" class="muted"></p>
+      <div class="exam-actions">
+        <button type="button" class="button secondary" id="prev">← Previous</button>
+        <button type="button" class="button primary" id="next">Next →</button>
+      </div>
+    </article>
+    <aside class="review-panel">
+      <h3>Review map</h3>
+      <div id="review-map" class="review-map"></div>
+      <p class="muted">Answered items turn green. You can return to any question.</p>
+      <button type="button" class="button danger" id="submit-button">Submit exam</button>
+    </aside>
+  </section>
+</form>
+
+<script>
+window.EXAM_DATA = {{ questions|tojson }};
+window.EXAM_SECONDS = {{ duration_minutes * 60 }};
+</script>
+<script src="{{ url_for('static', filename='exam.js') }}"></script>
+{% endblock %}
+

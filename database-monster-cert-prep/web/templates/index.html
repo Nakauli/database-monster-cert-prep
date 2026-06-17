@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Database Monster{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Your command center</p>
+    <h1>Train until the traps look obvious.</h1>
+    <p class="lede">Use the diagnostic first, repair weak topics, then prove your score twice under the 50-minute clock.</p>
+    <div class="actions">
+      <a class="button primary" href="{{ url_for('configured_exam', name='diagnostic_exam') }}">Start diagnostic</a>
+      <a class="button secondary" href="{{ url_for('random_exam') }}">Random timed exam</a>
+    </div>
+  </div>
+  <div class="score-orb">
+    {% if latest %}
+      <strong>{{ "%.0f"|format(latest.score) }}%</strong>
+      <span>latest score</span>
+    {% else %}
+      <strong>—</strong>
+      <span>take the diagnostic</span>
+    {% endif %}
+  </div>
+</section>
+
+<section class="metrics">
+  <article><strong>{{ progress.attempts|length }}</strong><span>attempts</span></article>
+  <article><strong>{{ mistake_count }}</strong><span>saved mistakes</span></article>
+  <article><strong>{{ progress.weak_topics|length }}</strong><span>weak topics</span></article>
+</section>
+
+<section class="section-heading">
+  <div><p class="eyebrow">Exam room</p><h2>Choose your next fight</h2></div>
+</section>
+<div class="card-grid">
+  {% for exam in exam_cards %}
+  <article class="exam-card">
+    <div class="pill">{{ exam.count }} questions · {{ exam.minutes }} min</div>
+    <h3>{{ exam.title }}</h3>
+    <p>One question at a time, review navigation, automatic scoring, and full explanations.</p>
+    <a href="{{ url_for('configured_exam', name=exam.slug) }}">Begin →</a>
+  </article>
+  {% endfor %}
+</div>
+
+<section class="dashboard-grid">
+  <article class="panel">
+    <p class="eyebrow">Weakness radar</p>
+    <h2>Topics to repair</h2>
+    {% if progress.weak_topics %}
+      {% for item in progress.weak_topics[:6] %}
+      <div class="topic-row">
+        <div><strong>{{ item.topic }}</strong><span>{{ item.correct }}/{{ item.total }}</span></div>
+        <div class="bar"><i style="width: {{ item.percentage }}%"></i></div>
+        <b>{{ "%.0f"|format(item.percentage) }}%</b>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="muted">No data yet. The diagnostic will build your map.</p>
+    {% endif %}
+  </article>
+  <article class="panel study-now">
+    <p class="eyebrow">Study now</p>
+    <h2>Fastest useful sequence</h2>
+    <ol>
+      <li>Take the diagnostic without notes.</li>
+      <li>Review the lowest topic note.</li>
+      <li>Complete its linked SQL lab.</li>
+      <li>Re-answer every saved mistake.</li>
+      <li>Target 85% twice before the real exam.</li>
+    </ol>
+    <form method="post" action="{{ url_for('reset') }}" onsubmit="return confirm('Reset all scores and mistakes?')">
+      <button class="text-button" type="submit">Reset progress</button>
+    </form>
+  </article>
+</section>
+{% endblock %}
+

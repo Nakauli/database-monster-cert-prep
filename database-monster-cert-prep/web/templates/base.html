@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Database Monster{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}"><span>DB</span> Database Monster</a>
+    <div class="tagline">Cert prep. No dumps. Real mastery.</div>
+  </header>
+  <main class="shell">{% block content %}{% endblock %}</main>
+</body>
+</html>
+
