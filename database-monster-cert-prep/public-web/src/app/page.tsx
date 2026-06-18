@@ -1,7 +1,5 @@
+import { HomeDashboard } from "@/components/HomeDashboard";
+
 export default function Home() {
-  return (
-    <main>
-      <div>Hello world!</div>
-    </main>
-  );
+  return <HomeDashboard />;
 }
