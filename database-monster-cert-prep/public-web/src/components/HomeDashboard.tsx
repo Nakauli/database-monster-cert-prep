@@ -1,79 +1,105 @@
 import Link from "next/link";
+import { CodeBlock } from "@/components/DataDisplay";
+import { InfoCard, PageHeader, SectionHeader, StatGrid } from "@/components/DesignSystem";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const modes = [
-  { title: "Diagnostic Exam", detail: "40 balanced questions · 50 minutes", href: "/exam?mode=diagnostic", label: "Start diagnostic", tone: "green" },
-  { title: "Timed Exam", detail: "40 randomized questions · 50 minutes", href: "/exam?mode=timed", label: "Start timed exam", tone: "blue" },
-  { title: "Final Boss", detail: "45 hard and final-boss questions", href: "/exam?mode=final", label: "Enter final boss", tone: "orange" },
+  { title: "Diagnostic", detail: "40 balanced questions, 50 minutes", href: "/exam?mode=diagnostic", label: "Start diagnostic" },
+  { title: "Timed Exam", detail: "40 randomized questions, 50 minutes", href: "/exam?mode=timed", label: "Start timed exam" },
+  { title: "Final Boss", detail: "45 hard questions for proof of readiness", href: "/exam?mode=final", label: "Start final boss" },
 ];
 
 export function HomeDashboard() {
   return (
-    <main>
-      <section className="hero-section">
-        <div className="page-shell hero-grid">
-          <div>
-            <p className="eyebrow">Database certification command center</p>
-            <h1>Train hard. Query smart. Pass ready.</h1>
-            <p className="hero-copy">
-              An unofficial Certiport-style simulator with private accounts, timed exams,
-              SQL-first explanations, and per-topic mastery tracking.
-            </p>
-            <div className="button-row">
-              <Link className="button primary" href="/register">Create your training account</Link>
-              <Link className="button secondary" href="/login">Sign in</Link>
-            </div>
-            <p className="privacy-note"><span aria-hidden="true">◆</span> Your history and mistakes are protected per user with Row Level Security.</p>
-          </div>
-          <div className="editor-preview" aria-label="Decorative SQL editor preview">
-            <div className="editor-top"><span></span><span></span><span></span><strong>readiness_query.sql</strong></div>
-            <pre><code><b>SELECT</b> topic, mastery_score{`\n`}<b>FROM</b> user_topic_progress{`\n`}<b>WHERE</b> mastery_score &lt; 80{`\n`}<b>ORDER BY</b> mastery_score <b>ASC</b>;</code></pre>
-            <div className="editor-result">
-              <span>training_signal</span><span>status</span>
-              <code>private progress</code><code>RLS</code>
-            </div>
-          </div>
+    <div>
+      <section className="app-container page-section">
+        <PageHeader
+          label="Certification simulator"
+          title="Practice like the exam is already open."
+          description="Timed sessions, readable SQL, typed drills, and a private mistake notebook backed by Supabase Row Level Security."
+          actions={
+            <>
+              <Button asChild size="lg"><Link href="/register">Create account</Link></Button>
+              <Button asChild size="lg" variant="outline"><Link href="/login">Sign in</Link></Button>
+            </>
+          }
+        />
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
+          <Card className="bg-card/90">
+            <CardHeader>
+              <CardTitle>Read the data, answer the trap.</CardTitle>
+              <CardDescription>Code and tables are treated as the main exam material, not decorative preview blocks.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CodeBlock
+                label="student_readiness.sql"
+                code={`SELECT topic, mastery_score\nFROM user_topic_progress\nWHERE mastery_score < 80\nORDER BY mastery_score ASC;`}
+              />
+            </CardContent>
+          </Card>
+          <Card className="bg-primary text-primary-foreground">
+            <CardHeader>
+              <Badge className="w-fit bg-primary-foreground text-primary">Private by architecture</Badge>
+              <CardTitle className="text-3xl tracking-[-0.04em]">
+                Your weak topics are not a class leaderboard.
+              </CardTitle>
+              <CardDescription className="text-primary-foreground/75">
+                Every authenticated user can access only their own attempts, topic mastery, profile, and mistake notebook.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="secondary"><Link href="/register">Build your baseline</Link></Button>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      <section className="page-shell section-space">
-        <div className="stat-strip">
-          <article><strong>360</strong><span>original questions</span></article>
-          <article><strong>200</strong><span>formatted code examples</span></article>
-          <article><strong>12</strong><span>tracked topic areas</span></article>
-          <article><strong>1</strong><span>private command center per user</span></article>
-        </div>
+      <section className="app-container page-section pt-0">
+        <StatGrid
+          stats={[
+            { value: "360", label: "original questions" },
+            { value: "200+", label: "code examples" },
+            { value: "12", label: "tracked topic areas" },
+            { value: "RLS", label: "private progress storage" },
+          ]}
+        />
+      </section>
 
-        <div className="section-heading">
-          <div><p className="eyebrow">Training modes</p><h2>Practice with a deliberate target</h2></div>
-          <Link href="/roadmap">Preview the study roadmap →</Link>
-        </div>
-        <div className="mode-grid">
+      <section className="app-container page-section pt-0">
+        <SectionHeader
+          title="Choose the right pressure."
+          description="Each mode has a job. Start broad, train weak topics, then prove readiness under the clock."
+          action={<Button asChild variant="ghost"><Link href="/roadmap">Open roadmap</Link></Button>}
+        />
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
           {modes.map((mode) => (
-            <article className={`mode-card ${mode.tone}`} key={mode.title}>
-              <span className="mode-icon" aria-hidden="true">{mode.title === "Final Boss" ? "⚑" : mode.title === "Timed Exam" ? "◷" : "◎"}</span>
-              <h3>{mode.title}</h3>
-              <p>{mode.detail}</p>
-              <Link href={mode.href}>{mode.label} →</Link>
-            </article>
+            <InfoCard
+              action={<Button asChild variant="outline"><Link href={mode.href}>{mode.label}</Link></Button>}
+              description={mode.detail}
+              key={mode.title}
+              title={mode.title}
+            />
           ))}
         </div>
+      </section>
 
-        <div className="feature-grid">
-          <article className="content-card">
-            <p className="eyebrow">Readable where it matters</p>
-            <h2>SQL looks like SQL. Questions stay calm.</h2>
-            <p>The exam uses a clean sans-serif for reading and a dedicated monospace for queries, schemas, columns, errors, and result grids.</p>
-            <Link href="/about">See how the simulator works →</Link>
-          </article>
-          <article className="content-card">
-            <p className="eyebrow">Private by architecture</p>
-            <h2>Your weak topics are not a class leaderboard.</h2>
-            <p>Every user can read and update only their own attempts, topic scores, profile, and mistake notebook.</p>
-            <Link href="/register">Create a private account →</Link>
-          </article>
+      <section className="app-container page-section pt-0">
+        <div className="grid gap-4 md:grid-cols-2">
+          <InfoCard
+            title="Typed SQL practice is ready."
+            description="Labs and topic practice ask you to write SQL before checking patterns or revealing the answer."
+            action={<Button asChild><Link href="/labs">Open SQL labs</Link></Button>}
+          />
+          <InfoCard
+            title="Readable where it matters."
+            description="Questions use a calm body font while SQL, schemas, columns, errors, and result grids use a dedicated monospace."
+            action={<Button asChild variant="outline"><Link href="/about">How it works</Link></Button>}
+          />
         </div>
       </section>
-    </main>
+    </div>
   );
 }
-

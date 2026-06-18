@@ -2,8 +2,15 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { EmptyPanel, PageHeader, StatGrid } from "@/components/DesignSystem";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { MistakeRow } from "@/lib/progress";
+import { createClient } from "@/lib/supabase/client";
 
 export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRow[] }) {
   const [mistakes, setMistakes] = useState(initialMistakes);
@@ -30,56 +37,105 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
   }
 
   return (
-    <main className="page-shell section-space">
-      <section className="page-intro">
-        <p className="eyebrow">Private mistake notebook</p>
-        <h1>Your wrong answers are the highest-value study material.</h1>
-        <p>Only your authenticated account can read or update these rows. Repeated misses rise to the top.</p>
-      </section>
-      <div className="stat-strip compact-stats">
-        <article><strong>{mistakes.length}</strong><span>unique mistakes</span></article>
-        <article><strong>{repeated}</strong><span>missed more than once</span></article>
-        <article><strong>{topics.length}</strong><span>topics needing repair</span></article>
+    <div className="app-container page-section">
+      <PageHeader
+        label="Private mistake notebook"
+        title="Your wrong answers are the highest-value study material."
+        description="Only your authenticated account can read or update these rows. Repeated misses rise to the top."
+        actions={
+          mistakes.length ? (
+            <Button asChild><Link href="/exam?mode=mistakes">Practice mistakes only</Link></Button>
+          ) : (
+            <Button asChild variant="outline"><Link href="/exam?mode=diagnostic">Start diagnostic</Link></Button>
+          )
+        }
+      />
+
+      <div className="mt-8">
+        <StatGrid
+          columns={3}
+          stats={[
+            { value: mistakes.length, label: "unique mistakes" },
+            { value: repeated, label: "missed more than once" },
+            { value: topics.length, label: "topics needing repair" },
+          ]}
+        />
       </div>
-      <div className="filter-row">
-        <label htmlFor="mistake-topic">Filter by topic</label>
-        <select id="mistake-topic" value={filter} onChange={(event) => setFilter(event.target.value)}>
-          <option value="all">All topics</option>
-          {topics.map((topic) => <option key={topic}>{topic}</option>)}
-        </select>
-        {mistakes.length > 0 && <Link className="button primary" href="/exam?mode=mistakes">Practice mistakes only</Link>}
-      </div>
-      {message && <p className="form-message success" role="status">{message}</p>}
+
+      <Card className="mt-6">
+        <CardContent>
+          <Field className="sm:max-w-xs">
+            <FieldLabel>Filter by topic</FieldLabel>
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="all">All topics</SelectItem>
+                  {topics.map((topic) => <SelectItem key={topic} value={topic}>{topic}</SelectItem>)}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </Field>
+        </CardContent>
+      </Card>
+
+      {message && (
+        <Alert className="mt-5" role="status">
+          <AlertTitle>Notebook update</AlertTitle>
+          <AlertDescription>{message}</AlertDescription>
+        </Alert>
+      )}
+
       {!visible.length ? (
-        <section className="empty-state inline-empty">
-          <h2>No saved mistakes in this view.</h2>
-          <p>Take the diagnostic to identify the topics that deserve your time.</p>
-          <Link className="button primary" href="/exam?mode=diagnostic">Start diagnostic</Link>
-        </section>
+        <div className="mt-6">
+          <EmptyPanel
+            actionLabel="Start diagnostic"
+            description="Take the diagnostic to identify the topics that deserve your time."
+            href="/exam?mode=diagnostic"
+            title="No saved mistakes in this view."
+          />
+        </div>
       ) : (
-        <section className="notebook-list">
+        <section className="exam-readable mt-6 grid gap-4">
           {visible.map((mistake) => {
             const snapshot = mistake.question_snapshot as { question?: string; reviewFile?: string };
             return (
-              <article className="notebook-card exam-readable" key={mistake.id}>
-                <div>
-                  <span>{mistake.topic}</span>
-                  <strong>Missed {mistake.mistake_count}× · {new Date(mistake.last_mistaken_at).toLocaleDateString()}</strong>
-                </div>
-                <h2>{snapshot.question ?? `Question ${mistake.question_id}`}</h2>
-                <p><b>Your latest answer:</b> {mistake.selected_answers.join(", ") || "Unanswered"}</p>
-                <p><b>Correct answer:</b> {mistake.correct_answers.join(", ")}</p>
-                <div className="explanation-box"><strong>Rule to remember</strong><p>{mistake.explanation}</p></div>
-                {snapshot.reviewFile && <p className="review-file">Review: <code>{snapshot.reviewFile}</code></p>}
-                <button className="button secondary" type="button" onClick={() => void removeMistake(mistake.id)}>
-                  Mark as mastered
-                </button>
-              </article>
+              <Card key={mistake.id}>
+                <CardHeader>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <Badge variant="secondary">{mistake.topic}</Badge>
+                    <Badge variant="outline">Missed {mistake.mistake_count}x</Badge>
+                  </div>
+                  <CardTitle className="text-2xl">{snapshot.question ?? `Question ${mistake.question_id}`}</CardTitle>
+                  <CardDescription>Latest miss: {new Date(mistake.last_mistaken_at).toLocaleDateString()}</CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+                      <span className="mono-label">Your latest answer</span>
+                      <strong className="mt-1 block">{mistake.selected_answers.join(", ") || "Unanswered"}</strong>
+                    </div>
+                    <div className="rounded-xl border border-primary/30 bg-accent/55 p-4">
+                      <span className="mono-label">Correct answer</span>
+                      <strong className="mt-1 block">{mistake.correct_answers.join(", ")}</strong>
+                    </div>
+                  </div>
+                  <Alert>
+                    <AlertTitle>Rule to remember</AlertTitle>
+                    <AlertDescription>{mistake.explanation}</AlertDescription>
+                  </Alert>
+                  {snapshot.reviewFile && <p className="text-sm text-muted-foreground">Review: <code>{snapshot.reviewFile}</code></p>}
+                  <div>
+                    <Button type="button" variant="outline" onClick={() => void removeMistake(mistake.id)}>
+                      Mark as mastered
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             );
           })}
         </section>
       )}
-    </main>
+    </div>
   );
 }
-

@@ -2,7 +2,13 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { LoadingPanel } from "@/components/DesignSystem";
 import { QuestionContent } from "@/components/QuestionContent";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   createExamQuestions,
   examDuration,
@@ -17,6 +23,7 @@ import {
   saveExamDraft,
   setLastMode,
 } from "@/lib/storage";
+import { cn } from "@/lib/utils";
 import type { ExamQuestion, ExamResult, TopicStat } from "@/lib/types";
 
 type Phase = "loading" | "exam" | "review";
@@ -185,7 +192,7 @@ export function ExamClient({ presetQuestionIds = [] }: { presetQuestionIds?: str
   }, [duration, secondsLeft]);
 
   if (phase === "loading") {
-    return <main className="page-shell section-space"><div className="loading-card">Preparing your randomized exam…</div></main>;
+    return <div className="app-container page-section"><LoadingPanel label="Preparing your randomized exam" /></div>;
   }
 
   if (!current) {
@@ -200,114 +207,130 @@ export function ExamClient({ presetQuestionIds = [] }: { presetQuestionIds?: str
 
   if (phase === "review") {
     return (
-      <main className="page-shell section-space exam-readable">
-        <section className="review-hero">
-          <p className="eyebrow">Final review</p>
-          <h1>Check your work before submitting.</h1>
-          <div className="review-summary">
-            <span><strong>{answeredCount}</strong> Answered</span>
-            <span><strong>{unanswered.length}</strong> Unanswered</span>
-            <span><strong>{marked.length}</strong> Marked</span>
-          </div>
-        </section>
+      <div className="exam-readable app-container page-section">
+        <Card className="bg-card">
+          <CardHeader>
+            <Badge className="w-fit" variant="secondary">Final review</Badge>
+            <CardTitle className="text-4xl tracking-[-0.04em]">Check your work before submitting.</CardTitle>
+            <CardDescription>Jump back to anything unanswered or marked before scoring.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border bg-muted/30 p-4"><strong className="text-2xl">{answeredCount}</strong><span className="block text-sm text-muted-foreground">Answered</span></div>
+              <div className="rounded-xl border bg-muted/30 p-4"><strong className="text-2xl">{unanswered.length}</strong><span className="block text-sm text-muted-foreground">Unanswered</span></div>
+              <div className="rounded-xl border bg-muted/30 p-4"><strong className="text-2xl">{marked.length}</strong><span className="block text-sm text-muted-foreground">Marked</span></div>
+            </div>
+          </CardContent>
+        </Card>
         {unanswered.length > 0 && (
-          <div className="warning-banner" role="alert">
-            <strong>Unanswered questions remain.</strong> They will be scored as incorrect if you submit now.
-          </div>
+          <Alert className="mt-5" role="alert">
+            <AlertTitle>Unanswered questions remain</AlertTitle>
+            <AlertDescription>They will be scored as incorrect if you submit now.</AlertDescription>
+          </Alert>
         )}
-        {saveError && <div className="form-message error" role="alert">{saveError}</div>}
-        <section className="review-grid" aria-label="Question review">
+        {saveError && (
+          <Alert className="mt-5" variant="destructive" role="alert">
+            <AlertTitle>Exam could not be saved</AlertTitle>
+            <AlertDescription>{saveError}</AlertDescription>
+          </Alert>
+        )}
+        <section className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Question review">
           {questions.map((question, index) => {
             const isAnswered = Boolean(answers[question.id]?.length);
             const isMarked = marked.includes(question.id);
             return (
-              <button
+              <Button
                 type="button"
-                className={`review-card ${isAnswered ? "answered" : "unanswered"} ${isMarked ? "marked" : ""}`}
+                className={cn("h-auto justify-start rounded-xl border p-4 text-left whitespace-normal", isMarked && "border-warning bg-warning/10")}
                 key={question.id}
                 onClick={() => { setCurrentIndex(index); setPhase("exam"); }}
+                variant={isAnswered ? "secondary" : "outline"}
               >
-                <span>Question {index + 1}</span>
-                <strong>{isAnswered ? "Answered" : "Unanswered"}{isMarked ? " · Marked" : ""}</strong>
-                <small>{question.topic}</small>
-              </button>
+                <span className="flex flex-col gap-1">
+                  <span className="font-semibold">Question {index + 1}</span>
+                  <span className="text-xs text-muted-foreground">{isAnswered ? "Answered" : "Unanswered"}{isMarked ? ", marked" : ""}</span>
+                  <span className="text-xs text-muted-foreground">{question.topic}</span>
+                </span>
+              </Button>
             );
           })}
         </section>
-        <div className="sticky-submit">
-          <button className="button secondary" type="button" onClick={() => setPhase("exam")} disabled={saving}>Return to exam</button>
-          <button className="button danger" type="button" onClick={() => void finalizeExam()} disabled={saving}>
+        <div className="sticky bottom-4 mt-5 flex flex-col gap-3 rounded-2xl border bg-card/92 p-3 shadow-[0_16px_50px_rgb(23_37_44_/_0.12)] backdrop-blur sm:flex-row sm:justify-end">
+          <Button type="button" variant="outline" onClick={() => setPhase("exam")} disabled={saving}>Return to exam</Button>
+          <Button type="button" variant="destructive" onClick={() => void finalizeExam()} disabled={saving}>
             {saving ? "Saving securely…" : "Submit and save exam"}
-          </button>
+          </Button>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="exam-page exam-readable">
-      <header className="exam-topbar">
-        <div className="page-shell">
+    <div className="exam-readable">
+      <header className="sticky top-16 z-30 border-b bg-background/90 backdrop-blur-xl">
+        <div className="app-container flex min-h-24 flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="eyebrow">Unofficial practice simulator</p>
-            <h1>{title}</h1>
+            <Badge variant="secondary">{duration === null ? "Untimed practice" : "Timed practice"}</Badge>
+            <h1 className="mt-2 text-2xl font-semibold tracking-[-0.035em] text-ink">{title}</h1>
           </div>
-          <div className={`exam-timer ${duration !== null && secondsLeft <= 300 ? "urgent" : ""}`}>
-            <small>{duration === null ? "Untimed" : "Time remaining"}</small>
-            <strong>{timerText}</strong>
+          <div className={cn("rounded-xl border bg-card px-4 py-3 text-right", duration !== null && secondsLeft <= 300 && "border-destructive bg-destructive/10 text-destructive")}>
+            <span className="block text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{duration === null ? "Mode" : "Time remaining"}</span>
+            <strong className="font-mono text-2xl">{timerText}</strong>
           </div>
         </div>
-        <div className="exam-progress" aria-label={`${Math.round(progress)} percent through exam`}>
-          <i style={{ width: `${progress}%` }} />
-        </div>
+        <Progress className="h-1 rounded-none" value={progress} aria-label={`${Math.round(progress)} percent through exam`} />
       </header>
 
-      <div className="page-shell exam-layout">
-        <section className="question-panel">
-          <div className="question-number">
-            <span>Question {currentIndex + 1} of {questions.length}</span>
-            <span>{answeredCount} answered</span>
-          </div>
-          <QuestionContent question={current} selectedAnswers={answers[current.id] ?? []} onToggleAnswer={toggleAnswer} />
-          <div className="question-actions">
-            <button className="button secondary" type="button" disabled={currentIndex === 0} onClick={() => setCurrentIndex((value) => value - 1)}>← Previous</button>
-            <button className={`button mark ${marked.includes(current.id) ? "active" : ""}`} type="button" onClick={toggleMarked}>
-              {marked.includes(current.id) ? "Marked for review" : "Mark for review"}
-            </button>
-            {currentIndex < questions.length - 1 ? (
-              <button className="button primary" type="button" onClick={() => setCurrentIndex((value) => value + 1)}>Next →</button>
-            ) : (
-              <button className="button primary" type="button" onClick={() => setPhase("review")}>Review exam →</button>
-            )}
-          </div>
-        </section>
+      <div className="app-container grid gap-5 py-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+        <Card className="min-w-0">
+          <CardContent>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+              <span>Question {currentIndex + 1} of {questions.length}</span>
+              <span>{answeredCount} answered</span>
+            </div>
+            <QuestionContent question={current} selectedAnswers={answers[current.id] ?? []} onToggleAnswer={toggleAnswer} />
+            <div className="mt-6 grid gap-3 sm:grid-cols-[auto_1fr_auto]">
+              <Button type="button" variant="outline" disabled={currentIndex === 0} onClick={() => setCurrentIndex((value) => value - 1)}>Previous</Button>
+              <Button className="sm:justify-self-center" type="button" variant={marked.includes(current.id) ? "secondary" : "ghost"} onClick={toggleMarked}>
+                {marked.includes(current.id) ? "Marked for review" : "Mark for review"}
+              </Button>
+              {currentIndex < questions.length - 1 ? (
+                <Button type="button" onClick={() => setCurrentIndex((value) => value + 1)}>Next</Button>
+              ) : (
+                <Button type="button" onClick={() => setPhase("review")}>Review exam</Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-        <aside className="question-map">
-          <div className="map-heading">
-            <h2>Question map</h2>
-            <button type="button" onClick={() => setPhase("review")}>Review all</button>
-          </div>
-          <div className="map-grid">
-            {questions.map((question, index) => (
-              <button
-                type="button"
-                key={question.id}
-                onClick={() => setCurrentIndex(index)}
-                className={`${index === currentIndex ? "current" : ""} ${answers[question.id]?.length ? "answered" : ""} ${marked.includes(question.id) ? "marked" : ""}`}
-                aria-label={`Question ${index + 1}${answers[question.id]?.length ? ", answered" : ", unanswered"}${marked.includes(question.id) ? ", marked" : ""}`}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-          <div className="map-legend">
-            <span><i className="legend-current" /> Current</span>
-            <span><i className="legend-answered" /> Answered</span>
-            <span><i className="legend-marked" /> Marked</span>
-          </div>
-          <button className="button danger full" type="button" onClick={() => setPhase("review")}>Review and submit</button>
+        <aside className="lg:sticky lg:top-44">
+          <Card>
+            <CardHeader>
+              <CardTitle>Question map</CardTitle>
+              <CardDescription>Jump, review, and submit from one place.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div className="grid grid-cols-5 gap-2">
+                {questions.map((question, index) => (
+                  <Button
+                    type="button"
+                    key={question.id}
+                    onClick={() => setCurrentIndex(index)}
+                    size="icon"
+                    variant={index === currentIndex ? "default" : answers[question.id]?.length ? "secondary" : "outline"}
+                    className={cn("relative", marked.includes(question.id) && "ring-2 ring-warning")}
+                    aria-label={`Question ${index + 1}${answers[question.id]?.length ? ", answered" : ", unanswered"}${marked.includes(question.id) ? ", marked" : ""}`}
+                  >
+                    {index + 1}
+                  </Button>
+                ))}
+              </div>
+              <Button type="button" variant="outline" onClick={() => setPhase("review")}>Review all</Button>
+              <Button type="button" variant="destructive" onClick={() => setPhase("review")}>Review and submit</Button>
+            </CardContent>
+          </Card>
         </aside>
       </div>
-    </main>
+    </div>
   );
 }

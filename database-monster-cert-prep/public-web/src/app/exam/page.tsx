@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ExamClient } from "@/components/ExamClient";
+import { LoadingPanel } from "@/components/DesignSystem";
 import { requireUser } from "@/lib/auth";
 import { getMistakes } from "@/lib/progress";
 
@@ -18,7 +19,7 @@ export default async function ExamPage({
     : [];
 
   return (
-    <Suspense fallback={<main className="page-shell section-space"><div className="loading-card">Preparing exam…</div></main>}>
+    <Suspense fallback={<div className="app-container page-section"><LoadingPanel label="Preparing exam" /></div>}>
       <ExamClient presetQuestionIds={presetQuestionIds} />
     </Suspense>
   );

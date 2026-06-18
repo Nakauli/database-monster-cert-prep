@@ -17,14 +17,14 @@ const bodyFont = Manrope({
 
 const monoFont = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-code",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Database Monster — Certification Practice",
-    template: "%s · Database Monster",
+    default: "Database Monster - Certification Practice",
+    template: "%s - Database Monster",
   },
   description: "An unofficial, original Certiport-style database fundamentals practice simulator.",
 };
@@ -35,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
-      <body className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+      <body className="font-sans">
         <AppShell>{children}</AppShell>
       </body>
     </html>

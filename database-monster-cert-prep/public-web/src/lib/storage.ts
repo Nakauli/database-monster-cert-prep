@@ -2,7 +2,6 @@
 
 import type { ExamQuestion } from "@/lib/types";
 
-const THEME_KEY = "database-monster-theme";
 const LAST_MODE_KEY = "database-monster-last-mode";
 const DRAFT_PREFIX = "database-monster-exam-draft-v2:";
 
@@ -20,19 +19,6 @@ export interface ExamDraft {
 
 function available(): boolean {
   return typeof window !== "undefined";
-}
-
-export function getTheme(): "light" | "dark" {
-  if (!available()) return "dark";
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === "dark" || saved === "light") return saved;
-  return "dark";
-}
-
-export function setTheme(theme: "light" | "dark"): void {
-  if (!available()) return;
-  localStorage.setItem(THEME_KEY, theme);
-  document.documentElement.dataset.theme = theme;
 }
 
 export function setLastMode(mode: string): void {

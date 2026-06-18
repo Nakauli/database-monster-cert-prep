@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
 export function AuthNav({ closeMenu }: { closeMenu: () => void }) {
@@ -38,18 +39,28 @@ export function AuthNav({ closeMenu }: { closeMenu: () => void }) {
   if (!signedIn) {
     return (
       <>
-        <Link href="/login" onClick={closeMenu}>Sign in</Link>
-        <Link className="nav-cta" href="/register" onClick={closeMenu}>Create account</Link>
+        <Button asChild className="justify-start" size="sm" variant="ghost">
+          <Link href="/login" onClick={closeMenu}>Sign in</Link>
+        </Button>
+        <Button asChild className="justify-start" size="sm">
+          <Link href="/register" onClick={closeMenu}>Create account</Link>
+        </Button>
       </>
     );
   }
 
   return (
     <>
-      <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
-      <Link href="/history" onClick={closeMenu}>History</Link>
-      <Link href="/profile" onClick={closeMenu}>Profile</Link>
-      <button className="nav-logout" type="button" onClick={logout}>Log out</button>
+      <Button asChild className="justify-start" size="sm" variant="ghost">
+        <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
+      </Button>
+      <Button asChild className="justify-start" size="sm" variant="ghost">
+        <Link href="/history" onClick={closeMenu}>History</Link>
+      </Button>
+      <Button asChild className="justify-start" size="sm" variant="ghost">
+        <Link href="/profile" onClick={closeMenu}>Profile</Link>
+      </Button>
+      <Button className="justify-start" size="sm" type="button" variant="outline" onClick={logout}>Log out</Button>
     </>
   );
 }
