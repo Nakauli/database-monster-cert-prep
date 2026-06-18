@@ -2,13 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { CodeBlock } from "@/components/DataDisplay";
+import { InfoCard, PageHeader, SectionHeader, StatGrid } from "@/components/DesignSystem";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getProgress } from "@/lib/storage";
 import type { ProgressData } from "@/lib/types";
 
 const modes = [
-  { title: "Diagnostic Exam", detail: "40 balanced questions · 50 minutes", href: "/exam?mode=diagnostic", label: "Start diagnostic", tone: "green" },
-  { title: "Timed Exam", detail: "40 randomized questions · 50 minutes", href: "/exam?mode=timed", label: "Start timed exam", tone: "blue" },
-  { title: "Final Boss", detail: "45 hard and final-boss questions", href: "/exam?mode=final", label: "Enter final boss", tone: "orange" },
+  { title: "Diagnostic", detail: "40 balanced questions, 50 minutes", href: "/exam?mode=diagnostic", label: "Start diagnostic" },
+  { title: "Timed Exam", detail: "40 randomized questions, 50 minutes", href: "/exam?mode=timed", label: "Start timed exam" },
+  { title: "Final Boss", detail: "45 hard questions for proof of readiness", href: "/exam?mode=final", label: "Start final boss" },
 ];
 
 export function HomeDashboard() {
@@ -27,71 +32,99 @@ export function HomeDashboard() {
   }, [progress]);
 
   return (
-    <main>
-      <section className="hero-section">
-        <div className="page-shell hero-grid">
-          <div>
-            <p className="eyebrow">Database certification training</p>
-            <h1>Make every database question readable—and every trap beatable.</h1>
-            <p className="hero-copy">
-              An unofficial Certiport-style simulator with timed exams, SQL-first explanations,
-              weakness tracking, and zero account setup.
-            </p>
-            <div className="button-row">
-              <Link className="button primary" href="/exam?mode=diagnostic">Start diagnostic exam</Link>
-              <Link className="button secondary" href="/practice">Practice by topic</Link>
-            </div>
-            <p className="privacy-note"><span aria-hidden="true">◆</span> No login. No personal data. Progress stays on this device.</p>
-          </div>
-          <div className="editor-preview" aria-label="Decorative SQL editor preview">
-            <div className="editor-top"><span></span><span></span><span></span><strong>student_readiness.sql</strong></div>
-            <pre><code><b>SELECT</b> topic, score{`\n`}<b>FROM</b> practice_results{`\n`}<b>WHERE</b> score &lt; 80{`\n`}<b>ORDER BY</b> score <b>ASC</b>;</code></pre>
-            <div className="editor-result">
-              <span>topic</span><span>score</span>
-              <code>{weakTopic?.[0] ?? "Take diagnostic"}</code><code>{latest ? `${latest.score}%` : "—"}</code>
-            </div>
-          </div>
+    <div>
+      <section className="app-container page-section">
+        <PageHeader
+          label="Certification simulator"
+          title="Practice like the exam is already open."
+          description="Timed sessions, readable SQL, typed drills, and a local mistake notebook for the topics that actually need repair."
+          actions={
+            <>
+              <Button asChild size="lg"><Link href="/exam?mode=diagnostic">Start diagnostic</Link></Button>
+              <Button asChild size="lg" variant="outline"><Link href="/practice">Practice by topic</Link></Button>
+            </>
+          }
+        />
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
+          <Card className="bg-card/90">
+            <CardHeader>
+              <CardTitle>Read the data, answer the trap.</CardTitle>
+              <CardDescription>Code and tables are treated as the main exam material, not decorative preview blocks.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CodeBlock
+                label="student_readiness.sql"
+                code={`SELECT topic, score\nFROM practice_results\nWHERE score < 80\nORDER BY score ASC;`}
+              />
+            </CardContent>
+          </Card>
+          <Card className="bg-primary text-primary-foreground">
+            <CardHeader>
+              <Badge className="w-fit bg-primary-foreground text-primary">Next best move</Badge>
+              <CardTitle className="text-3xl tracking-[-0.04em]">
+                {weakTopic ? `Repair ${weakTopic[0]}` : latest ? "Prove your score twice" : "Build your baseline"}
+              </CardTitle>
+              <CardDescription className="text-primary-foreground/75">
+                {weakTopic
+                  ? "Review the misses, then run a focused practice set before another timed exam."
+                  : latest
+                    ? `Your latest score is ${latest.score}%. Repeat it on a different exam before exam day.`
+                    : "Start with the diagnostic so the rest of the site can point you at the right topic."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="secondary">
+                <Link href={weakTopic ? "/mistakes" : "/exam?mode=diagnostic"}>{weakTopic ? "Open mistakes" : "Start diagnostic"}</Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      <section className="page-shell section-space">
-        <div className="stat-strip">
-          <article><strong>360</strong><span>original questions</span></article>
-          <article><strong>200</strong><span>formatted code examples</span></article>
-          <article><strong>{progress.attempts.length}</strong><span>attempts on this device</span></article>
-          <article><strong>{progress.mistakes.length}</strong><span>mistakes to repair</span></article>
-        </div>
+      <section className="app-container page-section pt-0">
+        <StatGrid
+          stats={[
+            { value: "360", label: "original questions" },
+            { value: "200+", label: "code examples" },
+            { value: progress.attempts.length, label: "saved attempts" },
+            { value: progress.mistakes.length, label: "mistakes to repair" },
+          ]}
+        />
+      </section>
 
-        <div className="section-heading">
-          <div><p className="eyebrow">Choose a mode</p><h2>Train with a purpose</h2></div>
-          <Link href="/roadmap">See the study roadmap →</Link>
-        </div>
-        <div className="mode-grid">
+      <section className="app-container page-section pt-0">
+        <SectionHeader
+          title="Choose the right pressure."
+          description="Each mode has a job. Start broad, train weak topics, then prove readiness under the clock."
+          action={<Button asChild variant="ghost"><Link href="/roadmap">Open roadmap</Link></Button>}
+        />
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
           {modes.map((mode) => (
-            <article className={`mode-card ${mode.tone}`} key={mode.title}>
-              <span className="mode-icon" aria-hidden="true">{mode.title === "Final Boss" ? "⚑" : mode.title === "Timed Exam" ? "◷" : "◎"}</span>
-              <h3>{mode.title}</h3>
-              <p>{mode.detail}</p>
-              <Link href={mode.href}>{mode.label} →</Link>
-            </article>
+            <InfoCard
+              action={<Button asChild variant="outline"><Link href={mode.href}>{mode.label}</Link></Button>}
+              description={mode.detail}
+              key={mode.title}
+              title={mode.title}
+            />
           ))}
         </div>
+      </section>
 
-        <div className="feature-grid">
-          <article className="content-card">
-            <p className="eyebrow">Readable by design</p>
-            <h2>SQL looks like SQL.</h2>
-            <p>Question text uses a comfortable sans-serif. Queries, schemas, column names, outputs, and errors use a dedicated monospace presentation with horizontal scrolling.</p>
-            <Link href="/exam?mode=panic">Try a 10-question panic review →</Link>
-          </article>
-          <article className="content-card">
-            <p className="eyebrow">Your next move</p>
-            <h2>{latest ? `${latest.score}% on your latest attempt` : "Start with the diagnostic"}</h2>
-            <p>{weakTopic ? `Your most repeated weak topic is ${weakTopic[0]}. Repair it before another full exam.` : "Get a topic-by-topic baseline before deciding what to study."}</p>
-            <Link href={weakTopic ? "/mistakes" : "/exam?mode=diagnostic"}>{weakTopic ? "Review mistakes" : "Build my baseline"} →</Link>
-          </article>
+      <section className="app-container page-section pt-0">
+        <div className="grid gap-4 md:grid-cols-2">
+          <InfoCard
+            title="Typed SQL practice is ready."
+            description="Labs and topic practice now ask you to write SQL before checking patterns or revealing the answer."
+            action={<Button asChild><Link href="/labs">Open SQL labs</Link></Button>}
+          />
+          <InfoCard
+            title={latest ? `${latest.score}% latest score` : "No saved score yet"}
+            description={latest ? "Use the result page to inspect weak topics and repair misses." : "One diagnostic run unlocks useful local progress signals."}
+            action={<Button asChild variant="outline"><Link href={latest ? "/results" : "/exam?mode=diagnostic"}>{latest ? "View report" : "Take diagnostic"}</Link></Button>}
+          />
         </div>
       </section>
-    </main>
+    </div>
   );
 }
