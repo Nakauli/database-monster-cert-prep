@@ -8,12 +8,22 @@ This directory contains the database and security setup for individual Database 
 2. Create a new project and choose a strong database password.
 3. Wait for the project to finish provisioning.
 4. In **Authentication → URL Configuration**, set:
-   - Site URL: your production Vercel URL
+   - Site URL: `https://database-monster-cert-prep.vercel.app`
    - Redirect URLs:
      - `http://localhost:3000/auth/confirm`
-     - `http://localhost:3000/update-password`
-     - `https://YOUR-VERCEL-DOMAIN/auth/confirm`
-     - `https://YOUR-VERCEL-DOMAIN/update-password`
+      - `http://localhost:3000/update-password`
+     - `https://database-monster-cert-prep.vercel.app/auth/confirm`
+     - `https://database-monster-cert-prep.vercel.app/update-password`
+
+These values are also versioned in `config.toml`. After linking the correct project, apply
+configuration changes with:
+
+```bash
+npx supabase config push
+```
+
+Review the displayed remote/local diff before applying future changes. The committed configuration
+preserves email confirmation, eight-digit OTPs, resend throttling, and TOTP MFA.
 
 ## 2. Get the URL and anon key
 
@@ -47,9 +57,17 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR-ANON-OR-PUBLISHABLE-KEY
 
 Restart `npm run dev` after changing environment variables. `.env.local` is ignored by Git.
 
-## 4. Run migrations manually
+## 4. Run migrations
 
-Open **SQL Editor** in Supabase and run these files in order:
+Preferred CLI workflow:
+
+```bash
+npx supabase link --project-ref cpvxtbeikqjvbcxjpapf
+npx supabase migration list
+npx supabase db push
+```
+
+If the CLI is unavailable, open **SQL Editor** in Supabase and run these files in order:
 
 1. `migrations/001_create_user_progress_tables.sql`
 2. `migrations/002_enable_rls_policies.sql`
