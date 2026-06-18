@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AuthNav } from "@/components/auth/AuthNav";
 import { getTheme, setTheme as persistTheme } from "@/lib/storage";
 
 const navigation = [
-  { href: "/", label: "Dashboard" },
-  { href: "/practice", label: "Topic Practice" },
-  { href: "/mistakes", label: "Mistakes" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/labs", label: "SQL Labs" },
+  { href: "/about", label: "About" },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -55,6 +54,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {item.label}
               </Link>
             ))}
+            <AuthNav closeMenu={() => setMenuOpen(false)} />
           </nav>
           <div className="flex items-center gap-2">
             <button className="icon-button" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
@@ -76,7 +76,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <footer className="site-footer">
         <div className="page-shell flex flex-col justify-between gap-3 py-8 text-sm sm:flex-row">
           <p>Unofficial Certiport-style database fundamentals practice. No exam dumps.</p>
-          <p>Progress stays in this browser.</p>
+          <p>Train hard. Query smart. Pass ready.</p>
         </div>
       </footer>
     </div>
