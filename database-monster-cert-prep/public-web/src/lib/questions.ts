@@ -1,7 +1,7 @@
 import questionData from "@/data/questions.json";
 import type { Difficulty, ExamQuestion, Question } from "@/lib/types";
 
-export const questions = questionData as Question[];
+export const questions = questionData as unknown as Question[];
 export const topics = [...new Set(questions.map((question) => question.topic))].sort();
 export const difficulties: Difficulty[] = ["easy", "medium", "hard", "final boss"];
 
@@ -54,4 +54,3 @@ export function examDuration(mode: string): number | null {
   if (mode === "panic") return 10 * 60;
   return 50 * 60;
 }
-
