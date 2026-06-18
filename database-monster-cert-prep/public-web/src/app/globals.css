@@ -226,6 +226,13 @@ code, pre { font-family: var(--mono); }
 .exam-topbar, .exam-topbar h1, .question-panel, .question-map {
   font-family: var(--body);
 }
+.exam-copy, .exam-copy button, .exam-copy .question-title, .exam-copy .scenario-box {
+  font-family: var(--body);
+}
+.exam-copy code, .exam-copy pre, .exam-copy .schema-card li span,
+.exam-copy .table-card th, .exam-copy .table-card td {
+  font-family: var(--mono);
+}
 .exam-readable .code-card, .exam-readable .schema-card, .exam-readable .table-card {
   font-family: var(--body);
 }

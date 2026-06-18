@@ -9,7 +9,7 @@ interface QuestionContentProps {
 
 export function QuestionContent({ question, selectedAnswers, onToggleAnswer }: QuestionContentProps) {
   return (
-    <>
+    <div className="exam-copy">
       <div className="question-badges" aria-label="Question metadata">
         <span>{question.topic}</span>
         <span>{question.difficulty}</span>
@@ -45,7 +45,6 @@ export function QuestionContent({ question, selectedAnswers, onToggleAnswer }: Q
           );
         })}
       </fieldset>
-    </>
+    </div>
   );
 }
-
