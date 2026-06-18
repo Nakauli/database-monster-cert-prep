@@ -2,80 +2,86 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getTheme, setTheme as persistTheme } from "@/lib/storage";
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 const navigation = [
   { href: "/", label: "Dashboard" },
-  { href: "/practice", label: "Topic Practice" },
+  { href: "/practice", label: "Practice" },
   { href: "/mistakes", label: "Mistakes" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/labs", label: "SQL Labs" },
 ];
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const initial = getTheme();
-      setTheme(initial);
-      persistTheme(initial);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  function toggleTheme() {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    persistTheme(next);
-  }
 
   return (
-    <div className="min-h-screen">
-      <header className="site-header">
-        <div className="page-shell flex h-16 items-center justify-between gap-4">
-          <Link className="brand-mark" href="/" aria-label="Database Monster home">
-            <span aria-hidden="true">DB</span>
-            <span>
-              Database Monster
-              <small>Unofficial certification practice</small>
+    <>
+      {navigation.map((item) => {
+        const active = pathname === item.href;
+        return (
+          <Button
+            asChild
+            className={cn("justify-start", active && "bg-secondary text-secondary-foreground")}
+            key={item.href}
+            size="sm"
+            variant={active ? "secondary" : "ghost"}
+          >
+            <Link href={item.href} onClick={onNavigate}>
+              {item.label}
+            </Link>
+          </Button>
+        );
+      })}
+    </>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-40 border-b bg-background/88 backdrop-blur-xl">
+        <div className="app-container flex h-16 items-center justify-between gap-4">
+          <Link className="group flex items-center gap-3 text-decoration-none" href="/" aria-label="Database Monster home">
+            <span className="grid size-10 place-items-center rounded-xl bg-primary font-mono text-sm font-bold text-primary-foreground shadow-[0_12px_30px_rgb(32_122_101_/_0.24)] transition-transform group-hover:-translate-y-0.5">
+              DB
+            </span>
+            <span className="flex flex-col leading-tight">
+              <span className="text-sm font-semibold tracking-[-0.02em] text-ink">Database Monster</span>
+              <span className="text-xs text-muted-foreground">Certification practice</span>
             </span>
           </Link>
-          <nav className={`site-nav ${menuOpen ? "is-open" : ""}`} aria-label="Main navigation">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={pathname === item.href ? "active" : ""}
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+            <NavLinks />
           </nav>
-          <div className="flex items-center gap-2">
-            <button className="icon-button" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
-              <span aria-hidden="true">{theme === "light" ? "◐" : "☀"}</span>
-            </button>
-            <button
-              className="icon-button menu-button"
-              type="button"
-              onClick={() => setMenuOpen((value) => !value)}
-              aria-label="Toggle navigation"
-              aria-expanded={menuOpen}
-            >
-              <span aria-hidden="true">☰</span>
-            </button>
-          </div>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button className="lg:hidden" size="sm" variant="outline">
+                Menu
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Database Monster</SheetTitle>
+              </SheetHeader>
+              <nav className="mt-6 flex flex-col gap-2" aria-label="Mobile navigation">
+                <NavLinks />
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
-      {children}
-      <footer className="site-footer">
-        <div className="page-shell flex flex-col justify-between gap-3 py-8 text-sm sm:flex-row">
-          <p>Unofficial Certiport-style database fundamentals practice. No exam dumps.</p>
+
+      <main className="flex-1">{children}</main>
+
+      <footer className="border-t bg-card/75">
+        <div className="app-container flex flex-col gap-3 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p>Unofficial database certification practice. Original questions only.</p>
           <p>Progress stays in this browser.</p>
         </div>
       </footer>

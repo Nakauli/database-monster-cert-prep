@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ExamClient } from "@/components/ExamClient";
+import { LoadingPanel } from "@/components/DesignSystem";
 
 export const metadata: Metadata = { title: "Exam" };
 
 export default function ExamPage() {
   return (
-    <Suspense fallback={<main className="page-shell section-space"><div className="loading-card">Preparing exam…</div></main>}>
+    <Suspense fallback={<div className="app-container page-section"><LoadingPanel label="Preparing exam" /></div>}>
       <ExamClient />
     </Suspense>
   );
 }
-

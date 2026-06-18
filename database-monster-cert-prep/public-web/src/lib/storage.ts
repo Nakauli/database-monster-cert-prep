@@ -4,7 +4,6 @@ import type { ExamResult, ProgressData, StoredMistake } from "@/lib/types";
 
 const PROGRESS_KEY = "database-monster-progress-v1";
 const RESULT_KEY = "database-monster-last-result-v1";
-const THEME_KEY = "database-monster-theme";
 
 const emptyProgress: ProgressData = { attempts: [], mistakes: [] };
 
@@ -71,18 +70,5 @@ export function resetProgress(): void {
   if (!available()) return;
   localStorage.removeItem(PROGRESS_KEY);
   localStorage.removeItem(RESULT_KEY);
-}
-
-export function getTheme(): "light" | "dark" {
-  if (!available()) return "light";
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === "dark" || saved === "light") return saved;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-export function setTheme(theme: "light" | "dark"): void {
-  if (!available()) return;
-  localStorage.setItem(THEME_KEY, theme);
-  document.documentElement.dataset.theme = theme;
 }
 
