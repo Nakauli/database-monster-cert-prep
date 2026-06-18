@@ -1,0 +1,14 @@
+# Unrelated local files that are not part of the public project
+/Certiport_Databases_Reviewer_and_50_Item_Mock_Exam.pdf
+/make_database_reviewer_pdf.py
+
+# Secrets and local tooling
+.env
+.env.*
+.vercel/
+node_modules/
+.next/
+out/
+coverage/
+*.log
+
