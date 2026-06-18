@@ -26,7 +26,7 @@ export function getTheme(): "light" | "dark" {
   if (!available()) return "dark";
   const saved = localStorage.getItem(THEME_KEY);
   if (saved === "dark" || saved === "light") return saved;
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  return "dark";
 }
 
 export function setTheme(theme: "light" | "dark"): void {
@@ -72,4 +72,3 @@ export function clearExamDraft(key: string): void {
   if (!available()) return;
   localStorage.removeItem(`${DRAFT_PREFIX}${key}`);
 }
-

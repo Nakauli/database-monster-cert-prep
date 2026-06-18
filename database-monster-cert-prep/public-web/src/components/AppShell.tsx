@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span aria-hidden="true">DB</span>
             <span>
               Database Monster
-              <small>Unofficial certification practice</small>
+              <small>Train hard. Query smart. Pass ready.</small>
             </span>
           </Link>
           <nav className={`site-nav ${menuOpen ? "is-open" : ""}`} aria-label="Main navigation">
