@@ -15,8 +15,8 @@ export function HomeDashboard() {
   const [progress, setProgress] = useState<ProgressData>({ attempts: [], mistakes: [] });
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setProgress(getProgress()));
-    return () => window.cancelAnimationFrame(frame);
+    const timer = window.setTimeout(() => setProgress(getProgress()), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const latest = progress.attempts[0];

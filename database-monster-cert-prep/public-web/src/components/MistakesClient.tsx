@@ -10,8 +10,8 @@ export function MistakesClient() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setProgress(getProgress()));
-    return () => window.cancelAnimationFrame(frame);
+    const timer = window.setTimeout(() => setProgress(getProgress()), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const topics = [...new Set(progress.mistakes.map((mistake) => mistake.topic))].sort();

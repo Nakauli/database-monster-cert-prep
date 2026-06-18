@@ -32,13 +32,13 @@ export function ExamClient() {
   const [startedAt, setStartedAt] = useState(0);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
+    const timer = window.setTimeout(() => {
       setQuestions(createExamQuestions(mode, topic, difficulty, requestedCount));
       setSecondsLeft(duration ?? 0);
       setStartedAt(Date.now());
       setPhase("exam");
-    });
-    return () => window.cancelAnimationFrame(frame);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [mode, topic, difficulty, requestedCount, duration]);
 
   const current = questions[currentIndex];
