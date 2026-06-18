@@ -17,9 +17,24 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-The public app is fully static, deployable on Vercel's free Hobby plan, requires no login, and stores every user's progress only in that user's browser.
+The public app uses Supabase Auth and Row Level Security so each classmate has an individual dashboard, exam history, topic mastery record, and mistake notebook.
 
 ### Deploy
+
+```powershell
+cd database-monster-cert-prep/public-web
+npm install
+Copy-Item .env.example .env.local
+npm run dev
+```
+
+Before running, create a Supabase project and execute the migrations documented in:
+
+```text
+database-monster-cert-prep/public-web/supabase/README.md
+```
+
+Deploy after adding `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` to Vercel:
 
 ```bash
 cd database-monster-cert-prep/public-web
@@ -50,4 +65,3 @@ The Python system includes the SQLite database, SQL lab runner, CLI exam engine,
 ## Readiness target
 
 Take the diagnostic without notes. Repair the weakest topics using the matching note and SQL lab. Before the real exam, target at least 85% on two different 50-minute simulations and at least 80% in every topic.
-

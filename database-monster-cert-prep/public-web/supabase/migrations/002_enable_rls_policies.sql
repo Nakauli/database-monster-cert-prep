@@ -6,6 +6,12 @@ alter table public.question_attempts enable row level security;
 alter table public.mistake_notebook enable row level security;
 alter table public.user_topic_progress enable row level security;
 
+revoke all on public.profiles from public, anon;
+revoke all on public.exam_attempts from public, anon;
+revoke all on public.question_attempts from public, anon;
+revoke all on public.mistake_notebook from public, anon;
+revoke all on public.user_topic_progress from public, anon;
+
 grant select, insert, update, delete on public.profiles to authenticated;
 grant select, insert, update, delete on public.exam_attempts to authenticated;
 grant select, insert, update, delete on public.question_attempts to authenticated;
@@ -156,4 +162,3 @@ to authenticated
 using ((select auth.uid()) is not null and user_id = (select auth.uid()));
 
 commit;
-
