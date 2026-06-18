@@ -1,18 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { Cards, Notebook } from "@phosphor-icons/react";
 import { useEffect, useMemo, useState } from "react";
+import { FlashcardReview } from "@/components/FlashcardReview";
 import { getProgress, resetProgress } from "@/lib/storage";
 import type { ProgressData } from "@/lib/types";
 
 export function MistakesClient() {
   const [progress, setProgress] = useState<ProgressData>({ attempts: [], mistakes: [] });
   const [filter, setFilter] = useState("all");
+  const [view, setView] = useState<"notebook" | "flashcards">("notebook");
 
   useEffect(() => {
     const timer = window.setTimeout(() => setProgress(getProgress()), 0);
     return () => window.clearTimeout(timer);
   }, []);
+
+  function handleResolve(questionId: string) {
+    setProgress((prev) => ({ ...prev, mistakes: prev.mistakes.filter((m) => m.questionId !== questionId) }));
+  }
 
   const topics = [...new Set(progress.mistakes.map((mistake) => mistake.topic))].sort();
   const visible = filter === "all" ? progress.mistakes : progress.mistakes.filter((mistake) => mistake.topic === filter);
@@ -36,6 +43,20 @@ export function MistakesClient() {
         <article><strong>{repeated}</strong><span>missed more than once</span></article>
         <article><strong>{progress.attempts.length}</strong><span>saved attempts</span></article>
       </div>
+      {progress.mistakes.length > 0 && (
+        <div className="button-row" style={{ marginBottom: 4 }}>
+          <button className={`button ${view === "notebook" ? "primary" : "secondary"}`} type="button" onClick={() => setView("notebook")}>
+            <Notebook size={16} weight="bold" /> Notebook
+          </button>
+          <button className={`button ${view === "flashcards" ? "primary" : "secondary"}`} type="button" onClick={() => setView("flashcards")}>
+            <Cards size={16} weight="bold" /> Flashcard review
+          </button>
+        </div>
+      )}
+      {view === "flashcards" && progress.mistakes.length > 0 ? (
+        <FlashcardReview mistakes={progress.mistakes} onResolve={handleResolve} />
+      ) : (
+      <>
       <div className="filter-row">
         <label htmlFor="mistake-topic">Filter by topic</label>
         <select id="mistake-topic" value={filter} onChange={(event) => setFilter(event.target.value)}>
@@ -63,6 +84,8 @@ export function MistakesClient() {
             </article>
           ))}
         </section>
+      )}
+      </>
       )}
     </main>
   );

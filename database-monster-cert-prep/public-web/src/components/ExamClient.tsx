@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionContent } from "@/components/QuestionContent";
 import { createExamQuestions, examDuration, examTitle } from "@/lib/questions";
+import { gradeSql } from "@/lib/sql-engine";
 import { saveResult } from "@/lib/storage";
 import type { ExamQuestion, ExamResult, TopicStat } from "@/lib/types";
 
@@ -46,18 +47,33 @@ export function ExamClient() {
   const unanswered = questions.filter((question) => !(answers[question.id]?.length));
   const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0;
 
-  const finalizeExam = useCallback(() => {
-    if (!questions.length) return;
+  const [submitting, setSubmitting] = useState(false);
+
+  const finalizeExam = useCallback(async () => {
+    if (!questions.length || submitting) return;
+    setSubmitting(true);
     const topicCounts: Record<string, { correct: number; total: number }> = {};
-    const reviews = questions.map((question) => {
-      const selectedAnswers = answers[question.id] ?? [];
-      const correct = exactMatch(selectedAnswers, question.correctAnswers);
-      const topicCount = topicCounts[question.topic] ?? { correct: 0, total: 0 };
+    const reviews = await Promise.all(
+      questions.map(async (question) => {
+        const selectedAnswers = answers[question.id] ?? [];
+        let correct: boolean;
+        if (question.type === "sql-write") {
+          const userSql = selectedAnswers[0] ?? "";
+          correct = userSql.trim() && question.expectedSql
+            ? (await gradeSql(userSql, question.expectedSql)).pass
+            : false;
+        } else {
+          correct = exactMatch(selectedAnswers, question.correctAnswers);
+        }
+        return { question, selectedAnswers, correct };
+      }),
+    );
+    for (const review of reviews) {
+      const topicCount = topicCounts[review.question.topic] ?? { correct: 0, total: 0 };
       topicCount.total += 1;
-      topicCount.correct += correct ? 1 : 0;
-      topicCounts[question.topic] = topicCount;
-      return { question, selectedAnswers, correct };
-    });
+      topicCount.correct += review.correct ? 1 : 0;
+      topicCounts[review.question.topic] = topicCount;
+    }
     const correct = reviews.filter((review) => review.correct).length;
     const topicStats = Object.fromEntries(
       Object.entries(topicCounts).map(([name, stat]) => [
@@ -79,7 +95,7 @@ export function ExamClient() {
     };
     saveResult(result);
     router.push("/results");
-  }, [answers, mode, questions, router, startedAt, title]);
+  }, [answers, mode, questions, router, startedAt, title, submitting]);
 
   useEffect(() => {
     if (phase !== "exam" || duration === null) return;
@@ -114,6 +130,54 @@ export function ExamClient() {
     if (!current) return;
     setMarked((previous) => previous.includes(current.id) ? previous.filter((id) => id !== current.id) : [...previous, current.id]);
   }
+
+  useEffect(() => {
+    if (phase !== "exam" || !current) return;
+    function onKey(event: KeyboardEvent) {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      const typing =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable ||
+          target.closest(".cm-editor"));
+      if (typing || event.metaKey || event.ctrlKey || event.altKey) return;
+      const active = questions[currentIndex];
+      if (!active) return;
+
+      const letter = event.key.toUpperCase();
+      if (active.type !== "sql-write" && /^[A-J]$/.test(letter)) {
+        const idx = letter.charCodeAt(0) - 65;
+        if (idx < active.choices.length) {
+          event.preventDefault();
+          toggleAnswer(active.choices[idx]);
+        }
+        return;
+      }
+      switch (event.key) {
+        case "ArrowRight":
+          event.preventDefault();
+          if (currentIndex < questions.length - 1) setCurrentIndex((v) => v + 1);
+          else setPhase("review");
+          break;
+        case "Enter":
+          if (currentIndex < questions.length - 1) setCurrentIndex((v) => v + 1);
+          else setPhase("review");
+          break;
+        case "ArrowLeft":
+          event.preventDefault();
+          if (currentIndex > 0) setCurrentIndex((v) => v - 1);
+          break;
+        case "m":
+        case "M":
+          event.preventDefault();
+          toggleMarked();
+          break;
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [phase, current, currentIndex, questions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const timerText = useMemo(() => {
     if (duration === null) return "Practice mode";
@@ -161,7 +225,9 @@ export function ExamClient() {
         </section>
         <div className="sticky-submit">
           <button className="button secondary" type="button" onClick={() => setPhase("exam")}>Return to exam</button>
-          <button className="button danger" type="button" onClick={finalizeExam}>Submit and score exam</button>
+          <button className="button danger" type="button" onClick={finalizeExam} disabled={submitting}>
+            {submitting ? "Scoring…" : "Submit and score exam"}
+          </button>
         </div>
       </main>
     );
@@ -192,6 +258,12 @@ export function ExamClient() {
             <span>{answeredCount} answered</span>
           </div>
           <QuestionContent question={current} selectedAnswers={answers[current.id] ?? []} onToggleAnswer={toggleAnswer} />
+          <div className="kbd-legend" aria-label="Keyboard shortcuts">
+            {current.type !== "sql-write" && <span><kbd>A</kbd>–<kbd>{String.fromCharCode(64 + current.choices.length)}</kbd> select</span>}
+            <span><kbd>←</kbd><kbd>→</kbd> navigate</span>
+            <span><kbd>M</kbd> mark</span>
+            <span><kbd>Enter</kbd> next</span>
+          </div>
           <div className="question-actions">
             <button className="button secondary" type="button" disabled={currentIndex === 0} onClick={() => setCurrentIndex((value) => value - 1)}>← Previous</button>
             <button className={`button mark ${marked.includes(current.id) ? "active" : ""}`} type="button" onClick={toggleMarked}>

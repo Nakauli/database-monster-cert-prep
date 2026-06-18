@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { Trophy, ArrowClockwise, Notebook } from "@phosphor-icons/react";
 import { useEffect, useMemo, useState } from "react";
 import { CodeBlock, ResultTable, SchemaDisplay } from "@/components/DataDisplay";
+import { ProgressRing } from "@/components/ProgressRing";
 import { getLastResult } from "@/lib/storage";
 import type { ExamResult } from "@/lib/types";
 
@@ -44,19 +47,27 @@ export function ResultsClient() {
     <main>
       <section className={`result-hero ${passed ? "pass" : "repair"}`}>
         <div className="page-shell result-grid">
-          <div>
-            <p className="eyebrow">Exam complete</p>
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
+            <p className="eyebrow">
+              {examReady && <Trophy size={14} weight="fill" style={{ verticalAlign: "-2px", marginRight: 6 }} />}
+              Exam complete
+            </p>
             <h1>{examReady ? "Exam-ready range." : passed ? "Pass range. Make it repeatable." : "Useful data. Repair before retaking."}</h1>
             <p>{result.correct} of {result.total} correct in {Math.floor(result.durationSeconds / 60)} minutes.</p>
             <div className="button-row">
-              <Link className="button primary" href="/exam?mode=timed">Take another exam</Link>
-              <Link className="button secondary" href="/mistakes">Open mistake notebook</Link>
+              <Link className="button primary" href="/exam?mode=timed"><ArrowClockwise size={16} weight="bold" /> Take another exam</Link>
+              <Link className="button secondary" href="/mistakes"><Notebook size={16} weight="bold" /> Mistake notebook</Link>
             </div>
-          </div>
-          <div className="score-ring" aria-label={`Score ${result.score} percent`}>
-            <strong>{result.score}%</strong>
-            <span>{passed ? "Pass range" : "Repair required"}</span>
-          </div>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}>
+            <ProgressRing
+              value={result.score}
+              size={190}
+              stroke={12}
+              label={passed ? "Pass range" : "Repair"}
+              color={examReady ? "var(--green)" : passed ? "var(--green)" : "var(--yellow)"}
+            />
+          </motion.div>
         </div>
       </section>
 
@@ -108,7 +119,7 @@ export function ResultsClient() {
               {review.question.code && <CodeBlock code={review.question.code} label={review.question.codeLabel} />}
               <div className="answer-comparison">
                 <p><span>Your answer</span><strong>{review.selectedAnswers.join(", ") || "Unanswered"}</strong></p>
-                <p><span>Correct answer</span><strong>{review.question.correctAnswers.join(", ")}</strong></p>
+                <p><span>Correct answer</span><strong>{review.question.correctAnswers.join(", ") || review.question.expectedSql || "—"}</strong></p>
               </div>
               <div className="explanation-box">
                 <strong>Why</strong>

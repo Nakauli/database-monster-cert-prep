@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { House, Cards, Notebook, MapTrifold, Terminal, Sun, MoonStars, List } from "@phosphor-icons/react";
 import { getTheme, setTheme as persistTheme } from "@/lib/storage";
 
 const navigation = [
-  { href: "/", label: "Dashboard" },
-  { href: "/practice", label: "Topic Practice" },
-  { href: "/mistakes", label: "Mistakes" },
-  { href: "/roadmap", label: "Roadmap" },
-  { href: "/labs", label: "SQL Labs" },
+  { href: "/", label: "Dashboard", icon: House },
+  { href: "/practice", label: "Topic Practice", icon: Cards },
+  { href: "/mistakes", label: "Mistakes", icon: Notebook },
+  { href: "/roadmap", label: "Roadmap", icon: MapTrifold },
+  { href: "/labs", label: "SQL Labs", icon: Terminal },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -45,20 +46,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </span>
           </Link>
           <nav className={`site-nav ${menuOpen ? "is-open" : ""}`} aria-label="Main navigation">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={pathname === item.href ? "active" : ""}
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={pathname === item.href ? "active" : ""}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <Icon size={16} weight={pathname === item.href ? "fill" : "regular"} style={{ verticalAlign: "-3px", marginRight: 6 }} />
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
           <div className="flex items-center gap-2">
             <button className="icon-button" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
-              <span aria-hidden="true">{theme === "light" ? "◐" : "☀"}</span>
+              {theme === "light" ? <MoonStars size={18} weight="bold" /> : <Sun size={18} weight="bold" />}
             </button>
             <button
               className="icon-button menu-button"
@@ -67,7 +72,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               aria-label="Toggle navigation"
               aria-expanded={menuOpen}
             >
-              <span aria-hidden="true">☰</span>
+              <List size={18} weight="bold" />
             </button>
           </div>
         </div>

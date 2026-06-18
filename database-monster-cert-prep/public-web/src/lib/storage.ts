@@ -67,6 +67,18 @@ export function getLastResult(): ExamResult | null {
   }
 }
 
+/**
+ * Remove a mistake the user has mastered during flashcard review. Safe no-op if
+ * the question isn't present. Returns the updated mistake list.
+ */
+export function resolveMistake(questionId: string): StoredMistake[] {
+  if (!available()) return [];
+  const progress = getProgress();
+  progress.mistakes = progress.mistakes.filter((mistake) => mistake.questionId !== questionId);
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  return progress.mistakes;
+}
+
 export function resetProgress(): void {
   if (!available()) return;
   localStorage.removeItem(PROGRESS_KEY);

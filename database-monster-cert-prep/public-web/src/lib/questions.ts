@@ -1,7 +1,8 @@
 import questionData from "@/data/questions.json";
+import { sqlQuestions } from "@/data/sql-questions";
 import type { Difficulty, ExamQuestion, Question } from "@/lib/types";
 
-export const questions = questionData as unknown as Question[];
+export const questions = [...(questionData as unknown as Question[]), ...sqlQuestions];
 export const topics = [...new Set(questions.map((question) => question.topic))].sort();
 export const difficulties: Difficulty[] = ["easy", "medium", "hard", "final boss"];
 

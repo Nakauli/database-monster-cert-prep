@@ -1,5 +1,5 @@
 export type Difficulty = "easy" | "medium" | "hard" | "final boss";
-export type QuestionType = "single-choice" | "multiple-answer";
+export type QuestionType = "single-choice" | "multiple-answer" | "sql-write";
 
 export interface SchemaColumn {
   name: string;
@@ -39,6 +39,9 @@ export interface Question {
   wrongAnswerExplanations: Record<string, string>;
   relatedConcept?: string;
   reviewFile?: string;
+  // sql-write questions: run + auto-grade against the canonical dataset.
+  starterSql?: string;
+  expectedSql?: string;
 }
 
 export interface ExamQuestion extends Question {
