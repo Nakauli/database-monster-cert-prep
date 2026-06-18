@@ -45,12 +45,13 @@ export function examTitle(mode: string, topic?: string): string {
   if (mode === "diagnostic") return "Diagnostic Exam";
   if (mode === "final") return "Final Boss Exam";
   if (mode === "panic") return "Panic Review";
+  if (mode === "mistakes") return "Mistake Repair";
   if (mode === "practice") return topic ? `${topic} Practice` : "Topic Practice";
   return "Timed Certification-Style Exam";
 }
 
 export function examDuration(mode: string): number | null {
-  if (mode === "practice") return null;
+  if (mode === "practice" || mode === "mistakes") return null;
   if (mode === "panic") return 10 * 60;
   return 50 * 60;
 }

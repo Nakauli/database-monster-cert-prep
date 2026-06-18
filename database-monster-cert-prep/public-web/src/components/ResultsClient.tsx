@@ -1,39 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
 import { CodeBlock, ResultTable, SchemaDisplay } from "@/components/DataDisplay";
-import { getLastResult } from "@/lib/storage";
 import type { ExamResult } from "@/lib/types";
 
-export function ResultsClient() {
-  const [result, setResult] = useState<ExamResult | null>(null);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setResult(getLastResult());
-      setReady(true);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  const topicRows = useMemo(
-    () => result ? Object.entries(result.topicStats).sort((a, b) => a[1].percentage - b[1].percentage) : [],
-    [result],
-  );
-
-  if (!ready) return <main className="page-shell section-space"><div className="loading-card">Loading results…</div></main>;
-  if (!result) {
-    return (
-      <main className="page-shell empty-state">
-        <p className="eyebrow">No result yet</p>
-        <h1>Take an exam to build your performance report.</h1>
-        <Link className="button primary" href="/exam?mode=diagnostic">Start diagnostic</Link>
-      </main>
-    );
-  }
-
+export function ResultsClient({ result }: { result: ExamResult }) {
+  const topicRows = Object.entries(result.topicStats).sort((a, b) => a[1].percentage - b[1].percentage);
   const passed = result.score >= 80;
   const examReady = result.score >= 85;
   const weakest = topicRows.slice(0, 3);
@@ -45,12 +15,13 @@ export function ResultsClient() {
       <section className={`result-hero ${passed ? "pass" : "repair"}`}>
         <div className="page-shell result-grid">
           <div>
-            <p className="eyebrow">Exam complete</p>
+            <p className="eyebrow">Exam saved</p>
             <h1>{examReady ? "Exam-ready range." : passed ? "Pass range. Make it repeatable." : "Useful data. Repair before retaking."}</h1>
             <p>{result.correct} of {result.total} correct in {Math.floor(result.durationSeconds / 60)} minutes.</p>
             <div className="button-row">
               <Link className="button primary" href="/exam?mode=timed">Take another exam</Link>
               <Link className="button secondary" href="/mistakes">Open mistake notebook</Link>
+              <Link className="button secondary" href="/history">Exam history</Link>
             </div>
           </div>
           <div className="score-ring" aria-label={`Score ${result.score} percent`}>
@@ -95,7 +66,7 @@ export function ResultsClient() {
           <div><p className="eyebrow">Mistake repair</p><h2>{wrong.length ? "Understand every missed answer" : "Clean sweep"}</h2></div>
           <span>{wrong.length} wrong answers</span>
         </div>
-        <section className="mistake-review-list">
+        <section className="mistake-review-list exam-readable">
           {wrong.map((review, index) => (
             <article className="answer-review-card" key={review.question.id}>
               <div className="answer-review-heading">
@@ -128,3 +99,4 @@ export function ResultsClient() {
     </main>
   );
 }
+

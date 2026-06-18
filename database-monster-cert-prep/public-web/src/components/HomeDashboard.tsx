@@ -1,9 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { getProgress } from "@/lib/storage";
-import type { ProgressData } from "@/lib/types";
 
 const modes = [
   { title: "Diagnostic Exam", detail: "40 balanced questions · 50 minutes", href: "/exam?mode=diagnostic", label: "Start diagnostic", tone: "green" },
@@ -12,43 +7,29 @@ const modes = [
 ];
 
 export function HomeDashboard() {
-  const [progress, setProgress] = useState<ProgressData>({ attempts: [], mistakes: [] });
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setProgress(getProgress()), 0);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  const latest = progress.attempts[0];
-  const weakTopic = useMemo(() => {
-    const counts = new Map<string, number>();
-    progress.mistakes.forEach((mistake) => counts.set(mistake.topic, (counts.get(mistake.topic) ?? 0) + mistake.misses));
-    return [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
-  }, [progress]);
-
   return (
     <main>
       <section className="hero-section">
         <div className="page-shell hero-grid">
           <div>
-            <p className="eyebrow">Database certification training</p>
-            <h1>Make every database question readable—and every trap beatable.</h1>
+            <p className="eyebrow">Database certification command center</p>
+            <h1>Train hard. Query smart. Pass ready.</h1>
             <p className="hero-copy">
-              An unofficial Certiport-style simulator with timed exams, SQL-first explanations,
-              weakness tracking, and zero account setup.
+              An unofficial Certiport-style simulator with private accounts, timed exams,
+              SQL-first explanations, and per-topic mastery tracking.
             </p>
             <div className="button-row">
-              <Link className="button primary" href="/exam?mode=diagnostic">Start diagnostic exam</Link>
-              <Link className="button secondary" href="/practice">Practice by topic</Link>
+              <Link className="button primary" href="/register">Create your training account</Link>
+              <Link className="button secondary" href="/login">Sign in</Link>
             </div>
-            <p className="privacy-note"><span aria-hidden="true">◆</span> No login. No personal data. Progress stays on this device.</p>
+            <p className="privacy-note"><span aria-hidden="true">◆</span> Your history and mistakes are protected per user with Row Level Security.</p>
           </div>
           <div className="editor-preview" aria-label="Decorative SQL editor preview">
-            <div className="editor-top"><span></span><span></span><span></span><strong>student_readiness.sql</strong></div>
-            <pre><code><b>SELECT</b> topic, score{`\n`}<b>FROM</b> practice_results{`\n`}<b>WHERE</b> score &lt; 80{`\n`}<b>ORDER BY</b> score <b>ASC</b>;</code></pre>
+            <div className="editor-top"><span></span><span></span><span></span><strong>readiness_query.sql</strong></div>
+            <pre><code><b>SELECT</b> topic, mastery_score{`\n`}<b>FROM</b> user_topic_progress{`\n`}<b>WHERE</b> mastery_score &lt; 80{`\n`}<b>ORDER BY</b> mastery_score <b>ASC</b>;</code></pre>
             <div className="editor-result">
-              <span>topic</span><span>score</span>
-              <code>{weakTopic?.[0] ?? "Take diagnostic"}</code><code>{latest ? `${latest.score}%` : "—"}</code>
+              <span>training_signal</span><span>status</span>
+              <code>private progress</code><code>RLS</code>
             </div>
           </div>
         </div>
@@ -58,13 +39,13 @@ export function HomeDashboard() {
         <div className="stat-strip">
           <article><strong>360</strong><span>original questions</span></article>
           <article><strong>200</strong><span>formatted code examples</span></article>
-          <article><strong>{progress.attempts.length}</strong><span>attempts on this device</span></article>
-          <article><strong>{progress.mistakes.length}</strong><span>mistakes to repair</span></article>
+          <article><strong>12</strong><span>tracked topic areas</span></article>
+          <article><strong>1</strong><span>private command center per user</span></article>
         </div>
 
         <div className="section-heading">
-          <div><p className="eyebrow">Choose a mode</p><h2>Train with a purpose</h2></div>
-          <Link href="/roadmap">See the study roadmap →</Link>
+          <div><p className="eyebrow">Training modes</p><h2>Practice with a deliberate target</h2></div>
+          <Link href="/roadmap">Preview the study roadmap →</Link>
         </div>
         <div className="mode-grid">
           {modes.map((mode) => (
@@ -79,19 +60,20 @@ export function HomeDashboard() {
 
         <div className="feature-grid">
           <article className="content-card">
-            <p className="eyebrow">Readable by design</p>
-            <h2>SQL looks like SQL.</h2>
-            <p>Question text uses a comfortable sans-serif. Queries, schemas, column names, outputs, and errors use a dedicated monospace presentation with horizontal scrolling.</p>
-            <Link href="/exam?mode=panic">Try a 10-question panic review →</Link>
+            <p className="eyebrow">Readable where it matters</p>
+            <h2>SQL looks like SQL. Questions stay calm.</h2>
+            <p>The exam uses a clean sans-serif for reading and a dedicated monospace for queries, schemas, columns, errors, and result grids.</p>
+            <Link href="/about">See how the simulator works →</Link>
           </article>
           <article className="content-card">
-            <p className="eyebrow">Your next move</p>
-            <h2>{latest ? `${latest.score}% on your latest attempt` : "Start with the diagnostic"}</h2>
-            <p>{weakTopic ? `Your most repeated weak topic is ${weakTopic[0]}. Repair it before another full exam.` : "Get a topic-by-topic baseline before deciding what to study."}</p>
-            <Link href={weakTopic ? "/mistakes" : "/exam?mode=diagnostic"}>{weakTopic ? "Review mistakes" : "Build my baseline"} →</Link>
+            <p className="eyebrow">Private by architecture</p>
+            <h2>Your weak topics are not a class leaderboard.</h2>
+            <p>Every user can read and update only their own attempts, topic scores, profile, and mistake notebook.</p>
+            <Link href="/register">Create a private account →</Link>
           </article>
         </div>
       </section>
     </main>
   );
 }
+
