@@ -21,7 +21,7 @@ export const labs: Lab[] = [
     objective: "Retrieve columns, use aliases, remove duplicates, sort deterministically, and limit results.",
     schema: "students(student_id, student_number, full_name, email, year_level, status)",
     tasks: ["List active students alphabetically.", "Return distinct status values.", "Show the three highest year levels.", "Replace NULL email with 'No email'."],
-    starter: "SELECT student_id, full_name\nFROM students\nWHERE /* add condition */\nORDER BY /* add sort */;",
+    starter: "SELECT student_id, full_name\nFROM students\nWHERE /* TODO: status = 'active' */\nORDER BY /* TODO: full_name ASC */;",
     answer: "SELECT student_id, full_name\nFROM students\nWHERE status = 'active'\nORDER BY full_name ASC;",
     expectedPatterns: [
       { id: "select", label: "Select student identity columns", pattern: "\\bselect\\b[\\s\\S]*(student_id|student_number)[\\s\\S]*full_name" },
@@ -55,7 +55,7 @@ export const labs: Lab[] = [
     objective: "Choose a join from the required rows and preserve students without enrollments.",
     schema: "students(student_id, full_name)\nenrollments(enrollment_id, student_id, course_id, grade)",
     tasks: ["Show student names with enrollment grades.", "Keep students with no enrollment.", "Find courses with zero enrollments."],
-    starter: "SELECT s.full_name, e.grade\nFROM students AS s\n/* choose join */ enrollments AS e\n  ON e.student_id = s.student_id;",
+    starter: "SELECT s.full_name, e.grade\nFROM students AS s\n/* TODO: LEFT JOIN */ enrollments AS e\n  ON e.student_id = s.student_id;",
     answer: "SELECT s.full_name, e.grade\nFROM students AS s\nLEFT JOIN enrollments AS e\n  ON e.student_id = s.student_id;",
     expectedPatterns: [
       { id: "left-join", label: "Use LEFT JOIN", pattern: "\\bleft\\s+join\\s+enrollments\\b" },
@@ -88,7 +88,7 @@ export const labs: Lab[] = [
     objective: "Use scalar subqueries and robust existence checks.",
     schema: "students(student_id, full_name)\nenrollments(student_id, grade)",
     tasks: ["Find students above the overall average grade.", "Find students with no enrollment using NOT EXISTS."],
-    starter: "SELECT s.full_name\nFROM students AS s\nWHERE EXISTS (/* correlated query */);",
+    starter: "SELECT s.full_name\nFROM students AS s\nWHERE NOT EXISTS (/* TODO: correlated SELECT from enrollments */);",
     answer: "SELECT s.full_name\nFROM students AS s\nWHERE NOT EXISTS (\n  SELECT 1 FROM enrollments AS e\n  WHERE e.student_id = s.student_id\n);",
     expectedPatterns: [
       { id: "not-exists", label: "Use NOT EXISTS", pattern: "\\bnot\\s+exists\\b" },
@@ -121,7 +121,7 @@ export const labs: Lab[] = [
     objective: "Preview changes, group one business operation, and recover from mistakes.",
     schema: "payments(payment_id, student_id, payment_type, amount, reference_number)",
     tasks: ["Preview the target row.", "Update inside a transaction.", "Use a savepoint.", "Roll back the experiment."],
-    starter: "BEGIN;\nUPDATE payments\nSET amount = amount + 500\nWHERE payment_id = 1;\n/* finish safely */",
+    starter: "BEGIN;\nUPDATE payments\nSET amount = amount + 500\nWHERE payment_id = 1;\n/* TODO: add savepoint/rollback/commit */",
     answer: "BEGIN;\nSAVEPOINT before_change;\nUPDATE payments\nSET amount = amount + 500\nWHERE payment_id = 1;\nROLLBACK TO before_change;\nCOMMIT;",
     expectedPatterns: [
       { id: "begin", label: "Begin transaction", pattern: "\\bbegin\\b" },
@@ -139,7 +139,7 @@ export const labs: Lab[] = [
     objective: "Record payment amount changes automatically while understanding OLD and NEW values.",
     schema: "payments(payment_id, amount)\naudit_logs(audit_id, table_name, record_id, old_value, new_value)",
     tasks: ["Create an AFTER UPDATE trigger.", "Write OLD and NEW amounts.", "Explain why hidden trigger side effects need documentation."],
-    starter: "CREATE TRIGGER payments_after_update\nAFTER UPDATE OF amount ON payments\nFOR EACH ROW\nBEGIN\n  /* insert audit row */\nEND;",
+    starter: "CREATE TRIGGER payments_after_update\nAFTER UPDATE OF amount ON payments\nFOR EACH ROW\nBEGIN\n  /* TODO: INSERT INTO audit_logs with OLD and NEW values */\nEND;",
     answer: "CREATE TRIGGER payments_after_update\nAFTER UPDATE OF amount ON payments\nFOR EACH ROW\nBEGIN\n  INSERT INTO audit_logs(table_name, record_id, old_value, new_value)\n  VALUES ('payments', OLD.payment_id, OLD.amount, NEW.amount);\nEND;",
     expectedPatterns: [
       { id: "trigger", label: "Create trigger", pattern: "\\bcreate\\s+trigger\\b" },

@@ -2,7 +2,7 @@ import type { SqlExpectedPattern } from "@/lib/sql-patterns";
 import type { SchemaTable } from "@/lib/types";
 import { DATASET_TABLES } from "@/data/sql-datasets";
 
-function schemaFor(...names: string[]): SchemaTable[] {
+export function schemaFor(...names: string[]): SchemaTable[] {
   return DATASET_TABLES.filter((table) => names.includes(table.name)).map((table) => ({
     table: table.name,
     columns: table.columns.map((column) => ({
@@ -34,7 +34,7 @@ export const sqlChallenges: SqlChallenge[] = [
     difficulty: "easy",
     prompt: "Return the full_name of every active student, sorted alphabetically.",
     schema: schemaFor("students"),
-    starter: "SELECT full_name\nFROM students\nWHERE /* condition */\nORDER BY /* column */;",
+    starter: "SELECT full_name\nFROM students\nWHERE /* TODO: status filter */\nORDER BY /* TODO: sort column */;",
     expectedSql: "SELECT full_name FROM students WHERE status = 'active' ORDER BY full_name ASC;",
     explanation: "Filter with WHERE status = 'active', then sort with ORDER BY full_name ASC.",
     expectedPatterns: [
@@ -52,7 +52,7 @@ export const sqlChallenges: SqlChallenge[] = [
     prompt: "Return each student's full_name beside their enrollment grade. Students with no enrollments must still appear.",
     schema: schemaFor("students", "enrollments"),
     starter:
-      "SELECT s.full_name, e.grade\nFROM students AS s\n/* which join keeps unmatched students? */ enrollments AS e\n  ON e.student_id = s.student_id;",
+      "SELECT s.full_name, e.grade\nFROM students AS s\n/* TODO: join that keeps unmatched students */ enrollments AS e\n  ON e.student_id = s.student_id;",
     expectedSql:
       "SELECT s.full_name, e.grade FROM students AS s LEFT JOIN enrollments AS e ON e.student_id = s.student_id;",
     explanation: "LEFT JOIN preserves rows from students even when no matching enrollment exists.",
@@ -69,7 +69,7 @@ export const sqlChallenges: SqlChallenge[] = [
     difficulty: "medium",
     prompt: "Return course_id and enrollment_count only for courses with at least two enrollments.",
     schema: schemaFor("enrollments"),
-    starter: "SELECT course_id, COUNT(*) AS enrollment_count\nFROM enrollments\nGROUP BY course_id\n/* filter groups */;",
+    starter: "SELECT course_id, COUNT(*) AS enrollment_count\nFROM enrollments\nGROUP BY course_id\n/* TODO: HAVING count filter */;",
     expectedSql:
       "SELECT course_id, COUNT(*) AS enrollment_count FROM enrollments GROUP BY course_id HAVING COUNT(*) >= 2;",
     explanation: "Use GROUP BY for course_id and HAVING for the aggregate count filter.",
@@ -87,7 +87,7 @@ export const sqlChallenges: SqlChallenge[] = [
     prompt: "Return distinct student names for students with at least one grade above the overall average grade.",
     schema: schemaFor("students", "enrollments"),
     starter:
-      "SELECT DISTINCT s.full_name\nFROM students AS s\nJOIN enrollments AS e ON e.student_id = s.student_id\nWHERE e.grade > (/* scalar subquery */);",
+      "SELECT DISTINCT s.full_name\nFROM students AS s\nJOIN enrollments AS e ON e.student_id = s.student_id\nWHERE e.grade > (/* TODO: SELECT AVG(grade) FROM enrollments */);",
     expectedSql:
       "SELECT DISTINCT s.full_name FROM students AS s JOIN enrollments AS e ON e.student_id = s.student_id WHERE e.grade > (SELECT AVG(grade) FROM enrollments);",
     explanation: "A scalar subquery computes the overall average; DISTINCT avoids duplicate names.",

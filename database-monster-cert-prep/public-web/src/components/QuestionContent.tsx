@@ -34,9 +34,20 @@ export function QuestionContent({ question, selectedAnswers, onToggleAnswer }: Q
       {question.code && <CodeBlock code={question.code} label={question.codeLabel} />}
       {question.outputTable && <ResultTable data={question.outputTable} />}
 
+      {question.type === "multiple-answer" && (
+        <Alert>
+          <AlertTitle>Multiple answers required</AlertTitle>
+          <AlertDescription>
+            Select every option that must be true. Partial selections are scored as incorrect in the exam simulator.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <fieldset className="flex flex-col gap-3">
         <legend className="mb-1 text-sm font-medium text-muted-foreground">
-          {question.type === "multiple-answer" ? "Select every correct answer." : "Select one answer."}
+          {question.type === "multiple-answer"
+            ? `Select every correct answer. ${selectedAnswers.length} selected.`
+            : "Select one answer."}
         </legend>
         {question.choices.map((choice, index) => {
           const selected = selectedAnswers.includes(choice);

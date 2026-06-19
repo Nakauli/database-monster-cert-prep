@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { hrefForReviewFile } from "@/lib/learn";
 import type { MistakeRow } from "@/lib/progress";
 import { createClient } from "@/lib/supabase/client";
 
@@ -121,6 +122,7 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
         <section className="exam-readable mt-6 grid gap-4">
           {visible.map((mistake) => {
             const snapshot = mistake.question_snapshot as { question?: string; reviewFile?: string };
+            const learnHref = hrefForReviewFile(snapshot.reviewFile);
             return (
               <Card key={mistake.id}>
                 <CardHeader>
@@ -128,6 +130,7 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
                     <Badge variant="secondary">{mistake.topic}</Badge>
                     <Badge variant="outline">Missed {mistake.mistake_count}x</Badge>
                   </div>
+                  <span className="mono-label">Question</span>
                   <CardTitle className="text-2xl">{snapshot.question ?? `Question ${mistake.question_id}`}</CardTitle>
                   <CardDescription>Latest miss: {new Date(mistake.last_mistaken_at).toLocaleDateString()}</CardDescription>
                 </CardHeader>
@@ -146,11 +149,12 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
                     <AlertTitle>Rule to remember</AlertTitle>
                     <AlertDescription>{mistake.explanation ?? "Review the correct answer and try this topic again."}</AlertDescription>
                   </Alert>
-                  {snapshot.reviewFile && <p className="text-sm text-muted-foreground">Review: <code>{snapshot.reviewFile}</code></p>}
-                  <div>
+                  <div className="flex flex-wrap gap-3">
                     <Button type="button" variant="outline" onClick={() => void removeMistake(mistake.id)}>
                       Mark as mastered
                     </Button>
+                    {learnHref && <Button asChild variant="secondary"><Link href={learnHref}>Read lesson</Link></Button>}
+                    <Button asChild variant="ghost"><Link href="/practice">Practice this topic</Link></Button>
                   </div>
                 </CardContent>
               </Card>

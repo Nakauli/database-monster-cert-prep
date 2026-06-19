@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { COURSE_OPTIONS } from "@/lib/courses";
 import { createClient } from "@/lib/supabase/client";
 
 function validatePassword(password: string) {
@@ -13,6 +14,8 @@ function validatePassword(password: string) {
 
 export function RegisterForm() {
   const [displayName, setDisplayName] = useState("");
+  const [course, setCourse] = useState("IT");
+  const [leaderboardOptIn, setLeaderboardOptIn] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -45,7 +48,11 @@ export function RegisterForm() {
       email: email.trim(),
       password,
       options: {
-        data: { display_name: displayName.trim() },
+        data: {
+          display_name: displayName.trim(),
+          course,
+          leaderboard_opt_in: leaderboardOptIn,
+        },
         emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
       },
     });
@@ -78,6 +85,29 @@ export function RegisterForm() {
         onChange={(event) => setDisplayName(event.target.value)}
         placeholder="How classmates know you"
       />
+      <label htmlFor="register-course">Course</label>
+      <select
+        id="register-course"
+        required
+        value={course}
+        onChange={(event) => setCourse(event.target.value)}
+      >
+        {COURSE_OPTIONS.map((option) => (
+          <option key={option} value={option}>{option}</option>
+        ))}
+      </select>
+      <label className="check-field" htmlFor="register-leaderboard">
+        <input
+          id="register-leaderboard"
+          type="checkbox"
+          checked={leaderboardOptIn}
+          onChange={(event) => setLeaderboardOptIn(event.target.checked)}
+        />
+        <span>Show me on the class leaderboard</span>
+      </label>
+      <p className="field-help">
+        Public leaderboard cards show only your name, course, readiness score, broad topic strengths, and recent activity.
+      </p>
       <label htmlFor="register-email">Email address</label>
       <input
         id="register-email"
@@ -119,4 +149,3 @@ export function RegisterForm() {
     </form>
   );
 }
-

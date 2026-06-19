@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader, SectionHeader } from "@/components/DesignSystem";
 import { SqlSandbox } from "@/components/SqlSandbox";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,9 @@ import { difficulties, topics } from "@/lib/questions";
 
 export function PracticeClient() {
   const router = useRouter();
-  const [topic, setTopic] = useState(topics[0]);
+  const searchParams = useSearchParams();
+  const requestedTopic = searchParams.get("topic");
+  const [topic, setTopic] = useState(() => requestedTopic && topics.includes(requestedTopic) ? requestedTopic : topics[0]);
   const [difficulty, setDifficulty] = useState("all");
   const [count, setCount] = useState("15");
   const [selectedChallengeId, setSelectedChallengeId] = useState(sqlChallenges[0]?.id ?? "");
@@ -25,6 +27,10 @@ export function PracticeClient() {
     [topic],
   );
   const selectedChallenge = visibleChallenges.find((challenge) => challenge.id === selectedChallengeId) ?? visibleChallenges[0];
+  const advancedQueryHint =
+    topic === "Advanced Queries"
+      ? ["For the scalar subquery, put `SELECT AVG(grade) FROM enrollments` inside the parentheses."]
+      : [];
 
   function start() {
     const params = new URLSearchParams({ mode: "practice", topic, difficulty, count });
@@ -118,10 +124,20 @@ export function PracticeClient() {
           <div className="mt-5">
             <SqlSandbox
               answer={drill.answer}
-              description={`${drill.prompt} Replace comment hints with real SQL before running.`}
+              description={drill.prompt}
               expectedPatterns={drill.expectedPatterns}
               expectedSql={drill.expectedSql}
+              hints={[
+                "Read the available tables and columns first.",
+                "Replace every TODO comment with real SQL before you run.",
+                ...advancedQueryHint,
+              ]}
+              placeholderHelp={{
+                "select avg(grade) from enrollments":
+                  "Replace the subquery hint with SELECT AVG(grade) FROM enrollments, keeping it inside the parentheses.",
+              }}
               rubric={drill.rubric}
+              schema={drill.schema}
               starter={drill.starter}
               title={drill.title}
             />
@@ -183,7 +199,19 @@ export function PracticeClient() {
                     description="Write the query, run it, and check whether your result set matches the reference."
                     expectedPatterns={selectedChallenge.expectedPatterns}
                     expectedSql={selectedChallenge.expectedSql}
+                    hints={[
+                      "Use only the tables and columns shown in the schema.",
+                      "Replace every TODO comment with real SQL before you run.",
+                      ...(selectedChallenge.id === "sqlw-above-average"
+                        ? ["Use `SELECT AVG(grade) FROM enrollments` as the scalar subquery."]
+                        : []),
+                    ]}
+                    placeholderHelp={{
+                      "select avg(grade) from enrollments":
+                        "Replace the subquery hint with SELECT AVG(grade) FROM enrollments, keeping it inside the parentheses.",
+                    }}
                     rubric={selectedChallenge.rubric}
+                    schema={selectedChallenge.schema}
                     starter={selectedChallenge.starter}
                     title="Query challenge"
                   />
