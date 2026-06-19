@@ -79,9 +79,35 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
 
       <footer className="border-t bg-card/75">
-        <div className="app-container flex flex-col gap-3 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>Unofficial database certification practice. Original questions only.</p>
-          <p>Authenticated progress is private per user.</p>
+        <div className="app-container flex flex-col gap-5 py-8 text-sm text-muted-foreground lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-1">
+            <p>Unofficial database certification practice. Original questions only.</p>
+            <p>Authenticated progress is private per user.</p>
+          </div>
+          <div className="flex flex-col gap-1 text-left lg:text-right" aria-label="Project creators">
+            <span className="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground/80">
+              Made by CS Bois
+            </span>
+            <p className="text-sm text-muted-foreground">
+              <a
+                className="font-medium text-ink/80 underline-offset-4 transition hover:text-primary hover:underline"
+                href="https://github.com/SemiAutomat1c"
+                rel="noreferrer"
+                target="_blank"
+              >
+                Aljun Cursiga
+              </a>
+              <span aria-hidden="true"> · </span>
+              <a
+                className="font-medium text-ink/80 underline-offset-4 transition hover:text-primary hover:underline"
+                href="https://github.com/Nakauli"
+                rel="noreferrer"
+                target="_blank"
+              >
+                Ryan Deniega
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </div>
