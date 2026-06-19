@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { AuthNav } from "@/components/auth/AuthNav";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { href: "/", label: "Dashboard" },
+  { href: "/", label: "Home" },
   { href: "/practice", label: "Practice" },
   { href: "/mistakes", label: "Mistakes" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/labs", label: "SQL Labs" },
+  { href: "/about", label: "About" },
 ];
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
@@ -36,6 +38,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           </Button>
         );
       })}
+      <AuthNav closeMenu={onNavigate ?? (() => undefined)} />
     </>
   );
 }
@@ -50,7 +53,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               DB
             </span>
             <span className="flex flex-col leading-tight">
-              <span className="text-sm font-semibold tracking-[-0.02em] text-ink">Database Monster</span>
+              <span className="font-heading text-sm font-semibold tracking-[-0.02em] text-ink">Database Monster</span>
               <span className="text-xs text-muted-foreground">Certification practice</span>
             </span>
           </Link>
@@ -82,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <footer className="border-t bg-card/75">
         <div className="app-container flex flex-col gap-3 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>Unofficial database certification practice. Original questions only.</p>
-          <p>Progress stays in this browser.</p>
+          <p>Authenticated progress is private per user.</p>
         </div>
       </footer>
     </div>

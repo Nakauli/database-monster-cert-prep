@@ -9,8 +9,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { createExamQuestions, examDuration, examTitle } from "@/lib/questions";
-import { saveResult } from "@/lib/storage";
+import {
+  createExamQuestions,
+  examDuration,
+  examTitle,
+  questions as questionBank,
+  shuffle,
+} from "@/lib/questions";
+import { saveExamResult } from "@/lib/exam-save";
+import {
+  clearExamDraft,
+  loadExamDraft,
+  saveExamDraft,
+  setLastMode,
+} from "@/lib/storage";
 import { cn } from "@/lib/utils";
 import type { ExamQuestion, ExamResult, TopicStat } from "@/lib/types";
 
@@ -20,7 +32,7 @@ function exactMatch(left: string[], right: string[]): boolean {
   return [...left].sort().join("\u0000") === [...right].sort().join("\u0000");
 }
 
-export function ExamClient() {
+export function ExamClient({ presetQuestionIds = [] }: { presetQuestionIds?: string[] }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const mode = searchParams.get("mode") ?? "timed";
@@ -29,6 +41,7 @@ export function ExamClient() {
   const requestedCount = Number(searchParams.get("count")) || undefined;
   const title = examTitle(mode, topic);
   const duration = examDuration(mode);
+  const draftKey = [mode, topic ?? "all", difficulty ?? "all", requestedCount ?? "default"].join(":");
 
   const [questions, setQuestions] = useState<ExamQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
@@ -37,24 +50,62 @@ export function ExamClient() {
   const [phase, setPhase] = useState<Phase>("loading");
   const [secondsLeft, setSecondsLeft] = useState(duration ?? 0);
   const [startedAt, setStartedAt] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      setQuestions(createExamQuestions(mode, topic, difficulty, requestedCount));
-      setSecondsLeft(duration ?? 0);
-      setStartedAt(Date.now());
+      const draft = loadExamDraft(draftKey);
+      if (draft?.questions.length) {
+        setQuestions(draft.questions);
+        setAnswers(draft.answers);
+        setMarked(draft.marked);
+        setCurrentIndex(Math.min(draft.currentIndex, draft.questions.length - 1));
+        setSecondsLeft(draft.secondsLeft);
+        setStartedAt(draft.startedAt);
+      } else {
+        const selected = presetQuestionIds.length
+          ? shuffle(questionBank.filter((question) => presetQuestionIds.includes(question.id)))
+              .map((question) => ({ ...question, choices: shuffle(question.choices) }))
+          : createExamQuestions(mode, topic, difficulty, requestedCount);
+        setQuestions(selected);
+        setSecondsLeft(duration ?? 0);
+        setStartedAt(Date.now());
+      }
+      setLastMode(mode);
       setPhase("exam");
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [mode, topic, difficulty, requestedCount, duration]);
+  }, [difficulty, draftKey, duration, mode, presetQuestionIds, requestedCount, topic]);
+
+  useEffect(() => {
+    if (phase === "loading" || !questions.length || saving) return;
+    const timer = window.setTimeout(() => {
+      saveExamDraft({
+        key: draftKey,
+        mode,
+        questions,
+        answers,
+        marked,
+        currentIndex,
+        secondsLeft,
+        startedAt,
+        savedAt: Date.now(),
+      });
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [answers, currentIndex, draftKey, marked, mode, phase, questions, saving, secondsLeft, startedAt]);
 
   const current = questions[currentIndex];
   const answeredCount = Object.values(answers).filter((answer) => answer.length > 0).length;
   const unanswered = questions.filter((question) => !(answers[question.id]?.length));
   const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0;
 
-  const finalizeExam = useCallback(() => {
-    if (!questions.length) return;
+  const finalizeExam = useCallback(async () => {
+    if (!questions.length || saving) return;
+    setSaving(true);
+    setSaveError(null);
+
     const topicCounts: Record<string, { correct: number; total: number }> = {};
     const reviews = questions.map((question) => {
       const selectedAnswers = answers[question.id] ?? [];
@@ -73,35 +124,42 @@ export function ExamClient() {
       ]),
     );
     const result: ExamResult = {
-      id: crypto.randomUUID(),
+      id: "",
       mode,
       title,
       completedAt: new Date().toISOString(),
-      durationSeconds: Math.round((Date.now() - startedAt) / 1000),
+      durationSeconds: Math.max(0, Math.round((Date.now() - startedAt) / 1000)),
       score: Math.round((correct / questions.length) * 100),
       correct,
       total: questions.length,
       topicStats,
       reviews,
     };
-    saveResult(result);
-    router.push("/results");
-  }, [answers, mode, questions, router, startedAt, title]);
+
+    try {
+      const attemptId = await saveExamResult(result);
+      clearExamDraft(draftKey);
+      router.push(`/results?id=${encodeURIComponent(attemptId)}`);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "The result could not be saved.");
+      setSaving(false);
+    }
+  }, [answers, draftKey, mode, questions, router, saving, startedAt, title]);
 
   useEffect(() => {
-    if (phase !== "exam" || duration === null) return;
+    if (phase !== "exam" || duration === null || saving) return;
     const timer = window.setInterval(() => {
       setSecondsLeft((value) => {
         if (value <= 1) {
           window.clearInterval(timer);
-          window.setTimeout(finalizeExam, 0);
+          window.setTimeout(() => void finalizeExam(), 0);
           return 0;
         }
         return value - 1;
       });
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [duration, finalizeExam, phase]);
+  }, [duration, finalizeExam, phase, saving]);
 
   function toggleAnswer(answer: string) {
     if (!current) return;
@@ -110,7 +168,9 @@ export function ExamClient() {
       if (current.type === "multiple-answer") {
         return {
           ...previous,
-          [current.id]: selected.includes(answer) ? selected.filter((item) => item !== answer) : [...selected, answer],
+          [current.id]: selected.includes(answer)
+            ? selected.filter((item) => item !== answer)
+            : [...selected, answer],
         };
       }
       return { ...previous, [current.id]: [answer] };
@@ -119,7 +179,11 @@ export function ExamClient() {
 
   function toggleMarked() {
     if (!current) return;
-    setMarked((previous) => previous.includes(current.id) ? previous.filter((id) => id !== current.id) : [...previous, current.id]);
+    setMarked((previous) =>
+      previous.includes(current.id)
+        ? previous.filter((id) => id !== current.id)
+        : [...previous, current.id],
+    );
   }
 
   const timerText = useMemo(() => {
@@ -127,13 +191,23 @@ export function ExamClient() {
     return `${String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:${String(secondsLeft % 60).padStart(2, "0")}`;
   }, [duration, secondsLeft]);
 
-  if (phase === "loading" || !current) {
+  if (phase === "loading") {
     return <div className="app-container page-section"><LoadingPanel label="Preparing your randomized exam" /></div>;
+  }
+
+  if (!current) {
+    return (
+      <main className="page-shell empty-state">
+        <p className="eyebrow">Nothing to practice</p>
+        <h1>Your mistake notebook is already clear.</h1>
+        <button className="button primary" type="button" onClick={() => router.push("/dashboard")}>Return to dashboard</button>
+      </main>
+    );
   }
 
   if (phase === "review") {
     return (
-      <div className="app-container page-section">
+      <div className="exam-readable app-container page-section">
         <Card className="bg-card">
           <CardHeader>
             <Badge className="w-fit" variant="secondary">Final review</Badge>
@@ -148,14 +222,18 @@ export function ExamClient() {
             </div>
           </CardContent>
         </Card>
-
         {unanswered.length > 0 && (
           <Alert className="mt-5" role="alert">
             <AlertTitle>Unanswered questions remain</AlertTitle>
             <AlertDescription>They will be scored as incorrect if you submit now.</AlertDescription>
           </Alert>
         )}
-
+        {saveError && (
+          <Alert className="mt-5" variant="destructive" role="alert">
+            <AlertTitle>Exam could not be saved</AlertTitle>
+            <AlertDescription>{saveError}</AlertDescription>
+          </Alert>
+        )}
         <section className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Question review">
           {questions.map((question, index) => {
             const isAnswered = Boolean(answers[question.id]?.length);
@@ -177,17 +255,18 @@ export function ExamClient() {
             );
           })}
         </section>
-
         <div className="sticky bottom-4 mt-5 flex flex-col gap-3 rounded-2xl border bg-card/92 p-3 shadow-[0_16px_50px_rgb(23_37_44_/_0.12)] backdrop-blur sm:flex-row sm:justify-end">
-          <Button type="button" variant="outline" onClick={() => setPhase("exam")}>Return to exam</Button>
-          <Button type="button" variant="destructive" onClick={finalizeExam}>Submit and score</Button>
+          <Button type="button" variant="outline" onClick={() => setPhase("exam")} disabled={saving}>Return to exam</Button>
+          <Button type="button" variant="destructive" onClick={() => void finalizeExam()} disabled={saving}>
+            {saving ? "Saving securely…" : "Submit and save exam"}
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="exam-readable">
       <header className="sticky top-16 z-30 border-b bg-background/90 backdrop-blur-xl">
         <div className="app-container flex min-h-24 flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>

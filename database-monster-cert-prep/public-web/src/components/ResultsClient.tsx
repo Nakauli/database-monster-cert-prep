@@ -1,48 +1,15 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
 import { CodeBlock, ResultTable, SchemaDisplay } from "@/components/DataDisplay";
-import { EmptyPanel, LoadingPanel, SectionHeader, StatGrid } from "@/components/DesignSystem";
+import { SectionHeader, StatGrid } from "@/components/DesignSystem";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getLastResult } from "@/lib/storage";
 import type { ExamResult } from "@/lib/types";
 
-export function ResultsClient() {
-  const [result, setResult] = useState<ExamResult | null>(null);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setResult(getLastResult());
-      setReady(true);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  const topicRows = useMemo(
-    () => result ? Object.entries(result.topicStats).sort((a, b) => a[1].percentage - b[1].percentage) : [],
-    [result],
-  );
-
-  if (!ready) return <div className="app-container page-section"><LoadingPanel label="Loading your latest result" /></div>;
-  if (!result) {
-    return (
-      <div className="app-container page-section">
-        <EmptyPanel
-          actionLabel="Start diagnostic"
-          description="Take an exam to build a performance report and mistake notebook."
-          href="/exam?mode=diagnostic"
-          title="No result yet."
-        />
-      </div>
-    );
-  }
-
+export function ResultsClient({ result }: { result: ExamResult }) {
+  const topicRows = Object.entries(result.topicStats).sort((a, b) => a[1].percentage - b[1].percentage);
   const passed = result.score >= 80;
   const examReady = result.score >= 85;
   const weakest = topicRows.slice(0, 3);
@@ -50,7 +17,7 @@ export function ResultsClient() {
   const wrong = result.reviews.filter((review) => !review.correct);
 
   return (
-    <div className="app-container page-section">
+    <div className="exam-readable app-container page-section">
       <Card className="overflow-hidden bg-card">
         <CardHeader>
           <Badge className="w-fit" variant={examReady ? "default" : "secondary"}>{examReady ? "Exam-ready range" : passed ? "Pass range" : "Repair needed"}</Badge>
@@ -63,6 +30,7 @@ export function ResultsClient() {
               <div className="flex flex-wrap gap-3">
                 <Button asChild><Link href="/exam?mode=timed">Take another exam</Link></Button>
                 <Button asChild variant="outline"><Link href="/mistakes">Open mistakes</Link></Button>
+                <Button asChild variant="ghost"><Link href="/history">Exam history</Link></Button>
               </div>
             </div>
             <div className="grid size-40 place-items-center rounded-full border-[12px] border-muted bg-background">
@@ -173,3 +141,4 @@ function TopicScore({ topic, percentage }: { topic: string; percentage: number }
     </div>
   );
 }
+

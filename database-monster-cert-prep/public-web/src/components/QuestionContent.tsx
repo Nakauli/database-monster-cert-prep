@@ -13,7 +13,7 @@ interface QuestionContentProps {
 
 export function QuestionContent({ question, selectedAnswers, onToggleAnswer }: QuestionContentProps) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="exam-readable flex flex-col gap-5">
       <div className="flex flex-wrap gap-2" aria-label="Question metadata">
         <Badge>{question.topic}</Badge>
         <Badge variant="secondary">{question.difficulty}</Badge>

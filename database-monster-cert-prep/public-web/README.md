@@ -1,25 +1,33 @@
 # Database Monster Public Web App
 
-A polished, static, unofficial Certiport-style database fundamentals practice simulator. It is original practice content—not an official Certiport product, exam interface, logo, or question bank.
+A premium, account-backed, unofficial Certiport-style database fundamentals practice simulator. It contains original practice material and does not copy official branding, interfaces, real exam questions, leaked content, or exam dumps.
 
 ## Features
 
-- Diagnostic, 50-minute timed, Final Boss, and Panic Review modes
-- Topic and difficulty practice without a timer
+- Supabase email/password registration, login, confirmation, reset, and logout
+- Private profile, exam history, topic mastery, and mistake notebook
+- Row Level Security on every user-specific table
+- Atomic exam saving through the `save_exam_result` Postgres function
+- Diagnostic, 50-minute timed, Final Boss, Panic Review, and topic practice
 - 360 original questions with randomized question and choice order
-- SQL code blocks, schemas, sample tables, and output grids
-- Single-answer and multiple-answer questions
-- Mark-for-review, unanswered warnings, review screen, and timer
-- Scores, topic breakdown, strongest/weakest topics, and recommendations
-- Browser-only mistake notebook and progress history
-- 48-hour, 7-day, and 14-day study roadmaps
-- Eight guided SQL labs with answer reveal
-- Light/dark themes, keyboard focus states, and responsive layouts
-- Fully static architecture with no accounts, API, or writable database
+- SQL blocks, schemas, tables, and result grids
+- Review marking, unanswered warnings, and detailed result explanations
+- Public study roadmaps, SQL labs, landing page, and disclaimer
+- Dark-first theme with light mode
+- Sora display typography, Manrope UI/exam typography, and JetBrains Mono for SQL
+
+## Required environment variables
+
+Copy `.env.example` to `.env.local`:
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR-ANON-OR-PUBLISHABLE-KEY
+```
+
+Never commit `.env.local`. Never expose a Supabase service-role key.
 
 ## Run locally
-
-Requires Node.js 20.9 or newer.
 
 ```bash
 npm install
@@ -28,82 +36,79 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Production verification:
+Verification:
 
 ```bash
 npm run test:data
 npm run lint
 npm run typecheck
 npm run build
+npm run audit
 ```
 
-The output is exported to `out/`.
+## Supabase setup
+
+1. Create a Supabase project.
+2. Add localhost and production auth redirect URLs.
+3. Run the three files in `supabase/migrations/` in order.
+4. Add the URL and anon/publishable key to `.env.local`.
+5. Create two test users and verify they cannot see each other's data.
+
+The complete procedure and RLS test are in [supabase/README.md](supabase/README.md).
+
+## How authentication works
+
+The app uses `@supabase/ssr` with cookie-based browser/server clients. `src/proxy.ts` refreshes sessions and redirects users:
+
+- Public: `/`, `/roadmap`, `/labs`, `/about`, `/login`, `/register`, `/forgot-password`
+- Protected: `/dashboard`, `/exam`, `/practice`, `/results`, `/mistakes`, `/history`, `/profile`
+
+Passwords are submitted directly to Supabase Auth. The application does not store, hash, log, or inspect passwords.
+
+## How progress is saved
+
+After submission, the client calls the authenticated `save_exam_result` RPC. One database transaction:
+
+1. Inserts the exam attempt.
+2. Inserts every question attempt.
+3. Upserts wrong answers into the user's mistake notebook.
+4. Updates cumulative topic mastery.
+
+Permanent progress lives in Supabase. `localStorage` is limited to theme, last mode, and a temporary unfinished exam draft.
+
+## RLS ownership
+
+Every user-specific table has RLS enabled. Policies compare `auth.uid()` with `user_id`; `profiles` compares `auth.uid()` with `id`. Anonymous table access is explicitly revoked. The service-role key is never used by the frontend.
 
 ## Deploy to Vercel
 
-### Vercel CLI
-
-From this directory:
+Add both Supabase variables under **Settings → Environment Variables** for Preview and Production. Then:
 
 ```bash
-npm install
-vercel login
 vercel
 vercel --prod
 ```
 
-Accept the detected Next.js settings. No environment variables are required.
+The Vercel security headers permit connections only to the app origin and Supabase, block framing, disable unneeded browser permissions, and prevent MIME sniffing.
 
-### Vercel dashboard
+## Testing with classmates
 
-1. Import the GitHub repository into Vercel.
-2. Set **Root Directory** to `database-monster-cert-prep/public-web`.
-3. Keep the detected Next.js build command.
-4. Deploy.
+1. Create two disposable accounts.
+2. Complete different exams in each.
+3. Verify dashboards, histories, and mistakes remain different.
+4. Verify email confirmation and password reset delivery.
+5. Test mobile exam navigation and SQL horizontal scrolling.
+6. Delete one test Auth user and confirm their rows cascade.
 
-The app uses static export and can also be hosted by any service that serves the `out/` directory.
+## Font rules
 
-## How classmates use it
+- Public brand, hero, and dashboard headings: **Sora**
+- UI, buttons, forms, and exam questions: **Manrope**
+- SQL, schemas, table values, columns, and errors: **JetBrains Mono**
 
-Share the deployment URL. They do not need an account. Every classmate gets an independent browser-local progress history; nothing is synchronized between devices.
-
-## Progress and reset behavior
-
-Attempts, last result, theme preference, and mistakes are stored in `localStorage`. Use **Mistakes → Reset all progress** or clear the site's browser data to reset.
-
-## Add or update questions
-
-The generated public bank is `src/data/questions.json`. Its supported fields include:
-
-- `scenario`
-- `schema`
-- `sampleData`
-- `code` and `codeLabel`
-- `outputTable`
-- `choices`
-- `correctAnswers`
-- `explanation`
-- `wrongAnswerExplanations`
-- `reviewFile`
-
-The source Python bank can be remigrated with:
-
-```bash
-node tools/migrate-questions.mjs
-npm run test:data
-```
-
-Never add leaked questions, exam dumps, protected branding, or real student information.
+Decorative/display typography is not applied to exam questions.
 
 ## Security
 
-No secrets or environment variables are needed. The app has no server-side data collection. React renders content as text, and the site does not execute SQL. See [SECURITY.md](SECURITY.md) for headers, dependency notes, and privacy details.
-
-## Recommended study sequence
-
-1. Take the diagnostic without notes.
-2. Open the mistake notebook.
-3. Study the lowest topic and complete its SQL lab.
-4. Run a focused topic practice set.
-5. Target 85% or higher on two different timed exams, with every topic at 80% or higher.
+See [SECURITY.md](SECURITY.md). Run dependency audits regularly and update Next.js/Supabase packages deliberately.
 

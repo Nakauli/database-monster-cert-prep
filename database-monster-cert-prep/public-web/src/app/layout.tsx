@@ -1,11 +1,25 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono, Manrope, Sora } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import "./globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+const displayFont = Sora({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const bodyFont = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const monoFont = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-code",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -21,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable, geistMono.variable)}>
-      <body>
+    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+      <body className="font-sans">
         <AppShell>{children}</AppShell>
       </body>
     </html>

@@ -28,7 +28,7 @@ export function PageHeader({
       )}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex max-w-4xl flex-col gap-4">
-          <h1 className="page-title">{title}</h1>
+          <h1 className="font-heading page-title">{title}</h1>
           {description && <p className="page-copy">{description}</p>}
         </div>
         {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
@@ -49,7 +49,7 @@ export function SectionHeader({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="flex max-w-2xl flex-col gap-2">
-        <h2 className="text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">{title}</h2>
+        <h2 className="font-heading text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">{title}</h2>
         {description && <p className="text-sm leading-6 text-muted-foreground sm:text-base">{description}</p>}
       </div>
       {action}
@@ -76,7 +76,7 @@ export function StatGrid({
     >
       {stats.map((stat) => (
         <article className="border-b p-5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0" key={stat.label}>
-          <strong className="block text-3xl font-semibold tracking-[-0.04em] text-ink">{stat.value}</strong>
+          <strong className="font-heading block text-3xl font-semibold tracking-[-0.04em] text-ink">{stat.value}</strong>
           <span className="mt-1 block text-sm font-medium text-muted-foreground">{stat.label}</span>
           {stat.detail && <span className="mt-2 block text-xs text-muted-foreground">{stat.detail}</span>}
         </article>
