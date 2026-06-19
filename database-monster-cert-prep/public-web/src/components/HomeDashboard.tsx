@@ -105,7 +105,13 @@ export function HomeDashboard({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild variant="secondary"><Link href="/exam?mode=diagnostic">Build your baseline</Link></Button>
+              <Button
+                asChild
+                variant="outline"
+                className="!border-primary-foreground !bg-primary-foreground !text-primary shadow-[0_14px_34px_rgb(0_0_0_/_0.14)] hover:!bg-primary-foreground/90 hover:!text-primary"
+              >
+                <Link href="/exam?mode=diagnostic">Start diagnostic</Link>
+              </Button>
             </CardContent>
           </Card>
         </div>
