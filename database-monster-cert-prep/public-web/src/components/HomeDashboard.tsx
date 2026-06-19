@@ -67,7 +67,7 @@ export function HomeDashboard({
 }) {
   const nextAction = getNextAction(dashboardData);
   const displayName = dashboardData?.profile?.display_name || userEmail?.split("@")[0];
-  const secondaryCards = secondaryNavigation.filter((item) => ["/labs", "/roadmap", "/about"].includes(item.href));
+  const secondaryCards = secondaryNavigation.filter((item) => ["/learn", "/labs", "/roadmap", "/about"].includes(item.href));
 
   return (
     <div>
@@ -152,10 +152,10 @@ export function HomeDashboard({
 
       <section className="app-container page-section pt-0">
         <SectionHeader title="Useful side quests" description="These stay available, but they no longer compete with the main diagnostic-first path." />
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {secondaryCards.map((item) => (
             <InfoCard
-              action={<Button asChild variant={item.href === "/labs" ? "default" : "outline"}><Link href={item.href}>{item.label}</Link></Button>}
+              action={<Button asChild variant={item.href === "/learn" ? "default" : "outline"}><Link href={item.href}>{item.label}</Link></Button>}
               description={item.description}
               key={item.href}
               title={item.label}

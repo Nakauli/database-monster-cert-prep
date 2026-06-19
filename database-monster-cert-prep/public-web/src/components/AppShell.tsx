@@ -91,7 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <p className="text-sm text-muted-foreground">
               <a
                 className="font-medium text-ink/80 underline-offset-4 transition hover:text-primary hover:underline"
-                href="https://github.com/SemiAutomat1c"
+                href="https://github.com/Nakauli"
                 rel="noreferrer"
                 target="_blank"
               >
@@ -100,7 +100,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <span aria-hidden="true"> · </span>
               <a
                 className="font-medium text-ink/80 underline-offset-4 transition hover:text-primary hover:underline"
-                href="https://github.com/Nakauli"
+                href="https://github.com/SemiAutomat1c"
                 rel="noreferrer"
                 target="_blank"
               >

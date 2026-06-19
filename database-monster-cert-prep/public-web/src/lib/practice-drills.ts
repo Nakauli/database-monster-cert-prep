@@ -1,5 +1,6 @@
-import { sqlChallenges } from "@/data/sql-questions";
+import { schemaFor, sqlChallenges } from "@/data/sql-questions";
 import type { SqlExpectedPattern } from "@/lib/sql-patterns";
+import type { SchemaTable } from "@/lib/types";
 
 export interface PracticeDrill {
   title: string;
@@ -7,6 +8,7 @@ export interface PracticeDrill {
   starter: string;
   expectedSql: string;
   answer: string;
+  schema: SchemaTable[];
   expectedPatterns: SqlExpectedPattern[];
   rubric: string[];
 }
@@ -14,6 +16,7 @@ export interface PracticeDrill {
 const topicDrills: Record<string, Omit<PracticeDrill, "title">> = {
   SQL: {
     prompt: "Write a query that lists active students alphabetically.",
+    schema: schemaFor("students"),
     starter: "SELECT student_id, full_name\nFROM students\nWHERE status = 'active'\nORDER BY full_name;",
     expectedSql: "SELECT student_id, full_name\nFROM students\nWHERE status = 'active'\nORDER BY full_name ASC;",
     answer: "SELECT student_id, full_name\nFROM students\nWHERE status = 'active'\nORDER BY full_name ASC;",
@@ -27,6 +30,7 @@ const topicDrills: Record<string, Omit<PracticeDrill, "title">> = {
   },
   Joins: {
     prompt: "Write a query that keeps all students even when they have no enrollment.",
+    schema: schemaFor("students", "enrollments"),
     starter: "SELECT s.full_name, e.grade\nFROM students AS s\nLEFT JOIN enrollments AS e\n  ON e.student_id = s.student_id;",
     expectedSql: "SELECT s.full_name, e.grade\nFROM students AS s\nLEFT JOIN enrollments AS e\n  ON e.student_id = s.student_id;",
     answer: "SELECT s.full_name, e.grade\nFROM students AS s\nLEFT JOIN enrollments AS e\n  ON e.student_id = s.student_id;",
@@ -39,6 +43,7 @@ const topicDrills: Record<string, Omit<PracticeDrill, "title">> = {
   },
   Aggregation: {
     prompt: "Write a query that counts enrollments per course and keeps courses with at least two enrollments.",
+    schema: schemaFor("enrollments"),
     starter: "SELECT course_id, COUNT(*) AS enrollment_count\nFROM enrollments\nGROUP BY course_id\nHAVING COUNT(*) >= 2;",
     expectedSql: "SELECT course_id, COUNT(*) AS enrollment_count\nFROM enrollments\nGROUP BY course_id\nHAVING COUNT(*) >= 2;",
     answer: "SELECT course_id, COUNT(*) AS enrollment_count\nFROM enrollments\nGROUP BY course_id\nHAVING COUNT(*) >= 2;",
@@ -64,6 +69,7 @@ export function getPracticeDrill(topic: string): PracticeDrill | null {
     starter: challenge.starter,
     expectedSql: challenge.expectedSql,
     answer: challenge.expectedSql,
+    schema: challenge.schema,
     expectedPatterns: challenge.expectedPatterns,
     rubric: challenge.rubric,
   };

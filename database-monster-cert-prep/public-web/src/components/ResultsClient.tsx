@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { hrefForReviewFile } from "@/lib/learn";
 import type { ExamResult } from "@/lib/types";
 
 export function ResultsClient({ result }: { result: ExamResult }) {
@@ -96,30 +97,46 @@ export function ResultsClient({ result }: { result: ExamResult }) {
           </Alert>
         )}
         <div className="mt-5 grid gap-5">
-          {wrong.map((review, index) => (
-            <Card className="border-destructive/30" key={review.question.id}>
-              <CardHeader>
-                <div className="flex flex-wrap justify-between gap-3">
-                  <Badge variant="destructive">{review.question.topic}</Badge>
-                  <span className="text-sm text-muted-foreground">Miss {index + 1}</span>
-                </div>
-                <CardTitle className="text-2xl">{review.question.question}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-4">
-                {review.question.schema && <SchemaDisplay schemas={review.question.schema} />}
-                {review.question.sampleData?.map((table, tableIndex) => <ResultTable data={table} key={tableIndex} />)}
-                {review.question.code && <CodeBlock code={review.question.code} label={review.question.codeLabel} />}
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4"><span className="mono-label">Your answer</span><strong className="mt-1 block">{review.selectedAnswers.join(", ") || "Unanswered"}</strong></div>
-                  <div className="rounded-xl border border-primary/30 bg-accent/55 p-4"><span className="mono-label">Correct answer</span><strong className="mt-1 block">{review.question.correctAnswers.join(", ")}</strong></div>
-                </div>
-                <Alert>
-                  <AlertTitle>Why</AlertTitle>
-                  <AlertDescription>{review.question.explanation}</AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          ))}
+          {wrong.map((review, index) => {
+            const learnHref = hrefForReviewFile(review.question.reviewFile);
+
+            return (
+              <Card className="border-destructive/30" key={review.question.id}>
+                <CardHeader>
+                  <div className="flex flex-wrap justify-between gap-3">
+                    <Badge variant="destructive">{review.question.topic}</Badge>
+                    <span className="text-sm text-muted-foreground">Miss {index + 1}</span>
+                  </div>
+                  <CardTitle className="text-2xl">{review.question.question}</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                  {review.question.scenario && (
+                    <Alert>
+                      <AlertTitle>Question context</AlertTitle>
+                      <AlertDescription>{review.question.scenario}</AlertDescription>
+                    </Alert>
+                  )}
+                  {review.question.schema && <SchemaDisplay schemas={review.question.schema} />}
+                  {review.question.sampleData?.map((table, tableIndex) => <ResultTable data={table} key={tableIndex} />)}
+                  {review.question.code && <CodeBlock code={review.question.code} label={review.question.codeLabel} />}
+                  {review.question.outputTable && <ResultTable data={review.question.outputTable} />}
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4"><span className="mono-label">Your answer</span><strong className="mt-1 block">{review.selectedAnswers.join(", ") || "Unanswered"}</strong></div>
+                    <div className="rounded-xl border border-primary/30 bg-accent/55 p-4"><span className="mono-label">Correct answer</span><strong className="mt-1 block">{review.question.correctAnswers.join(", ")}</strong></div>
+                  </div>
+                  <Alert>
+                    <AlertTitle>Why</AlertTitle>
+                    <AlertDescription>{review.question.explanation}</AlertDescription>
+                  </Alert>
+                  <div className="flex flex-wrap gap-3">
+                    <Button asChild variant="outline"><Link href="/mistakes">Repair in mistakes</Link></Button>
+                    {learnHref && <Button asChild variant="secondary"><Link href={learnHref}>Read lesson</Link></Button>}
+                    <Button asChild variant="ghost"><Link href="/practice">Practice this topic</Link></Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </section>
     </div>

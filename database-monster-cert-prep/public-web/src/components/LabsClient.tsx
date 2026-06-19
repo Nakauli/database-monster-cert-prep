@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Database } from "lucide-react";
-import { CodeBlock, SchemaDisplay } from "@/components/DataDisplay";
+import { SchemaDisplay } from "@/components/DataDisplay";
 import { PageHeader } from "@/components/DesignSystem";
 import { SqlSandbox } from "@/components/SqlSandbox";
 import { Badge } from "@/components/ui/badge";
@@ -13,21 +13,47 @@ import { DATASET_TABLES } from "@/data/sql-datasets";
 import { preloadSqlEngine } from "@/lib/sql-engine";
 import type { SchemaTable } from "@/lib/types";
 
+function datasetSchema(tableName: string): SchemaTable | null {
+  const table = DATASET_TABLES.find((item) => item.name === tableName);
+  if (!table) return null;
+
+  return {
+    table: table.name,
+    columns: table.columns.map((column) => ({
+      name: column.name,
+      type: column.type,
+      key: column.note === "PK" ? "PRIMARY KEY" : column.note === "FK" ? "FOREIGN KEY" : undefined,
+      nullable: column.note === "nullable" ? true : undefined,
+    })),
+  };
+}
+
+function parseLabSchema(schema: string): SchemaTable[] {
+  return schema.split("\n").flatMap((line) => {
+    const match = line.match(/^(\w+)\((.*)\)$/);
+    if (!match) return [];
+
+    const knownSchema = datasetSchema(match[1]);
+    if (knownSchema) return [knownSchema];
+
+    return [{
+      table: match[1],
+      columns: match[2].split(",").map((column) => ({
+        name: column.trim(),
+        type: "column",
+      })),
+    }];
+  });
+}
+
 export function LabsClient() {
   const [showSchema, setShowSchema] = useState(false);
   const [selectedLabId, setSelectedLabId] = useState(labs[0]?.id ?? "");
   const selectedLab = labs.find((lab) => lab.id === selectedLabId) ?? labs[0];
+  const selectedLabSchemas = useMemo(() => selectedLab ? parseLabSchema(selectedLab.schema) : [], [selectedLab]);
   const schemas = useMemo<SchemaTable[]>(
     () =>
-      DATASET_TABLES.map((table) => ({
-        table: table.name,
-        columns: table.columns.map((column) => ({
-          name: column.name,
-          type: column.type,
-          key: column.note === "PK" ? "PRIMARY KEY" : column.note === "FK" ? "FOREIGN KEY" : undefined,
-          nullable: column.note === "nullable" ? true : undefined,
-        })),
-      })),
+      DATASET_TABLES.map((table) => datasetSchema(table.name)).filter((table): table is SchemaTable => Boolean(table)),
     [],
   );
 
@@ -89,35 +115,31 @@ export function LabsClient() {
               <CardTitle className="text-2xl">{selectedLab.title}</CardTitle>
               <CardDescription>{selectedLab.objective}</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
-              <div className="flex flex-col gap-4">
-                <Card className="bg-muted/25">
-                  <CardHeader>
-                    <CardTitle className="text-base">Schema</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <pre className="overflow-x-auto text-sm text-muted-foreground"><code>{selectedLab.schema}</code></pre>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Tasks</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ol className="grid gap-2 pl-5 text-sm text-muted-foreground">
-                      {selectedLab.tasks.map((task) => <li className="list-decimal" key={task}>{task}</li>)}
-                    </ol>
-                  </CardContent>
-                </Card>
-                <CodeBlock code={selectedLab.starter} label="Starter SQL" />
-              </div>
+            <CardContent className="grid gap-5">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Lab brief</CardTitle>
+                  <CardDescription>Complete these tasks in the workspace below. The table columns are shown beside the editor.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ol className="grid gap-2 pl-5 text-sm text-muted-foreground md:grid-cols-2">
+                    {selectedLab.tasks.map((task) => <li className="list-decimal" key={task}>{task}</li>)}
+                  </ol>
+                </CardContent>
+              </Card>
               <SqlSandbox
                 answer={selectedLab.answer}
                 description="Run the lab against the seeded SQLite data, then check whether your output matches the reference query."
                 expectedPatterns={selectedLab.expectedPatterns}
                 expectedSql={selectedLab.answer}
+                hints={[
+                  "Use the current lab task list to decide what the query must return.",
+                  "Replace every TODO comment before you run.",
+                  "Check the result rows, then compare against the reference query.",
+                ]}
                 key={selectedLab.id}
                 rubric={selectedLab.rubric}
+                schema={selectedLabSchemas}
                 starter={selectedLab.starter}
                 title="Lab workspace"
               />

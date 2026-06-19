@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CheckCircle, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { EmptyPanel } from "@/components/DesignSystem";
@@ -7,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { hrefForReviewFile } from "@/lib/learn";
 import type { MistakeRow } from "@/lib/progress";
 
 export function FlashcardReview({
@@ -64,6 +66,7 @@ export function FlashcardReview({
   }
 
   const snapshot = card.question_snapshot as { question?: string; reviewFile?: string };
+  const learnHref = hrefForReviewFile(snapshot.reviewFile);
 
   return (
     <section className="grid gap-4">
@@ -82,6 +85,7 @@ export function FlashcardReview({
             <Badge variant="outline">Missed {card.mistake_count}x</Badge>
           </div>
           <CardDescription>{flipped ? "Answer side" : "Question side"}</CardDescription>
+          <span className="mono-label">Question</span>
           <CardTitle className="text-2xl leading-tight">{snapshot.question ?? `Question ${card.question_id}`}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -103,13 +107,15 @@ export function FlashcardReview({
               </Alert>
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">Tap the card to reveal the answer and decide whether to repeat it.</p>
+            <p className="text-sm text-muted-foreground">
+              Answer it in your head first, then tap the card to reveal the answer and decide whether to repeat it.
+            </p>
           )}
         </CardContent>
       </Card>
 
       {flipped && (
-        <div className="grid gap-3 sm:grid-cols-3" onClick={(event) => event.stopPropagation()}>
+        <div className="grid gap-3 sm:grid-cols-4" onClick={(event) => event.stopPropagation()}>
           <Button type="button" variant="outline" onClick={again}>
             <RotateCcw data-icon="inline-start" />
             Again
@@ -117,6 +123,7 @@ export function FlashcardReview({
           <Button type="button" variant="secondary" onClick={hard}>
             Hard
           </Button>
+          <Button asChild variant="outline"><Link href={learnHref ?? "/learn"}>Read lesson</Link></Button>
           <Button type="button" onClick={() => void gotIt()} disabled={resolving}>
             <CheckCircle data-icon="inline-start" />
             {resolving ? "Removing..." : "Got it"}
