@@ -17,18 +17,38 @@ export default async function DashboardPage() {
   const averageScore = scores.length ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : 0;
   const weakest = data.topics[0];
   const displayName = data.profile?.display_name || user.email?.split("@")[0] || "Database learner";
+  const nextAction = !data.attempts.length
+    ? { label: "Start diagnostic", href: "/exam?mode=diagnostic", title: "Build your baseline first.", detail: "Take the diagnostic so Progress can show weak topics, saved mistakes, and a useful next task." }
+    : data.mistakeCount > 0
+      ? { label: "Repair mistakes", href: "/mistakes", title: `Repair ${data.mistakeCount} saved mistake${data.mistakeCount === 1 ? "" : "s"}.`, detail: weakest ? `After that, practice ${weakest.topic} to lift your weakest mastery score.` : "Mistake repair is the fastest path from wrong answers to exam points." }
+      : weakest && weakest.mastery_score < 80
+        ? { label: "Practice weakest topic", href: `/practice?topic=${encodeURIComponent(weakest.topic)}`, title: `Practice ${weakest.topic} next.`, detail: `${weakest.mastery_score}% mastery is below the 80% checkpoint.` }
+        : { label: "Take timed exam", href: "/exam?mode=timed", title: "Move into timed pressure.", detail: "Your repair queue is clear enough to test whether the score holds under the clock." };
 
   return (
     <main className="page-shell dashboard-page">
       <section className="dashboard-hero">
         <div>
-          <p className="eyebrow">Personal command center</p>
-          <h1>Welcome back, {displayName}.</h1>
-          <p>{weakest ? `Your next useful target is ${weakest.topic} at ${weakest.mastery_score}% mastery.` : "Take the diagnostic to generate your first weakness map."}</p>
+          <p className="eyebrow">Progress</p>
+          <h1>Know exactly what to repair next.</h1>
+          <p>{displayName}, this page turns your attempts, weak topics, and saved mistakes into the next useful study move.</p>
         </div>
         <div className="button-row">
-          <Link className="button primary" href="/exam?mode=diagnostic">Start an exam</Link>
-          <Link className="button secondary" href="/practice">Practice a topic</Link>
+          <Link className="button primary" href={nextAction.href}>{nextAction.label}</Link>
+          <Link className="button secondary" href="/exam?mode=timed">Take timed exam</Link>
+        </div>
+      </section>
+
+      <section className="dashboard-panel progress-next-step">
+        <div className="panel-heading">
+          <div><p className="eyebrow">Next repair task</p><h2>{nextAction.title}</h2></div>
+          <Link href={nextAction.href}>{nextAction.label} -&gt;</Link>
+        </div>
+        <p className="muted">{nextAction.detail}</p>
+        <div className="button-row">
+          <Link className="button secondary" href="/mistakes">Mistake notebook</Link>
+          <Link className="button secondary" href="/practice">Topic practice</Link>
+          <Link className="button secondary" href="/history">Exam history</Link>
         </div>
       </section>
 
@@ -59,4 +79,3 @@ export default async function DashboardPage() {
     </main>
   );
 }
-

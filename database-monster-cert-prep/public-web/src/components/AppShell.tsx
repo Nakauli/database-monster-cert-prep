@@ -6,24 +6,16 @@ import type { ReactNode } from "react";
 import { AuthNav } from "@/components/auth/AuthNav";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { primaryNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-
-const navigation = [
-  { href: "/", label: "Home" },
-  { href: "/practice", label: "Practice" },
-  { href: "/mistakes", label: "Mistakes" },
-  { href: "/roadmap", label: "Roadmap" },
-  { href: "/labs", label: "SQL Labs" },
-  { href: "/about", label: "About" },
-];
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
     <>
-      {navigation.map((item) => {
-        const active = pathname === item.href;
+      {primaryNavigation.map((item) => {
+        const active = item.activePaths.some((path) => pathname === path || (path !== "/" && pathname.startsWith(path)));
         return (
           <Button
             asChild

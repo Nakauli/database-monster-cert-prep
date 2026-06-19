@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { sqlChallenges } from "@/data/sql-questions";
+import { secondaryNavigation } from "@/lib/navigation";
 import { difficulties, topics } from "@/lib/questions";
 import type { SqlExpectedPattern } from "@/lib/sql-patterns";
 
@@ -82,12 +83,36 @@ export function PracticeClient() {
   return (
     <div className="app-container page-section">
       <PageHeader
-        label="Focused practice"
-        title="Choose one weakness. Train it directly."
-        description="Practice is untimed. Use the typed SQL drill first, then start a question set when the pattern feels familiar."
+        label="Practice hub"
+        title="Train one skill before you take another exam."
+        description="Use this page after the diagnostic points to a weak topic. Warm up with typed SQL, then start an untimed question set."
+        actions={
+          <>
+            <Button asChild><a href="#topic-practice">Topic practice</a></Button>
+            <Button asChild variant="outline"><a href="#sql-labs">SQL labs</a></Button>
+          </>
+        }
       />
 
-      <Card className="mt-8">
+      <section className="mt-8 grid gap-4 md:grid-cols-2">
+        <Card id="topic-practice">
+          <CardContent className="grid gap-3">
+            <span className="mono-label">Primary training mode</span>
+            <h2 className="font-heading text-2xl font-semibold tracking-[-0.03em] text-ink">Topic practice</h2>
+            <p className="text-sm text-muted-foreground">Pick the exact topic your diagnostic exposed, then answer an untimed set with explanations.</p>
+          </CardContent>
+        </Card>
+        <Card id="sql-labs">
+          <CardContent className="grid gap-3">
+            <span className="mono-label">Hands-on syntax</span>
+            <h2 className="font-heading text-2xl font-semibold tracking-[-0.03em] text-ink">SQL Labs</h2>
+            <p className="text-sm text-muted-foreground">{secondaryNavigation.find((item) => item.href === "/labs")?.description}</p>
+            <Button asChild className="w-fit" variant="outline"><a href="/labs">Open SQL labs</a></Button>
+          </CardContent>
+        </Card>
+      </section>
+
+      <Card className="mt-8 scroll-mt-24">
         <CardContent>
           <FieldGroup className="grid gap-4 pt-1 lg:grid-cols-[1.4fr_1fr_0.8fr_auto] lg:items-end">
             <Field>

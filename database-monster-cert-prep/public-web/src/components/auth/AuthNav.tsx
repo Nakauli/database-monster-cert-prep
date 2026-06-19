@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/client";
 
 export function AuthNav({ closeMenu }: { closeMenu: () => void }) {
@@ -51,12 +52,7 @@ export function AuthNav({ closeMenu }: { closeMenu: () => void }) {
 
   return (
     <>
-      <Button asChild className="justify-start" size="sm" variant="ghost">
-        <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
-      </Button>
-      <Button asChild className="justify-start" size="sm" variant="ghost">
-        <Link href="/history" onClick={closeMenu}>History</Link>
-      </Button>
+      <Separator className="hidden h-6 lg:block" orientation="vertical" />
       <Button asChild className="justify-start" size="sm" variant="ghost">
         <Link href="/profile" onClick={closeMenu}>Profile</Link>
       </Button>
@@ -64,4 +60,3 @@ export function AuthNav({ closeMenu }: { closeMenu: () => void }) {
     </>
   );
 }
-
