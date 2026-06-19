@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { CodeBlock } from "@/components/DataDisplay";
-import { InfoCard, PageHeader, SectionHeader, StatGrid } from "@/components/DesignSystem";
+import { InfoCard, SectionHeader, StatGrid } from "@/components/DesignSystem";
 import { LeaderboardPreview } from "@/components/leaderboard/LeaderboardPreview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -72,53 +71,54 @@ export function HomeDashboard({
 
   return (
     <div>
-      <section className="app-container page-section">
-        <PageHeader
-          label={displayName ? `Start here, ${displayName}` : "Certification simulator"}
-          title="Start with a diagnostic. Then study only what matters."
-          description="Database Monster now follows one exam-prep path: build a baseline, repair weak topics, review mistakes, then prove readiness under timed pressure."
-          actions={
-            <>
+      <section className="app-container page-section home-hero-section">
+        <div className="home-hero-grid">
+          <div className="home-hero-copy">
+            <Badge variant="secondary" className="w-fit font-mono uppercase tracking-[0.08em]">
+              {displayName ? `Start here, ${displayName}` : "Certification simulator"}
+            </Badge>
+            <h1 className="font-heading page-title">Start with a diagnostic. Then study only what matters.</h1>
+            <p className="page-copy">
+              Database Monster now follows one exam-prep path: build a baseline, repair weak topics, review mistakes, then prove readiness under timed pressure.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-2">
               <Button asChild size="lg"><Link href={nextAction.href}>{nextAction.label}</Link></Button>
               <Button asChild size="lg" variant="outline"><Link href="/practice">Practice a topic</Link></Button>
-            </>
-          }
-        />
+            </div>
+          </div>
+          <LeaderboardPreview rows={leaderboardRows} signedIn={Boolean(userEmail)} />
+        </div>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
-          <Card className="bg-card/90">
+        <div className="home-action-grid">
+          <Card className="next-action-card bg-card/90">
             <CardHeader>
+              <Badge variant="secondary" className="w-fit">Next best action</Badge>
               <CardTitle>{nextAction.title}</CardTitle>
               <CardDescription>{nextAction.description}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <CodeBlock
-                label="exam_prep_flow.sql"
-                code={`SELECT next_step\nFROM certification_plan\nORDER BY priority\nLIMIT 1;`}
-              />
+            <CardContent className="flex flex-wrap gap-3">
+              <Button asChild><Link href={nextAction.href}>{nextAction.label}</Link></Button>
+              <Button asChild variant="outline"><Link href="/mistakes">Repair notebook</Link></Button>
             </CardContent>
           </Card>
-          <Card className="bg-primary text-primary-foreground">
-            <CardHeader>
+
+          <Card className="guided-path-strip bg-primary text-primary-foreground">
+            <CardHeader className="pb-3">
               <Badge className="w-fit bg-primary-foreground text-primary">Guided path</Badge>
-              <CardTitle className="text-3xl tracking-[-0.04em]">
-                Diagnostic -&gt; weak topics -&gt; mistake repair -&gt; timed exam.
-              </CardTitle>
+              <CardTitle className="text-2xl tracking-[-0.04em]">Diagnostic to timed exam.</CardTitle>
               <CardDescription className="text-primary-foreground/75">
                 The app should always make the next useful study move obvious.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button
-                asChild
-                variant="outline"
-                className="!border-primary-foreground !bg-primary-foreground !text-primary shadow-[0_14px_34px_rgb(0_0_0_/_0.14)] hover:!bg-primary-foreground/90 hover:!text-primary"
-              >
-                <Link href="/exam?mode=diagnostic">Start diagnostic</Link>
-              </Button>
+            <CardContent className="grid gap-2">
+              {flowSteps.map((step) => (
+                <div className="guided-path-step" key={step.title}>
+                  <strong>{step.title.replace(/^\d+\.\s*/, "")}</strong>
+                  <span>{step.detail}</span>
+                </div>
+              ))}
             </CardContent>
           </Card>
-          <LeaderboardPreview rows={leaderboardRows} signedIn={Boolean(userEmail)} />
         </div>
       </section>
 
