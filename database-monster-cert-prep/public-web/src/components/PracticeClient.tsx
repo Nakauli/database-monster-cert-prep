@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CodeAnswerWorkspace } from "@/components/CodeAnswerWorkspace";
 import { PageHeader, SectionHeader } from "@/components/DesignSystem";
+import { SqlSandbox } from "@/components/SqlSandbox";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { sqlChallenges } from "@/data/sql-questions";
 import { difficulties, topics } from "@/lib/questions";
 import type { SqlExpectedPattern } from "@/lib/sql-patterns";
 
@@ -65,7 +66,13 @@ export function PracticeClient() {
   const [topic, setTopic] = useState(topics[0]);
   const [difficulty, setDifficulty] = useState("all");
   const [count, setCount] = useState("15");
+  const [selectedChallengeId, setSelectedChallengeId] = useState(sqlChallenges[0]?.id ?? "");
   const drill = useMemo(() => topicPatterns[topic] ?? fallbackDrill, [topic]);
+  const visibleChallenges = useMemo(
+    () => sqlChallenges.filter((challenge) => challenge.topic === topic),
+    [topic],
+  );
+  const selectedChallenge = visibleChallenges.find((challenge) => challenge.id === selectedChallengeId) ?? visibleChallenges[0];
 
   function start() {
     const params = new URLSearchParams({ mode: "practice", topic, difficulty, count });
@@ -127,16 +134,69 @@ export function PracticeClient() {
       <section className="mt-8">
         <SectionHeader title="Syntax warmup" description="Type the query, check key patterns, then decide whether you are ready for the quiz." />
         <div className="mt-5">
-          <CodeAnswerWorkspace
+          <SqlSandbox
             answer={drill.answer}
+            description={`${drill.prompt} Run the query and compare your output with the expected result.`}
             expectedPatterns={drill.expectedPatterns}
-            prompt={drill.prompt}
+            expectedSql={drill.answer}
             rubric={drill.rubric}
             starter={drill.starter}
             title={`${topic} drill`}
           />
         </div>
       </section>
+
+      {visibleChallenges.length > 0 && (
+        <section className="mt-8">
+          <SectionHeader
+            title="Live query challenges"
+            description="These are typed SQL reps that run against the seeded dataset. They stay outside the timed exam flow."
+          />
+          <div className="mt-5 grid gap-5 lg:grid-cols-[18rem_minmax(0,1fr)]">
+            <Card className="h-fit">
+              <CardContent className="grid gap-2">
+                {visibleChallenges.map((challenge) => (
+                  <Button
+                    className="h-auto justify-start rounded-xl p-3 text-left whitespace-normal"
+                    key={challenge.id}
+                    onClick={() => setSelectedChallengeId(challenge.id)}
+                    type="button"
+                    variant={selectedChallenge?.id === challenge.id ? "secondary" : "outline"}
+                  >
+                    <span className="flex flex-col gap-1">
+                      <span className="font-semibold">{challenge.prompt}</span>
+                      <span className="text-xs text-muted-foreground">{challenge.difficulty}</span>
+                    </span>
+                  </Button>
+                ))}
+              </CardContent>
+            </Card>
+            {selectedChallenge && (
+              <Card key={selectedChallenge.id}>
+                <CardContent className="grid gap-5">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-wrap gap-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
+                      <span>{selectedChallenge.topic}</span>
+                      <span>{selectedChallenge.difficulty}</span>
+                    </div>
+                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-ink">{selectedChallenge.prompt}</h3>
+                    <p className="text-sm leading-6 text-muted-foreground">{selectedChallenge.explanation}</p>
+                  </div>
+                  <SqlSandbox
+                    answer={selectedChallenge.expectedSql}
+                    description="Write the query, run it, and check whether your result set matches the reference."
+                    expectedPatterns={selectedChallenge.expectedPatterns}
+                    expectedSql={selectedChallenge.expectedSql}
+                    rubric={selectedChallenge.rubric}
+                    starter={selectedChallenge.starter}
+                    title="Query challenge"
+                  />
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="mt-8">
         <SectionHeader title="Topic catalog" description="Pick a topic to load its drill and practice-set settings." />

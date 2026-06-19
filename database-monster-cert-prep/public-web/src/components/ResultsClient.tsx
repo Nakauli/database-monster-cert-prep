@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CodeBlock, ResultTable, SchemaDisplay } from "@/components/DataDisplay";
 import { SectionHeader, StatGrid } from "@/components/DesignSystem";
+import { ProgressRing } from "@/components/ProgressRing";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,12 +34,7 @@ export function ResultsClient({ result }: { result: ExamResult }) {
                 <Button asChild variant="ghost"><Link href="/history">Exam history</Link></Button>
               </div>
             </div>
-            <div className="grid size-40 place-items-center rounded-full border-[12px] border-muted bg-background">
-              <div className="text-center">
-                <strong className="block text-5xl tracking-[-0.05em] text-ink">{result.score}%</strong>
-                <span className="text-xs font-medium text-muted-foreground">{passed ? "Pass range" : "Repair first"}</span>
-              </div>
-            </div>
+            <ProgressRing value={result.score} label={passed ? "Pass range" : "Repair first"} size={178} />
           </div>
         </CardHeader>
       </Card>
@@ -141,4 +137,3 @@ function TopicScore({ topic, percentage }: { topic: string; percentage: number }
     </div>
   );
 }
-

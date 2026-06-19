@@ -13,7 +13,7 @@ This application uses Supabase Auth and Postgres for private, per-user progress.
 
 ## Rendering safety
 
-All question content is bundled JSON controlled by the repository. React renders values as text. The application does not use `dangerouslySetInnerHTML`, evaluate SQL, or execute user-provided code.
+All question content is bundled JSON controlled by the repository. React renders values as text and does not use `dangerouslySetInnerHTML`. SQL lab queries run only inside the bundled in-browser SQLite WebAssembly sandbox against fictional seeded data; they are not sent to Supabase or a server.
 
 ## Authorization
 
@@ -25,7 +25,7 @@ All question content is bundled JSON controlled by the repository. React renders
 
 ## Deployment protections
 
-`vercel.json` applies a restrictive Content Security Policy, permits authenticated API/WebSocket connections only to Supabase, blocks clickjacking and MIME sniffing, restricts browser permissions, and applies a conservative referrer policy.
+`vercel.json` applies a restrictive Content Security Policy, permits authenticated API/WebSocket connections only to Supabase, blocks clickjacking and MIME sniffing, restricts browser permissions, and applies a conservative referrer policy. The `wasm-unsafe-eval` script policy permits WebAssembly compilation for the bundled SQLite engine without enabling JavaScript `eval`.
 
 ## Dependency checks
 

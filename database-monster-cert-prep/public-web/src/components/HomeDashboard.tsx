@@ -61,7 +61,7 @@ export function HomeDashboard() {
         <StatGrid
           stats={[
             { value: "360", label: "original questions" },
-            { value: "200+", label: "code examples" },
+            { value: "4", label: "live SQL challenges" },
             { value: "12", label: "tracked topic areas" },
             { value: "RLS", label: "private progress storage" },
           ]}
