@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { NotebookTabs, PanelsTopLeft } from "lucide-react";
 import { useMemo, useState } from "react";
 import { EmptyPanel, PageHeader, StatGrid } from "@/components/DesignSystem";
+import { FlashcardReview } from "@/components/FlashcardReview";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,25 +17,27 @@ import { createClient } from "@/lib/supabase/client";
 export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRow[] }) {
   const [mistakes, setMistakes] = useState(initialMistakes);
   const [filter, setFilter] = useState("all");
+  const [view, setView] = useState<"notebook" | "flashcards">("notebook");
   const [message, setMessage] = useState<string | null>(null);
 
   const topics = [...new Set(mistakes.map((mistake) => mistake.topic))].sort();
   const visible = filter === "all" ? mistakes : mistakes.filter((mistake) => mistake.topic === filter);
   const repeated = useMemo(() => mistakes.filter((mistake) => mistake.mistake_count > 1).length, [mistakes]);
 
-  async function removeMistake(id: string) {
+  async function removeMistake(id: string): Promise<boolean> {
     const supabase = createClient();
     if (!supabase) {
       setMessage("Account storage is not configured.");
-      return;
+      return false;
     }
     const { error } = await supabase.from("mistake_notebook").delete().eq("id", id);
     if (error) {
       setMessage(error.message);
-      return;
+      return false;
     }
     setMistakes((current) => current.filter((mistake) => mistake.id !== id));
     setMessage("Mistake marked as mastered and removed.");
+    return true;
   }
 
   return (
@@ -63,19 +67,33 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
       </div>
 
       <Card className="mt-6">
-        <CardContent>
-          <Field className="sm:max-w-xs">
-            <FieldLabel>Filter by topic</FieldLabel>
-            <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">All topics</SelectItem>
-                  {topics.map((topic) => <SelectItem key={topic} value={topic}>{topic}</SelectItem>)}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
+        <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex gap-2">
+              <Button type="button" variant={view === "notebook" ? "secondary" : "outline"} onClick={() => setView("notebook")}>
+                <NotebookTabs data-icon="inline-start" />
+                Notebook
+              </Button>
+              <Button type="button" variant={view === "flashcards" ? "secondary" : "outline"} onClick={() => setView("flashcards")} disabled={!mistakes.length}>
+                <PanelsTopLeft data-icon="inline-start" />
+                Flashcards
+              </Button>
+            </div>
+            {view === "notebook" && (
+              <Field className="sm:min-w-64">
+                <FieldLabel>Filter by topic</FieldLabel>
+                <Select value={filter} onValueChange={setFilter}>
+                  <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="all">All topics</SelectItem>
+                      {topics.map((topic) => <SelectItem key={topic} value={topic}>{topic}</SelectItem>)}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -86,7 +104,11 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
         </Alert>
       )}
 
-      {!visible.length ? (
+      {view === "flashcards" && mistakes.length > 0 ? (
+        <div className="mt-6">
+          <FlashcardReview mistakes={mistakes} onResolve={removeMistake} />
+        </div>
+      ) : !visible.length ? (
         <div className="mt-6">
           <EmptyPanel
             actionLabel="Start diagnostic"
@@ -122,7 +144,7 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
                   </div>
                   <Alert>
                     <AlertTitle>Rule to remember</AlertTitle>
-                    <AlertDescription>{mistake.explanation}</AlertDescription>
+                    <AlertDescription>{mistake.explanation ?? "Review the correct answer and try this topic again."}</AlertDescription>
                   </Alert>
                   {snapshot.reviewFile && <p className="text-sm text-muted-foreground">Review: <code>{snapshot.reviewFile}</code></p>}
                   <div>

@@ -490,6 +490,35 @@ code, pre { font-family: var(--font-code), "Cascadia Code", Consolas, monospace;
     @apply overflow-x-auto rounded-b-xl bg-code p-4 text-sm leading-7 text-code-foreground;
   }
 
+  .sql-editor .cm-editor {
+    @apply bg-background font-mono text-sm;
+  }
+
+  .sql-editor .cm-editor.cm-focused {
+    @apply outline-none;
+  }
+
+  .sql-editor .cm-gutters {
+    @apply border-r bg-muted/50 text-muted-foreground;
+  }
+
+  .sql-editor .cm-content {
+    @apply py-4;
+  }
+
+  .sql-editor .cm-activeLine,
+  .sql-editor .cm-activeLineGutter {
+    @apply bg-accent/35;
+  }
+
+  kbd {
+    @apply inline-grid min-w-6 place-items-center rounded-md border border-b-2 bg-card px-1.5 py-0.5 font-mono text-[0.68rem] font-semibold text-ink shadow-sm;
+  }
+
+  .flashcard-panel {
+    animation: reveal 180ms ease-out;
+  }
+
   .answer-reveal {
     animation: reveal 180ms ease-out;
   }

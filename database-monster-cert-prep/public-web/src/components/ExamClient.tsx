@@ -161,7 +161,7 @@ export function ExamClient({ presetQuestionIds = [] }: { presetQuestionIds?: str
     return () => window.clearInterval(timer);
   }, [duration, finalizeExam, phase, saving]);
 
-  function toggleAnswer(answer: string) {
+  const toggleAnswer = useCallback((answer: string) => {
     if (!current) return;
     setAnswers((previous) => {
       const selected = previous[current.id] ?? [];
@@ -175,16 +175,63 @@ export function ExamClient({ presetQuestionIds = [] }: { presetQuestionIds?: str
       }
       return { ...previous, [current.id]: [answer] };
     });
-  }
+  }, [current]);
 
-  function toggleMarked() {
+  const toggleMarked = useCallback(() => {
     if (!current) return;
     setMarked((previous) =>
       previous.includes(current.id)
         ? previous.filter((id) => id !== current.id)
         : [...previous, current.id],
     );
-  }
+  }, [current]);
+
+  useEffect(() => {
+    if (phase !== "exam" || !current) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      const isTyping =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable ||
+          target.closest(".cm-editor"));
+
+      if (isTyping || event.metaKey || event.ctrlKey || event.altKey) return;
+
+      const letter = event.key.toUpperCase();
+      if (/^[A-J]$/.test(letter)) {
+        const choiceIndex = letter.charCodeAt(0) - 65;
+        if (choiceIndex < current.choices.length) {
+          event.preventDefault();
+          toggleAnswer(current.choices[choiceIndex]);
+        }
+        return;
+      }
+
+      if (event.key === "ArrowRight" || event.key === "Enter") {
+        event.preventDefault();
+        if (currentIndex < questions.length - 1) setCurrentIndex((value) => value + 1);
+        else setPhase("review");
+        return;
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        if (currentIndex > 0) setCurrentIndex((value) => value - 1);
+        return;
+      }
+
+      if (event.key === "m" || event.key === "M") {
+        event.preventDefault();
+        toggleMarked();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [current, currentIndex, phase, questions.length, toggleAnswer, toggleMarked]);
 
   const timerText = useMemo(() => {
     if (duration === null) return "Practice mode";
@@ -289,6 +336,12 @@ export function ExamClient({ presetQuestionIds = [] }: { presetQuestionIds?: str
               <span>{answeredCount} answered</span>
             </div>
             <QuestionContent question={current} selectedAnswers={answers[current.id] ?? []} onToggleAnswer={toggleAnswer} />
+            <div className="mt-5 flex flex-wrap gap-2 rounded-xl border border-dashed bg-muted/25 p-3 text-xs text-muted-foreground" aria-label="Keyboard shortcuts">
+              <span><kbd>A</kbd>-<kbd>{String.fromCharCode(64 + current.choices.length)}</kbd> choose</span>
+              <span><kbd>←</kbd><kbd>→</kbd> navigate</span>
+              <span><kbd>M</kbd> mark</span>
+              <span><kbd>Enter</kbd> next</span>
+            </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-[auto_1fr_auto]">
               <Button type="button" variant="outline" disabled={currentIndex === 0} onClick={() => setCurrentIndex((value) => value - 1)}>Previous</Button>
               <Button className="sm:justify-self-center" type="button" variant={marked.includes(current.id) ? "secondary" : "ghost"} onClick={toggleMarked}>
