@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { CodeBlock } from "@/components/DataDisplay";
 import { InfoCard, PageHeader, SectionHeader, StatGrid } from "@/components/DesignSystem";
+import { LeaderboardPreview } from "@/components/leaderboard/LeaderboardPreview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { secondaryNavigation } from "@/lib/navigation";
+import type { PublicLeaderboardRow } from "@/lib/leaderboard";
 import type { getDashboardData } from "@/lib/progress";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
@@ -57,9 +59,11 @@ function getNextAction(data: DashboardData | null) {
 
 export function HomeDashboard({
   dashboardData = null,
+  leaderboardRows = [],
   userEmail,
 }: {
   dashboardData?: DashboardData | null;
+  leaderboardRows?: PublicLeaderboardRow[];
   userEmail?: string;
 }) {
   const nextAction = getNextAction(dashboardData);
@@ -114,6 +118,7 @@ export function HomeDashboard({
               </Button>
             </CardContent>
           </Card>
+          <LeaderboardPreview rows={leaderboardRows} signedIn={Boolean(userEmail)} />
         </div>
       </section>
 

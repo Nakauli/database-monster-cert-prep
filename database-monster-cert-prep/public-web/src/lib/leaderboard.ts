@@ -1,0 +1,61 @@
+import { normalizeCourse } from "@/lib/courses";
+import { createClient } from "@/lib/supabase/server";
+
+export interface PublicLeaderboardRow {
+  user_id: string;
+  display_name: string;
+  course: string | null;
+  rank: number;
+  readiness_score: number;
+  best_score: number;
+  attempt_count: number;
+  average_mastery: number;
+  last_active_at: string | null;
+  strongest_topics: string[];
+  weakest_topics: string[];
+}
+
+export function getAvatarInitials(name: string | null | undefined) {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "DB";
+  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
+}
+
+export function formatPercent(value: number | null | undefined) {
+  return `${Math.round(Number(value ?? 0))}%`;
+}
+
+export function formatLastActive(value: string | null | undefined) {
+  if (!value) return "No activity yet";
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+export async function getPublicLeaderboard(course?: string | null, limit?: number): Promise<PublicLeaderboardRow[]> {
+  const supabase = await createClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase.rpc("get_public_leaderboard", {
+    p_course: normalizeCourse(course),
+  });
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as PublicLeaderboardRow[];
+  return typeof limit === "number" ? rows.slice(0, limit) : rows;
+}
+
+export async function getPublicStudentProfile(userId: string): Promise<PublicLeaderboardRow | null> {
+  const supabase = await createClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase.rpc("get_public_student_profile", {
+    p_user_id: userId,
+  });
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as PublicLeaderboardRow[];
+  return rows[0] ?? null;
+}
