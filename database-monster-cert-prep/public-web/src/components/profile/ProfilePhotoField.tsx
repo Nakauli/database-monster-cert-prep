@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { UserAvatar } from "@/components/UserAvatar";
-import { AVATAR_ACCEPT, validateAvatarFile } from "@/lib/avatar";
+import { AVATAR_ACCEPT, validateAvatarFile, validateAvatarImage } from "@/lib/avatar";
 
 export function ProfilePhotoField({
   currentAvatarUrl,
@@ -29,13 +29,20 @@ export function ProfilePhotoField({
     };
   }, [previewUrl]);
 
-  function chooseFile(event: React.ChangeEvent<HTMLInputElement>) {
+  async function chooseFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     if (!file) return;
 
     const validationError = validateAvatarFile(file);
     if (validationError) {
       setError(validationError);
+      event.target.value = "";
+      return;
+    }
+
+    const imageError = await validateAvatarImage(file);
+    if (imageError) {
+      setError(imageError);
       event.target.value = "";
       return;
     }
@@ -102,7 +109,7 @@ export function ProfilePhotoField({
         </div>
       </div>
       <p className="field-help">
-        JPEG, PNG, or WebP up to 2 MB. Your photo is public when shown on your leaderboard profile.
+        JPEG, PNG, or WebP up to 2 MB. Photo files use public URLs and appear on leaderboard surfaces when you opt in.
       </p>
       {error && <p className="form-message error" role="alert">{error}</p>}
     </fieldset>

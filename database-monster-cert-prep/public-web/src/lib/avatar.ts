@@ -1,5 +1,7 @@
 export const AVATAR_BUCKET = "avatars";
 export const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+export const AVATAR_MAX_DIMENSION = 4096;
+export const AVATAR_MIN_DIMENSION = 64;
 export const AVATAR_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const AVATAR_ACCEPT = AVATAR_ALLOWED_TYPES.join(",");
 
@@ -28,6 +30,24 @@ export function avatarExtension(contentType: string) {
   if (contentType === "image/png") return "png";
   if (contentType === "image/webp") return "webp";
   throw new Error("Unsupported avatar content type.");
+}
+
+export async function validateAvatarImage(file: File) {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const { width, height } = bitmap;
+    bitmap.close();
+
+    if (width < AVATAR_MIN_DIMENSION || height < AVATAR_MIN_DIMENSION) {
+      return `Profile photos must be at least ${AVATAR_MIN_DIMENSION} by ${AVATAR_MIN_DIMENSION} pixels.`;
+    }
+    if (width > AVATAR_MAX_DIMENSION || height > AVATAR_MAX_DIMENSION) {
+      return `Profile photos must be no larger than ${AVATAR_MAX_DIMENSION} by ${AVATAR_MAX_DIMENSION} pixels.`;
+    }
+    return null;
+  } catch {
+    return "The selected file could not be decoded as an image.";
+  }
 }
 
 export function buildAvatarPath(userId: string, contentType: string, uploadId = crypto.randomUUID()) {
