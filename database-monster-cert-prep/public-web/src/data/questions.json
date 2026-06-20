@@ -318,17 +318,17 @@
     "topic": "Database Concepts",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A row has `optional_value = NULL`. The predicate `optional_value IS NULL` evaluates TRUE for this row.",
+    "question": "A row has `optional_value = NULL`. The predicate `optional_value = NULL` evaluates TRUE for this row.",
     "choices": [
       "True",
       "False"
     ],
     "correctAnswers": [
-      "True"
+      "False"
     ],
-    "explanation": "`IS NULL` is true only for the NULL marker. Zero and empty text are values, not NULL.",
+    "explanation": "Comparing NULL with `=` produces UNKNOWN, not TRUE. Use `IS NULL` to test for the NULL marker.",
     "wrongAnswerExplanations": {
-      "False": "This confuses NULL with a stored value or uses the wrong truth result."
+      "True": "SQL uses three-valued logic, so `NULL = NULL` is UNKNOWN rather than TRUE."
     },
     "relatedConcept": "NULL semantics",
     "reviewFile": "notes/01_core_database_concepts.md"
@@ -360,7 +360,7 @@
     "topic": "Database Concepts",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A row has `optional_value = NULL`. The predicate `optional_value IS NULL` evaluates TRUE for this row.",
+    "question": "A row has `optional_value = NULL`. The predicate `COALESCE(optional_value, 0) = 0` evaluates TRUE for this row.",
     "choices": [
       "True",
       "False"
@@ -368,9 +368,9 @@
     "correctAnswers": [
       "True"
     ],
-    "explanation": "`IS NULL` is true only for the NULL marker. Zero and empty text are values, not NULL.",
+    "explanation": "`COALESCE(optional_value, 0)` substitutes 0 for NULL, so the comparison becomes `0 = 0`.",
     "wrongAnswerExplanations": {
-      "False": "This confuses NULL with a stored value or uses the wrong truth result."
+      "False": "`COALESCE` replaces the NULL marker before the equality comparison is evaluated."
     },
     "relatedConcept": "NULL semantics",
     "reviewFile": "notes/01_core_database_concepts.md"
@@ -402,17 +402,17 @@
     "topic": "Database Concepts",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "A row has `optional_value = ''`. The predicate `optional_value IS NULL` evaluates TRUE for this row.",
+    "question": "A row has `optional_value = ''`. The predicate `optional_value IS NOT NULL` evaluates TRUE for this row.",
     "choices": [
       "True",
       "False"
     ],
     "correctAnswers": [
-      "False"
+      "True"
     ],
-    "explanation": "`IS NULL` is true only for the NULL marker. Zero and empty text are values, not NULL.",
+    "explanation": "An empty string is still a stored value, so `IS NOT NULL` evaluates TRUE.",
     "wrongAnswerExplanations": {
-      "True": "This confuses NULL with a stored value or uses the wrong truth result."
+      "False": "An empty string and the NULL marker are different values in standard SQL."
     },
     "relatedConcept": "NULL semantics",
     "reviewFile": "notes/01_core_database_concepts.md"
@@ -423,17 +423,17 @@
     "topic": "Database Concepts",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A row has `optional_value = NULL`. The predicate `optional_value IS NULL` evaluates TRUE for this row.",
+    "question": "A row has `optional_value = NULL`. The predicate `optional_value IS NOT NULL` evaluates TRUE for this row.",
     "choices": [
       "True",
       "False"
     ],
     "correctAnswers": [
-      "True"
+      "False"
     ],
-    "explanation": "`IS NULL` is true only for the NULL marker. Zero and empty text are values, not NULL.",
+    "explanation": "`IS NOT NULL` is false when the expression contains the NULL marker.",
     "wrongAnswerExplanations": {
-      "False": "This confuses NULL with a stored value or uses the wrong truth result."
+      "True": "`IS NOT NULL` succeeds only for stored non-NULL values."
     },
     "relatedConcept": "NULL semantics",
     "reviewFile": "notes/01_core_database_concepts.md"
@@ -515,7 +515,7 @@
     "topic": "Database Concepts",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "One companie may have many applications, and each application belongs to one companie. Where should `company_id` normally be stored?",
+    "question": "One company may have many applications, and each application belongs to one company. Where should `company_id` normally be stored?",
     "choices": [
       "In `companies` only",
       "In `applications` as a foreign key",
@@ -640,7 +640,7 @@
     "topic": "Database Concepts",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "One categorie may have many products, and each product belongs to one categorie. Where should `category_id` normally be stored?",
+    "question": "One category may have many products, and each product belongs to one category. Where should `category_id` normally be stored?",
     "choices": [
       "In `categories` only",
       "In `products` as a foreign key",
@@ -665,7 +665,7 @@
     "topic": "Database Concepts",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "One branche may have many employees, and each employee belongs to one branche. Where should `branch_id` normally be stored?",
+    "question": "One branch may have many employees, and each employee belongs to one branch. Where should `branch_id` normally be stored?",
     "choices": [
       "In `branches` only",
       "In `employees` as a foreign key",
@@ -765,7 +765,7 @@
     "topic": "ERD & Design",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A author can relate to many books, and a book can relate to many authors. Which design best represents this requirement?",
+    "question": "An author can relate to many books, and a book can relate to many authors. Which design best represents this requirement?",
     "choices": [
       "Add a comma-separated `books_list` column to `authors`.",
       "Create `author_books` with foreign keys to both parent tables and enforce unique pairs.",
@@ -790,7 +790,7 @@
     "topic": "ERD & Design",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A employee can relate to many projects, and a project can relate to many employees. Which design best represents this requirement?",
+    "question": "An employee can relate to many projects, and a project can relate to many employees. Which design best represents this requirement?",
     "choices": [
       "Add a comma-separated `projects_list` column to `employees`.",
       "Create `employee_projects` with foreign keys to both parent tables and enforce unique pairs.",
@@ -815,7 +815,7 @@
     "topic": "ERD & Design",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "A product can relate to many orders, and a order can relate to many products. Which design best represents this requirement?",
+    "question": "A product can relate to many orders, and an order can relate to many products. Which design best represents this requirement?",
     "choices": [
       "Add a comma-separated `orders_list` column to `products`.",
       "Create `order_items` with foreign keys to both parent tables and enforce unique pairs.",
@@ -840,7 +840,7 @@
     "topic": "ERD & Design",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A speaker can relate to many events, and a event can relate to many speakers. Which design best represents this requirement?",
+    "question": "A speaker can relate to many events, and an event can relate to many speakers. Which design best represents this requirement?",
     "choices": [
       "Add a comma-separated `events_list` column to `speakers`.",
       "Create `event_speakers` with foreign keys to both parent tables and enforce unique pairs.",
@@ -915,7 +915,7 @@
     "topic": "ERD & Design",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A actor can relate to many films, and a film can relate to many actors. Which design best represents this requirement?",
+    "question": "An actor can relate to many films, and a film can relate to many actors. Which design best represents this requirement?",
     "choices": [
       "Add a comma-separated `films_list` column to `actors`.",
       "Create `cast_members` with foreign keys to both parent tables and enforce unique pairs.",
@@ -1515,7 +1515,7 @@
     "topic": "Normalization",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A `order` table stores `item1, item2, item3`. What is the first normalization concern and best repair?",
+    "question": "An `order` table stores `item1, item2, item3`. What is the first normalization concern and best repair?",
     "choices": [
       "1NF/repeating values; create `order_items` with one related value per row.",
       "2NF; add another calculated column.",
@@ -1540,7 +1540,7 @@
     "topic": "Normalization",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A `employee` table stores `skill1, skill2, skill3`. What is the first normalization concern and best repair?",
+    "question": "An `employee` table stores `skill1, skill2, skill3`. What is the first normalization concern and best repair?",
     "choices": [
       "1NF/repeating values; create `employee_skills` with one related value per row.",
       "2NF; add another calculated column.",
@@ -1565,7 +1565,7 @@
     "topic": "Normalization",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "A `event` table stores `speaker1, speaker2, speaker3`. What is the first normalization concern and best repair?",
+    "question": "An `event` table stores `speaker1, speaker2, speaker3`. What is the first normalization concern and best repair?",
     "choices": [
       "1NF/repeating values; create `event_speakers` with one related value per row.",
       "2NF; add another calculated column.",
@@ -1725,11 +1725,11 @@
     "correctAnswers": [
       "2NF partial dependency"
     ],
-    "explanation": "`student_name` depends on `student_id`, so the stated 2nf partial dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`student_name` depends on `student_id`, so the stated 2NF partial dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 2nf partial dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2nf partial dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 2nf partial dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 2NF partial dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2NF partial dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 2NF partial dependency."
     },
     "relatedConcept": "2NF partial dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1750,11 +1750,11 @@
     "correctAnswers": [
       "2NF partial dependency"
     ],
-    "explanation": "`product_name` depends on `product_id`, so the stated 2nf partial dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`product_name` depends on `product_id`, so the stated 2NF partial dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 2nf partial dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2nf partial dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 2nf partial dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 2NF partial dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2NF partial dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 2NF partial dependency."
     },
     "relatedConcept": "2NF partial dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1775,11 +1775,11 @@
     "correctAnswers": [
       "3NF transitive dependency"
     ],
-    "explanation": "`department_name` depends on `department_id`, so the stated 3nf transitive dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`department_name` depends on `department_id`, so the stated 3NF transitive dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 3nf transitive dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3nf transitive dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 3nf transitive dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 3NF transitive dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3NF transitive dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 3NF transitive dependency."
     },
     "relatedConcept": "3NF transitive dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1800,11 +1800,11 @@
     "correctAnswers": [
       "3NF transitive dependency"
     ],
-    "explanation": "`publisher_city` depends on `publisher_id`, so the stated 3nf transitive dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`publisher_city` depends on `publisher_id`, so the stated 3NF transitive dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 3nf transitive dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3nf transitive dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 3nf transitive dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 3NF transitive dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3NF transitive dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 3NF transitive dependency."
     },
     "relatedConcept": "3NF transitive dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1825,11 +1825,11 @@
     "correctAnswers": [
       "2NF partial dependency"
     ],
-    "explanation": "`doctor_specialty` depends on `doctor_id`, so the stated 2nf partial dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`doctor_specialty` depends on `doctor_id`, so the stated 2NF partial dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 2nf partial dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2nf partial dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 2nf partial dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 2NF partial dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2NF partial dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 2NF partial dependency."
     },
     "relatedConcept": "2NF partial dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1850,11 +1850,11 @@
     "correctAnswers": [
       "2NF partial dependency"
     ],
-    "explanation": "`invoice_date` depends on `invoice_id`, so the stated 2nf partial dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`invoice_date` depends on `invoice_id`, so the stated 2NF partial dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 2nf partial dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2nf partial dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 2nf partial dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 2NF partial dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2NF partial dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 2NF partial dependency."
     },
     "relatedConcept": "2NF partial dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1875,11 +1875,11 @@
     "correctAnswers": [
       "3NF transitive dependency"
     ],
-    "explanation": "`department_office` depends on `department_id`, so the stated 3nf transitive dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`department_office` depends on `department_id`, so the stated 3NF transitive dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 3nf transitive dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3nf transitive dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 3nf transitive dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 3NF transitive dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3NF transitive dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 3NF transitive dependency."
     },
     "relatedConcept": "3NF transitive dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1900,11 +1900,11 @@
     "correctAnswers": [
       "3NF transitive dependency"
     ],
-    "explanation": "`category_description` depends on `category_id`, so the stated 3nf transitive dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`category_description` depends on `category_id`, so the stated 3NF transitive dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 3nf transitive dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3nf transitive dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 3nf transitive dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 3NF transitive dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3NF transitive dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 3NF transitive dependency."
     },
     "relatedConcept": "3NF transitive dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1925,11 +1925,11 @@
     "correctAnswers": [
       "2NF partial dependency"
     ],
-    "explanation": "`shipment_date` depends on `shipment_id`, so the stated 2nf partial dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`shipment_date` depends on `shipment_id`, so the stated 2NF partial dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 2nf partial dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2nf partial dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 2nf partial dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 2NF partial dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 2NF partial dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 2NF partial dependency."
     },
     "relatedConcept": "2NF partial dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -1950,11 +1950,11 @@
     "correctAnswers": [
       "3NF transitive dependency"
     ],
-    "explanation": "`branch_phone` depends on `branch_id`, so the stated 3nf transitive dependency should be removed by storing the fact with its determinant.",
+    "explanation": "`branch_phone` depends on `branch_id`, so the stated 3NF transitive dependency should be removed by storing the fact with its determinant.",
     "wrongAnswerExplanations": {
-      "1NF atomicity violation only": "This does not satisfy the rule for 3nf transitive dependency.",
-      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3nf transitive dependency.",
-      "Denormalization is mandatory": "This does not satisfy the rule for 3nf transitive dependency."
+      "1NF atomicity violation only": "This does not satisfy the rule for 3NF transitive dependency.",
+      "BCNF is satisfied because every table has a key": "This does not satisfy the rule for 3NF transitive dependency.",
+      "Denormalization is mandatory": "This does not satisfy the rule for 3NF transitive dependency."
     },
     "relatedConcept": "3NF transitive dependency",
     "reviewFile": "notes/03_normalization.md"
@@ -2675,7 +2675,7 @@
     "topic": "SQL",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "In SQLite, which query reliably returns the 1 `students` rows with the largest `student_id` values?",
+    "question": "In SQLite, which query reliably returns the single `students` row with the largest `student_id` value?",
     "choices": [
       "SELECT * FROM students LIMIT 1 ORDER BY student_id DESC;",
       "SELECT * FROM students ORDER BY student_id DESC LIMIT 1;",
@@ -2800,7 +2800,7 @@
     "topic": "SQL",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "In SQLite, which query reliably returns the 1 `alumni` rows with the largest `alumni_id` values?",
+    "question": "In SQLite, which query reliably returns the single `alumni` row with the largest `alumni_id` value?",
     "choices": [
       "SELECT * FROM alumni LIMIT 1 ORDER BY alumni_id DESC;",
       "SELECT * FROM alumni ORDER BY alumni_id DESC LIMIT 1;",
@@ -3225,7 +3225,7 @@
     "topic": "Joins",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Table A has 1 rows and table B has 9 rows. How many rows does `A CROSS JOIN B` return?",
+    "question": "Table A has 1 row and table B has 9 rows. How many rows does `A CROSS JOIN B` return?",
     "choices": [
       "9",
       "10",
@@ -3475,107 +3475,7 @@
     "topic": "Joins",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "The query uses `companies p LEFT JOIN applications c ON c.company_id=p.company_id` but then adds `WHERE c.status='paid'`. Required `companies` rows with no child disappear. Best repair?",
-    "choices": [
-      "Move `c.status='paid'` into the ON clause.",
-      "Replace LEFT JOIN with CROSS JOIN.",
-      "Add DISTINCT and keep the WHERE clause.",
-      "Remove the key comparison from ON."
-    ],
-    "correctAnswers": [
-      "Move `c.status='paid'` into the ON clause."
-    ],
-    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
-    "wrongAnswerExplanations": {
-      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
-      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
-      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
-    },
-    "relatedConcept": "outer join filtering",
-    "reviewFile": "notes/05_joins.md"
-  },
-  {
-    "id": "joins-024",
-    "legacyId": "Q0144",
-    "topic": "Joins",
-    "difficulty": "hard",
-    "type": "single-choice",
-    "question": "The query uses `courses p LEFT JOIN enrollments c ON c.course_id=p.course_id` but then adds `WHERE c.status='open'`. Required `courses` rows with no child disappear. Best repair?",
-    "choices": [
-      "Move `c.status='open'` into the ON clause.",
-      "Replace LEFT JOIN with CROSS JOIN.",
-      "Add DISTINCT and keep the WHERE clause.",
-      "Remove the key comparison from ON."
-    ],
-    "correctAnswers": [
-      "Move `c.status='open'` into the ON clause."
-    ],
-    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
-    "wrongAnswerExplanations": {
-      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
-      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
-      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
-    },
-    "relatedConcept": "outer join filtering",
-    "reviewFile": "notes/05_joins.md"
-  },
-  {
-    "id": "joins-025",
-    "legacyId": "Q0145",
-    "topic": "Joins",
-    "difficulty": "easy",
-    "type": "single-choice",
-    "question": "The query uses `projects p LEFT JOIN tasks c ON c.project_id=p.project_id` but then adds `WHERE c.status='current'`. Required `projects` rows with no child disappear. Best repair?",
-    "choices": [
-      "Move `c.status='current'` into the ON clause.",
-      "Replace LEFT JOIN with CROSS JOIN.",
-      "Add DISTINCT and keep the WHERE clause.",
-      "Remove the key comparison from ON."
-    ],
-    "correctAnswers": [
-      "Move `c.status='current'` into the ON clause."
-    ],
-    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
-    "wrongAnswerExplanations": {
-      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
-      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
-      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
-    },
-    "relatedConcept": "outer join filtering",
-    "reviewFile": "notes/05_joins.md"
-  },
-  {
-    "id": "joins-026",
-    "legacyId": "Q0146",
-    "topic": "Joins",
-    "difficulty": "hard",
-    "type": "single-choice",
-    "question": "The query uses `authors p LEFT JOIN books c ON c.author_id=p.author_id` but then adds `WHERE c.status='active'`. Required `authors` rows with no child disappear. Best repair?",
-    "choices": [
-      "Move `c.status='active'` into the ON clause.",
-      "Replace LEFT JOIN with CROSS JOIN.",
-      "Add DISTINCT and keep the WHERE clause.",
-      "Remove the key comparison from ON."
-    ],
-    "correctAnswers": [
-      "Move `c.status='active'` into the ON clause."
-    ],
-    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
-    "wrongAnswerExplanations": {
-      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
-      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
-      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
-    },
-    "relatedConcept": "outer join filtering",
-    "reviewFile": "notes/05_joins.md"
-  },
-  {
-    "id": "joins-027",
-    "legacyId": "Q0147",
-    "topic": "Joins",
-    "difficulty": "medium",
-    "type": "single-choice",
-    "question": "The query uses `teams p LEFT JOIN players c ON c.team_id=p.team_id` but then adds `WHERE c.status='pending'`. Required `teams` rows with no child disappear. Best repair?",
+    "question": "The query uses `companies p LEFT JOIN applications c ON c.company_id=p.company_id` but then adds `WHERE c.status='pending'`. Required `companies` rows with no child disappear. Best repair?",
     "choices": [
       "Move `c.status='pending'` into the ON clause.",
       "Replace LEFT JOIN with CROSS JOIN.",
@@ -3595,20 +3495,20 @@
     "reviewFile": "notes/05_joins.md"
   },
   {
-    "id": "joins-028",
-    "legacyId": "Q0148",
+    "id": "joins-024",
+    "legacyId": "Q0144",
     "topic": "Joins",
-    "difficulty": "final boss",
+    "difficulty": "hard",
     "type": "single-choice",
-    "question": "The query uses `categories p LEFT JOIN products c ON c.category_id=p.category_id` but then adds `WHERE c.status='paid'`. Required `categories` rows with no child disappear. Best repair?",
+    "question": "The query uses `courses p LEFT JOIN enrollments c ON c.course_id=p.course_id` but then adds `WHERE c.status='active'`. Required `courses` rows with no child disappear. Best repair?",
     "choices": [
-      "Move `c.status='paid'` into the ON clause.",
+      "Move `c.status='active'` into the ON clause.",
       "Replace LEFT JOIN with CROSS JOIN.",
       "Add DISTINCT and keep the WHERE clause.",
       "Remove the key comparison from ON."
     ],
     "correctAnswers": [
-      "Move `c.status='paid'` into the ON clause."
+      "Move `c.status='active'` into the ON clause."
     ],
     "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
     "wrongAnswerExplanations": {
@@ -3620,12 +3520,12 @@
     "reviewFile": "notes/05_joins.md"
   },
   {
-    "id": "joins-029",
-    "legacyId": "Q0149",
+    "id": "joins-025",
+    "legacyId": "Q0145",
     "topic": "Joins",
-    "difficulty": "hard",
+    "difficulty": "easy",
     "type": "single-choice",
-    "question": "The query uses `branches p LEFT JOIN employees c ON c.branch_id=p.branch_id` but then adds `WHERE c.status='open'`. Required `branches` rows with no child disappear. Best repair?",
+    "question": "The query uses `projects p LEFT JOIN tasks c ON c.project_id=p.project_id` but then adds `WHERE c.status='open'`. Required `projects` rows with no child disappear. Best repair?",
     "choices": [
       "Move `c.status='open'` into the ON clause.",
       "Replace LEFT JOIN with CROSS JOIN.",
@@ -3645,20 +3545,120 @@
     "reviewFile": "notes/05_joins.md"
   },
   {
-    "id": "joins-030",
-    "legacyId": "Q0150",
+    "id": "joins-026",
+    "legacyId": "Q0146",
     "topic": "Joins",
-    "difficulty": "final boss",
+    "difficulty": "hard",
     "type": "single-choice",
-    "question": "The query uses `events p LEFT JOIN registrations c ON c.event_id=p.event_id` but then adds `WHERE c.status='current'`. Required `events` rows with no child disappear. Best repair?",
+    "question": "The query uses `authors p LEFT JOIN books c ON c.author_id=p.author_id` but then adds `WHERE c.status='published'`. Required `authors` rows with no child disappear. Best repair?",
     "choices": [
-      "Move `c.status='current'` into the ON clause.",
+      "Move `c.status='published'` into the ON clause.",
       "Replace LEFT JOIN with CROSS JOIN.",
       "Add DISTINCT and keep the WHERE clause.",
       "Remove the key comparison from ON."
     ],
     "correctAnswers": [
-      "Move `c.status='current'` into the ON clause."
+      "Move `c.status='published'` into the ON clause."
+    ],
+    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
+    "wrongAnswerExplanations": {
+      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
+      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
+      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
+    },
+    "relatedConcept": "outer join filtering",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "joins-027",
+    "legacyId": "Q0147",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "The query uses `teams p LEFT JOIN players c ON c.team_id=p.team_id` but then adds `WHERE c.status='active'`. Required `teams` rows with no child disappear. Best repair?",
+    "choices": [
+      "Move `c.status='active'` into the ON clause.",
+      "Replace LEFT JOIN with CROSS JOIN.",
+      "Add DISTINCT and keep the WHERE clause.",
+      "Remove the key comparison from ON."
+    ],
+    "correctAnswers": [
+      "Move `c.status='active'` into the ON clause."
+    ],
+    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
+    "wrongAnswerExplanations": {
+      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
+      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
+      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
+    },
+    "relatedConcept": "outer join filtering",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "joins-028",
+    "legacyId": "Q0148",
+    "topic": "Joins",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "The query uses `categories p LEFT JOIN products c ON c.category_id=p.category_id` but then adds `WHERE c.status='active'`. Required `categories` rows with no child disappear. Best repair?",
+    "choices": [
+      "Move `c.status='active'` into the ON clause.",
+      "Replace LEFT JOIN with CROSS JOIN.",
+      "Add DISTINCT and keep the WHERE clause.",
+      "Remove the key comparison from ON."
+    ],
+    "correctAnswers": [
+      "Move `c.status='active'` into the ON clause."
+    ],
+    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
+    "wrongAnswerExplanations": {
+      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
+      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
+      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
+    },
+    "relatedConcept": "outer join filtering",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "joins-029",
+    "legacyId": "Q0149",
+    "topic": "Joins",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "The query uses `branches p LEFT JOIN employees c ON c.branch_id=p.branch_id` but then adds `WHERE c.status='active'`. Required `branches` rows with no child disappear. Best repair?",
+    "choices": [
+      "Move `c.status='active'` into the ON clause.",
+      "Replace LEFT JOIN with CROSS JOIN.",
+      "Add DISTINCT and keep the WHERE clause.",
+      "Remove the key comparison from ON."
+    ],
+    "correctAnswers": [
+      "Move `c.status='active'` into the ON clause."
+    ],
+    "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
+    "wrongAnswerExplanations": {
+      "Replace LEFT JOIN with CROSS JOIN.": "This does not satisfy the rule for outer join filtering.",
+      "Add DISTINCT and keep the WHERE clause.": "This does not satisfy the rule for outer join filtering.",
+      "Remove the key comparison from ON.": "This does not satisfy the rule for outer join filtering."
+    },
+    "relatedConcept": "outer join filtering",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "joins-030",
+    "legacyId": "Q0150",
+    "topic": "Joins",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "The query uses `events p LEFT JOIN registrations c ON c.event_id=p.event_id` but then adds `WHERE c.status='confirmed'`. Required `events` rows with no child disappear. Best repair?",
+    "choices": [
+      "Move `c.status='confirmed'` into the ON clause.",
+      "Replace LEFT JOIN with CROSS JOIN.",
+      "Add DISTINCT and keep the WHERE clause.",
+      "Remove the key comparison from ON."
+    ],
+    "correctAnswers": [
+      "Move `c.status='confirmed'` into the ON clause."
     ],
     "explanation": "A WHERE predicate on the nullable right side rejects NULL-extended rows. Put match qualification in ON to preserve unmatched left rows.",
     "wrongAnswerExplanations": {
@@ -3675,7 +3675,7 @@
     "topic": "Aggregation",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "A group contains `[10, None, 20]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[10, NULL, 20]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "3 and 2",
       "2 and 3",
@@ -3700,7 +3700,7 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A group contains `[None, None, 5]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[NULL, NULL, 5]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "3 and 1",
       "1 and 3",
@@ -3710,7 +3710,7 @@
     "correctAnswers": [
       "3 and 1"
     ],
-    "explanation": "`COUNT(*)` counts all 3 rows; `COUNT(amount)` counts the 1 non-NULL values.",
+    "explanation": "`COUNT(*)` counts all 3 rows; `COUNT(amount)` counts the one non-NULL value.",
     "wrongAnswerExplanations": {
       "1 and 3": "This does not satisfy the rule for aggregate functions and null.",
       "3 and 3": "This does not satisfy the rule for aggregate functions and null.",
@@ -3725,7 +3725,7 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A group contains `[1, 2, 3, None]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[1, 2, 3, NULL]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "4 and 3",
       "3 and 4",
@@ -3750,7 +3750,7 @@
     "topic": "Aggregation",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A group contains `[7, 7, None]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[7, 7, NULL]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "3 and 2",
       "2 and 3",
@@ -3775,7 +3775,7 @@
     "topic": "Aggregation",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "A group contains `[0, None, 0]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[0, NULL, 0]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "3 and 2",
       "2 and 3",
@@ -3803,8 +3803,8 @@
     "question": "A group contains `[100, 50, 25]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "3 and 3",
-      "3 and 3",
-      "3 and 3",
+      "3 and 2",
+      "2 and 3",
       "Both return NULL because the group contains NULL."
     ],
     "correctAnswers": [
@@ -3812,8 +3812,9 @@
     ],
     "explanation": "`COUNT(*)` counts all 3 rows; `COUNT(amount)` counts the 3 non-NULL values.",
     "wrongAnswerExplanations": {
-      "3 and 3": "This does not satisfy the rule for aggregate functions and null.",
-      "Both return NULL because the group contains NULL.": "This does not satisfy the rule for aggregate functions and null."
+      "3 and 2": "There are no NULL values, so `COUNT(amount)` also counts all three rows.",
+      "2 and 3": "`COUNT(*)` cannot be smaller than `COUNT(amount)` for the same group.",
+      "Both return NULL because the group contains NULL.": "COUNT returns a number, and this group does not contain NULL."
     },
     "relatedConcept": "aggregate functions and NULL",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -3824,7 +3825,7 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A group contains `[None, 8]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[NULL, 8]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "2 and 1",
       "1 and 2",
@@ -3834,7 +3835,7 @@
     "correctAnswers": [
       "2 and 1"
     ],
-    "explanation": "`COUNT(*)` counts all 2 rows; `COUNT(amount)` counts the 1 non-NULL values.",
+    "explanation": "`COUNT(*)` counts all 2 rows; `COUNT(amount)` counts the one non-NULL value.",
     "wrongAnswerExplanations": {
       "1 and 2": "This does not satisfy the rule for aggregate functions and null.",
       "2 and 2": "This does not satisfy the rule for aggregate functions and null.",
@@ -3849,7 +3850,7 @@
     "topic": "Aggregation",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "A group contains `[4, None, 6, None]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[4, NULL, 6, NULL]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "4 and 2",
       "2 and 4",
@@ -3877,17 +3878,18 @@
     "question": "A group contains `[9]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "1 and 1",
-      "1 and 1",
-      "1 and 1",
+      "1 and 0",
+      "0 and 1",
       "Both return NULL because the group contains NULL."
     ],
     "correctAnswers": [
       "1 and 1"
     ],
-    "explanation": "`COUNT(*)` counts all 1 rows; `COUNT(amount)` counts the 1 non-NULL values.",
+    "explanation": "`COUNT(*)` counts the only row; `COUNT(amount)` counts the one non-NULL value.",
     "wrongAnswerExplanations": {
-      "1 and 1": "This does not satisfy the rule for aggregate functions and null.",
-      "Both return NULL because the group contains NULL.": "This does not satisfy the rule for aggregate functions and null."
+      "1 and 0": "The amount is 9 rather than NULL, so `COUNT(amount)` returns 1.",
+      "0 and 1": "`COUNT(*)` counts the row and therefore cannot return 0.",
+      "Both return NULL because the group contains NULL.": "COUNT returns a number, and this group does not contain NULL."
     },
     "relatedConcept": "aggregate functions and NULL",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -3898,7 +3900,7 @@
     "topic": "Aggregation",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "A group contains `[3, 3, 3, None]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
+    "question": "A group contains `[3, 3, 3, NULL]` in column `amount`. What are `COUNT(*)` and `COUNT(amount)`?",
     "choices": [
       "4 and 3",
       "3 and 4",
@@ -3923,21 +3925,21 @@
     "topic": "Aggregation",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Which clause filters grouped `departments` results to only groups with at least 2 matching `students` rows?",
+    "question": "After `departments AS p LEFT JOIN students AS c`, which clause keeps only parent groups with at least 2 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 2",
-      "HAVING COUNT(*) >= 2",
-      "ORDER BY COUNT(*) >= 2",
-      "GROUP BY COUNT(*) >= 2"
+      "WHERE COUNT(c.student_id) >= 2",
+      "HAVING COUNT(c.student_id) >= 2",
+      "ORDER BY COUNT(c.student_id) >= 2",
+      "GROUP BY COUNT(c.student_id) >= 2"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 2"
+      "HAVING COUNT(c.student_id) >= 2"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.student_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 2": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 2": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 2": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.student_id) >= 2": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.student_id) >= 2": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.student_id) >= 2": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -3948,21 +3950,21 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Which clause filters grouped `customers` results to only groups with at least 3 matching `orders` rows?",
+    "question": "After `customers AS p LEFT JOIN orders AS c`, which clause keeps only parent groups with at least 3 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 3",
-      "HAVING COUNT(*) >= 3",
-      "ORDER BY COUNT(*) >= 3",
-      "GROUP BY COUNT(*) >= 3"
+      "WHERE COUNT(c.order_id) >= 3",
+      "HAVING COUNT(c.order_id) >= 3",
+      "ORDER BY COUNT(c.order_id) >= 3",
+      "GROUP BY COUNT(c.order_id) >= 3"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 3"
+      "HAVING COUNT(c.order_id) >= 3"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.order_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 3": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 3": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 3": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.order_id) >= 3": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.order_id) >= 3": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.order_id) >= 3": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -3973,21 +3975,21 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Which clause filters grouped `companies` results to only groups with at least 4 matching `applications` rows?",
+    "question": "After `companies AS p LEFT JOIN applications AS c`, which clause keeps only parent groups with at least 4 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 4",
-      "HAVING COUNT(*) >= 4",
-      "ORDER BY COUNT(*) >= 4",
-      "GROUP BY COUNT(*) >= 4"
+      "WHERE COUNT(c.application_id) >= 4",
+      "HAVING COUNT(c.application_id) >= 4",
+      "ORDER BY COUNT(c.application_id) >= 4",
+      "GROUP BY COUNT(c.application_id) >= 4"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 4"
+      "HAVING COUNT(c.application_id) >= 4"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.application_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 4": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 4": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 4": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.application_id) >= 4": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.application_id) >= 4": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.application_id) >= 4": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -3998,21 +4000,21 @@
     "topic": "Aggregation",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Which clause filters grouped `courses` results to only groups with at least 5 matching `enrollments` rows?",
+    "question": "After `courses AS p LEFT JOIN enrollments AS c`, which clause keeps only parent groups with at least 5 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 5",
-      "HAVING COUNT(*) >= 5",
-      "ORDER BY COUNT(*) >= 5",
-      "GROUP BY COUNT(*) >= 5"
+      "WHERE COUNT(c.enrollment_id) >= 5",
+      "HAVING COUNT(c.enrollment_id) >= 5",
+      "ORDER BY COUNT(c.enrollment_id) >= 5",
+      "GROUP BY COUNT(c.enrollment_id) >= 5"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 5"
+      "HAVING COUNT(c.enrollment_id) >= 5"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.enrollment_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 5": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 5": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 5": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.enrollment_id) >= 5": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.enrollment_id) >= 5": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.enrollment_id) >= 5": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -4023,21 +4025,21 @@
     "topic": "Aggregation",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Which clause filters grouped `projects` results to only groups with at least 2 matching `tasks` rows?",
+    "question": "After `projects AS p LEFT JOIN tasks AS c`, which clause keeps only parent groups with at least 2 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 2",
-      "HAVING COUNT(*) >= 2",
-      "ORDER BY COUNT(*) >= 2",
-      "GROUP BY COUNT(*) >= 2"
+      "WHERE COUNT(c.task_id) >= 2",
+      "HAVING COUNT(c.task_id) >= 2",
+      "ORDER BY COUNT(c.task_id) >= 2",
+      "GROUP BY COUNT(c.task_id) >= 2"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 2"
+      "HAVING COUNT(c.task_id) >= 2"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.task_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 2": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 2": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 2": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.task_id) >= 2": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.task_id) >= 2": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.task_id) >= 2": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -4048,21 +4050,21 @@
     "topic": "Aggregation",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Which clause filters grouped `authors` results to only groups with at least 3 matching `books` rows?",
+    "question": "After `authors AS p LEFT JOIN books AS c`, which clause keeps only parent groups with at least 3 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 3",
-      "HAVING COUNT(*) >= 3",
-      "ORDER BY COUNT(*) >= 3",
-      "GROUP BY COUNT(*) >= 3"
+      "WHERE COUNT(c.book_id) >= 3",
+      "HAVING COUNT(c.book_id) >= 3",
+      "ORDER BY COUNT(c.book_id) >= 3",
+      "GROUP BY COUNT(c.book_id) >= 3"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 3"
+      "HAVING COUNT(c.book_id) >= 3"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.book_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 3": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 3": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 3": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.book_id) >= 3": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.book_id) >= 3": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.book_id) >= 3": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -4073,21 +4075,21 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Which clause filters grouped `teams` results to only groups with at least 4 matching `players` rows?",
+    "question": "After `teams AS p LEFT JOIN players AS c`, which clause keeps only parent groups with at least 4 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 4",
-      "HAVING COUNT(*) >= 4",
-      "ORDER BY COUNT(*) >= 4",
-      "GROUP BY COUNT(*) >= 4"
+      "WHERE COUNT(c.player_id) >= 4",
+      "HAVING COUNT(c.player_id) >= 4",
+      "ORDER BY COUNT(c.player_id) >= 4",
+      "GROUP BY COUNT(c.player_id) >= 4"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 4"
+      "HAVING COUNT(c.player_id) >= 4"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.player_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 4": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 4": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 4": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.player_id) >= 4": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.player_id) >= 4": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.player_id) >= 4": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -4098,21 +4100,21 @@
     "topic": "Aggregation",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Which clause filters grouped `categories` results to only groups with at least 5 matching `products` rows?",
+    "question": "After `categories AS p LEFT JOIN products AS c`, which clause keeps only parent groups with at least 5 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 5",
-      "HAVING COUNT(*) >= 5",
-      "ORDER BY COUNT(*) >= 5",
-      "GROUP BY COUNT(*) >= 5"
+      "WHERE COUNT(c.product_id) >= 5",
+      "HAVING COUNT(c.product_id) >= 5",
+      "ORDER BY COUNT(c.product_id) >= 5",
+      "GROUP BY COUNT(c.product_id) >= 5"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 5"
+      "HAVING COUNT(c.product_id) >= 5"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.product_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 5": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 5": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 5": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.product_id) >= 5": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.product_id) >= 5": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.product_id) >= 5": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -4123,21 +4125,21 @@
     "topic": "Aggregation",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Which clause filters grouped `branches` results to only groups with at least 2 matching `employees` rows?",
+    "question": "After `branches AS p LEFT JOIN employees AS c`, which clause keeps only parent groups with at least 2 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 2",
-      "HAVING COUNT(*) >= 2",
-      "ORDER BY COUNT(*) >= 2",
-      "GROUP BY COUNT(*) >= 2"
+      "WHERE COUNT(c.employee_id) >= 2",
+      "HAVING COUNT(c.employee_id) >= 2",
+      "ORDER BY COUNT(c.employee_id) >= 2",
+      "GROUP BY COUNT(c.employee_id) >= 2"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 2"
+      "HAVING COUNT(c.employee_id) >= 2"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.employee_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 2": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 2": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 2": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.employee_id) >= 2": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.employee_id) >= 2": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.employee_id) >= 2": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -4148,21 +4150,21 @@
     "topic": "Aggregation",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Which clause filters grouped `events` results to only groups with at least 3 matching `registrations` rows?",
+    "question": "After `events AS p LEFT JOIN registrations AS c`, which clause keeps only parent groups with at least 3 matching child rows?",
     "choices": [
-      "WHERE COUNT(*) >= 3",
-      "HAVING COUNT(*) >= 3",
-      "ORDER BY COUNT(*) >= 3",
-      "GROUP BY COUNT(*) >= 3"
+      "WHERE COUNT(c.registration_id) >= 3",
+      "HAVING COUNT(c.registration_id) >= 3",
+      "ORDER BY COUNT(c.registration_id) >= 3",
+      "GROUP BY COUNT(c.registration_id) >= 3"
     ],
     "correctAnswers": [
-      "HAVING COUNT(*) >= 3"
+      "HAVING COUNT(c.registration_id) >= 3"
     ],
-    "explanation": "HAVING filters after groups and aggregate values have been formed. WHERE filters source rows before grouping.",
+    "explanation": "HAVING filters after grouping. Counting `c.registration_id` ignores the NULL-extended row produced for a parent with no child match.",
     "wrongAnswerExplanations": {
-      "WHERE COUNT(*) >= 3": "This does not satisfy the rule for having versus where.",
-      "ORDER BY COUNT(*) >= 3": "This does not satisfy the rule for having versus where.",
-      "GROUP BY COUNT(*) >= 3": "This does not satisfy the rule for having versus where."
+      "WHERE COUNT(c.registration_id) >= 3": "WHERE is evaluated before aggregate groups are formed.",
+      "ORDER BY COUNT(c.registration_id) >= 3": "ORDER BY sorts results; it does not filter aggregate groups.",
+      "GROUP BY COUNT(c.registration_id) >= 3": "GROUP BY defines grouping keys; it does not apply an aggregate filter."
     },
     "relatedConcept": "HAVING versus WHERE",
     "reviewFile": "notes/06_grouping_aggregation.md"
@@ -4173,7 +4175,7 @@
     "topic": "Aggregation",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "A query groups `students` rows by `category_id` but also selects `email` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `students` rows by `department_id` but also selects `email` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `email` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4198,7 +4200,7 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A query groups `courses` rows by `category_id` but also selects `course_code` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `courses` rows by `department_id` but also selects `course_code` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `course_code` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4223,7 +4225,7 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A query groups `companies` rows by `category_id` but also selects `company_name` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `companies` rows by `industry_id` but also selects `company_name` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `company_name` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4248,7 +4250,7 @@
     "topic": "Aggregation",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A query groups `payments` rows by `category_id` but also selects `reference_number` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `payments` rows by `student_id` but also selects `reference_number` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `reference_number` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4273,7 +4275,7 @@
     "topic": "Aggregation",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "A query groups `departments` rows by `category_id` but also selects `department_name` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `departments` rows by `campus_id` but also selects `department_name` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `department_name` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4298,7 +4300,7 @@
     "topic": "Aggregation",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A query groups `alumni` rows by `category_id` but also selects `student_id` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `alumni` rows by `graduation_year` but also selects `student_id` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `student_id` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4323,7 +4325,7 @@
     "topic": "Aggregation",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "A query groups `employees` rows by `category_id` but also selects `work_email` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `employees` rows by `department_id` but also selects `work_email` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `work_email` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4373,7 +4375,7 @@
     "topic": "Aggregation",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "A query groups `orders` rows by `category_id` but also selects `order_number` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `orders` rows by `customer_id` but also selects `order_number` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `order_number` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4398,7 +4400,7 @@
     "topic": "Aggregation",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "A query groups `members` rows by `category_id` but also selects `member_email` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
+    "question": "A query groups `members` rows by `branch_id` but also selects `member_email` without aggregating or grouping it. Why is this unsafe or invalid in strict SQL?",
     "choices": [
       "A group can contain several `member_email` values, so no single value is defined.",
       "GROUP BY requires every column in the table to be indexed.",
@@ -4673,21 +4675,21 @@
     "topic": "Advanced Queries",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Find `students` with no matching `enrollments`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `students AS p` and must find rows with no matching `enrollments`. The child `student_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM enrollments i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM enrollments)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM enrollments AS c WHERE c.student_id = p.student_id)",
+      "WHERE p.student_id NOT IN (SELECT student_id FROM enrollments)",
+      "WHERE p.student_id = NULL",
       "UNION ALL SELECT * FROM enrollments"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM enrollments i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM enrollments AS c WHERE c.student_id = p.student_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM enrollments)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM enrollments": "This does not satisfy the rule for not exists and null."
+      "WHERE p.student_id NOT IN (SELECT student_id FROM enrollments)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.student_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM enrollments": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4698,21 +4700,21 @@
     "topic": "Advanced Queries",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Find `customers` with no matching `orders`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `customers AS p` and must find rows with no matching `orders`. The child `customer_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM orders i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM orders)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM orders AS c WHERE c.customer_id = p.customer_id)",
+      "WHERE p.customer_id NOT IN (SELECT customer_id FROM orders)",
+      "WHERE p.customer_id = NULL",
       "UNION ALL SELECT * FROM orders"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM orders i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM orders AS c WHERE c.customer_id = p.customer_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM orders)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM orders": "This does not satisfy the rule for not exists and null."
+      "WHERE p.customer_id NOT IN (SELECT customer_id FROM orders)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.customer_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM orders": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4723,21 +4725,21 @@
     "topic": "Advanced Queries",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Find `companies` with no matching `applications`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `companies AS p` and must find rows with no matching `applications`. The child `company_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM applications i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM applications)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM applications AS c WHERE c.company_id = p.company_id)",
+      "WHERE p.company_id NOT IN (SELECT company_id FROM applications)",
+      "WHERE p.company_id = NULL",
       "UNION ALL SELECT * FROM applications"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM applications i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM applications AS c WHERE c.company_id = p.company_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM applications)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM applications": "This does not satisfy the rule for not exists and null."
+      "WHERE p.company_id NOT IN (SELECT company_id FROM applications)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.company_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM applications": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4748,21 +4750,21 @@
     "topic": "Advanced Queries",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Find `courses` with no matching `registrations`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `courses AS p` and must find rows with no matching `registrations`. The child `course_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM registrations i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM registrations)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM registrations AS c WHERE c.course_id = p.course_id)",
+      "WHERE p.course_id NOT IN (SELECT course_id FROM registrations)",
+      "WHERE p.course_id = NULL",
       "UNION ALL SELECT * FROM registrations"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM registrations i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM registrations AS c WHERE c.course_id = p.course_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM registrations)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM registrations": "This does not satisfy the rule for not exists and null."
+      "WHERE p.course_id NOT IN (SELECT course_id FROM registrations)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.course_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM registrations": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4773,21 +4775,21 @@
     "topic": "Advanced Queries",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Find `projects` with no matching `tasks`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `projects AS p` and must find rows with no matching `tasks`. The child `project_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM tasks i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM tasks)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM tasks AS c WHERE c.project_id = p.project_id)",
+      "WHERE p.project_id NOT IN (SELECT project_id FROM tasks)",
+      "WHERE p.project_id = NULL",
       "UNION ALL SELECT * FROM tasks"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM tasks i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM tasks AS c WHERE c.project_id = p.project_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM tasks)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM tasks": "This does not satisfy the rule for not exists and null."
+      "WHERE p.project_id NOT IN (SELECT project_id FROM tasks)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.project_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM tasks": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4798,21 +4800,21 @@
     "topic": "Advanced Queries",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Find `authors` with no matching `books`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `authors AS p` and must find rows with no matching `books`. The child `author_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM books i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM books)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM books AS c WHERE c.author_id = p.author_id)",
+      "WHERE p.author_id NOT IN (SELECT author_id FROM books)",
+      "WHERE p.author_id = NULL",
       "UNION ALL SELECT * FROM books"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM books i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM books AS c WHERE c.author_id = p.author_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM books)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM books": "This does not satisfy the rule for not exists and null."
+      "WHERE p.author_id NOT IN (SELECT author_id FROM books)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.author_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM books": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4823,21 +4825,21 @@
     "topic": "Advanced Queries",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Find `teams` with no matching `players`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `teams AS p` and must find rows with no matching `players`. The child `team_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM players i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM players)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM players AS c WHERE c.team_id = p.team_id)",
+      "WHERE p.team_id NOT IN (SELECT team_id FROM players)",
+      "WHERE p.team_id = NULL",
       "UNION ALL SELECT * FROM players"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM players i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM players AS c WHERE c.team_id = p.team_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM players)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM players": "This does not satisfy the rule for not exists and null."
+      "WHERE p.team_id NOT IN (SELECT team_id FROM players)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.team_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM players": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4848,21 +4850,21 @@
     "topic": "Advanced Queries",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Find `categories` with no matching `products`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `categories AS p` and must find rows with no matching `products`. The child `category_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM products i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM products)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM products AS c WHERE c.category_id = p.category_id)",
+      "WHERE p.category_id NOT IN (SELECT category_id FROM products)",
+      "WHERE p.category_id = NULL",
       "UNION ALL SELECT * FROM products"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM products i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM products AS c WHERE c.category_id = p.category_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM products)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM products": "This does not satisfy the rule for not exists and null."
+      "WHERE p.category_id NOT IN (SELECT category_id FROM products)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.category_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM products": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4873,21 +4875,21 @@
     "topic": "Advanced Queries",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Find `branches` with no matching `employees`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `branches AS p` and must find rows with no matching `employees`. The child `branch_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM employees i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM employees)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM employees AS c WHERE c.branch_id = p.branch_id)",
+      "WHERE p.branch_id NOT IN (SELECT branch_id FROM employees)",
+      "WHERE p.branch_id = NULL",
       "UNION ALL SELECT * FROM employees"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM employees i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM employees AS c WHERE c.branch_id = p.branch_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM employees)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM employees": "This does not satisfy the rule for not exists and null."
+      "WHERE p.branch_id NOT IN (SELECT branch_id FROM employees)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.branch_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM employees": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4898,21 +4900,21 @@
     "topic": "Advanced Queries",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Find `events` with no matching `tickets`. The inner foreign-key column may contain NULL. Which pattern is most robust?",
+    "question": "A query uses `events AS p` and must find rows with no matching `tickets`. The child `event_id` may contain NULL. Which predicate is most robust?",
     "choices": [
-      "WHERE NOT EXISTS (SELECT 1 FROM tickets i WHERE i.owner_id = o.id)",
-      "WHERE o.id NOT IN (SELECT owner_id FROM tickets)",
-      "WHERE o.id = NULL",
+      "WHERE NOT EXISTS (SELECT 1 FROM tickets AS c WHERE c.event_id = p.event_id)",
+      "WHERE p.event_id NOT IN (SELECT event_id FROM tickets)",
+      "WHERE p.event_id = NULL",
       "UNION ALL SELECT * FROM tickets"
     ],
     "correctAnswers": [
-      "WHERE NOT EXISTS (SELECT 1 FROM tickets i WHERE i.owner_id = o.id)"
+      "WHERE NOT EXISTS (SELECT 1 FROM tickets AS c WHERE c.event_id = p.event_id)"
     ],
-    "explanation": "`NOT EXISTS` tests each outer row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
+    "explanation": "`NOT EXISTS` tests each parent row for an absent match and avoids the UNKNOWN result that NULL can introduce into `NOT IN`.",
     "wrongAnswerExplanations": {
-      "WHERE o.id NOT IN (SELECT owner_id FROM tickets)": "This does not satisfy the rule for not exists and null.",
-      "WHERE o.id = NULL": "This does not satisfy the rule for not exists and null.",
-      "UNION ALL SELECT * FROM tickets": "This does not satisfy the rule for not exists and null."
+      "WHERE p.event_id NOT IN (SELECT event_id FROM tickets)": "A NULL returned by the subquery can make `NOT IN` evaluate UNKNOWN for every parent row.",
+      "WHERE p.event_id = NULL": "Use `IS NULL` for NULL checks; equality with NULL is UNKNOWN.",
+      "UNION ALL SELECT * FROM tickets": "UNION ALL combines result sets and does not test whether a child row exists."
     },
     "relatedConcept": "NOT EXISTS and NULL",
     "reviewFile": "notes/07_subqueries_views.md"
@@ -4923,7 +4925,7 @@
     "topic": "Advanced Queries",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and retain duplicate rows. Which operator fits?",
+    "question": "Current and archived student-email queries must be stacked while retaining repeated addresses. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -4948,7 +4950,7 @@
     "topic": "Advanced Queries",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and remove duplicate result rows. Which operator fits?",
+    "question": "Two regional course-code queries must be stacked with duplicate codes removed. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -4973,7 +4975,7 @@
     "topic": "Advanced Queries",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and retain duplicate rows. Which operator fits?",
+    "question": "Online and walk-in payment queries must be stacked while retaining identical payment rows. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -4998,7 +5000,7 @@
     "topic": "Advanced Queries",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and remove duplicate result rows. Which operator fits?",
+    "question": "Two alumni-contact queries must be stacked with duplicate contacts removed. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -5023,7 +5025,7 @@
     "topic": "Advanced Queries",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and retain duplicate rows. Which operator fits?",
+    "question": "Morning and evening attendance queries must be stacked while retaining repeated entries. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -5048,7 +5050,7 @@
     "topic": "Advanced Queries",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and remove duplicate result rows. Which operator fits?",
+    "question": "Two supplier-name queries must be stacked with duplicate names removed. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -5073,7 +5075,7 @@
     "topic": "Advanced Queries",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and retain duplicate rows. Which operator fits?",
+    "question": "Successful and failed import-log queries must be stacked while retaining repeated messages. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -5098,7 +5100,7 @@
     "topic": "Advanced Queries",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and remove duplicate result rows. Which operator fits?",
+    "question": "Two event-category queries must be stacked with duplicate categories removed. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -5123,7 +5125,7 @@
     "topic": "Advanced Queries",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and retain duplicate rows. Which operator fits?",
+    "question": "Domestic and international order queries must be stacked while retaining repeated order values. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -5148,7 +5150,7 @@
     "topic": "Advanced Queries",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Two compatible SELECT results must be stacked vertically and remove duplicate result rows. Which operator fits?",
+    "question": "Two membership-tag queries must be stacked with duplicate tags removed. Which operator fits?",
     "choices": [
       "UNION",
       "UNION ALL",
@@ -6633,7 +6635,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Which statement about SQLite is accurate in the context of procedures/triggers?",
+    "question": "Which statement accurately describes stored-procedure support in SQLite?",
     "choices": [
       "stored procedures are not supported; use application functions for explicit reusable operations",
       "Every trigger must be called manually by the application.",
@@ -6658,7 +6660,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Which statement about MySQL is accurate in the context of procedures/triggers?",
+    "question": "How is a stored procedure normally invoked in MySQL?",
     "choices": [
       "a procedure can be invoked with CALL",
       "Every trigger must be called manually by the application.",
@@ -6683,7 +6685,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Which statement about SQL Server is accurate in the context of procedures/triggers?",
+    "question": "How is a stored procedure normally invoked in SQL Server?",
     "choices": [
       "a procedure can be invoked with EXEC/EXECUTE",
       "Every trigger must be called manually by the application.",
@@ -6708,7 +6710,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Which statement about SQLite is accurate in the context of procedures/triggers?",
+    "question": "How does a SQLite row trigger refer to values from the affected row?",
     "choices": [
       "row triggers can reference OLD and NEW",
       "Every trigger must be called manually by the application.",
@@ -6733,7 +6735,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Which statement about MySQL is accurate in the context of procedures/triggers?",
+    "question": "How does a MySQL row trigger refer to values from the affected row?",
     "choices": [
       "row triggers can reference OLD and NEW",
       "Every trigger must be called manually by the application.",
@@ -6758,7 +6760,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Which statement about SQL Server is accurate in the context of procedures/triggers?",
+    "question": "How do SQL Server DML triggers receive the affected rows?",
     "choices": [
       "DML triggers should process the inserted/deleted sets",
       "Every trigger must be called manually by the application.",
@@ -6783,7 +6785,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Which statement about SQLite is accurate in the context of procedures/triggers?",
+    "question": "Which statement accurately describes trigger support in SQLite?",
     "choices": [
       "CREATE TRIGGER is supported",
       "Every trigger must be called manually by the application.",
@@ -6808,7 +6810,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Which statement about MySQL is accurate in the context of procedures/triggers?",
+    "question": "Why is `DELIMITER` commonly used while defining MySQL stored programs?",
     "choices": [
       "DELIMITER is a client aid often used while defining multi-statement routines",
       "Every trigger must be called manually by the application.",
@@ -6833,7 +6835,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Which statement about SQL Server is accurate in the context of procedures/triggers?",
+    "question": "Why is `SET NOCOUNT ON` commonly used in a SQL Server procedure?",
     "choices": [
       "SET NOCOUNT ON can suppress row-count messages in a procedure",
       "Every trigger must be called manually by the application.",
@@ -6858,7 +6860,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Which statement about SQLite is accurate in the context of procedures/triggers?",
+    "question": "What is a practical consequence of SQLite not supporting stored procedures?",
     "choices": [
       "views and triggers do not create a full stored-procedure language",
       "Every trigger must be called manually by the application.",
@@ -7133,7 +7135,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to automatically log every change.",
+    "question": "Which database-programming object best records every update to student grades automatically?",
     "choices": [
       "Trigger",
       "Index",
@@ -7158,7 +7160,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to explicitly run a multi-step registration.",
+    "question": "Which database-programming object best runs an explicit multi-step course-registration workflow?",
     "choices": [
       "Stored procedure",
       "Index",
@@ -7183,7 +7185,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to calculate and return one reusable value.",
+    "question": "Which database-programming object best returns a reusable calculated tuition value inside a query?",
     "choices": [
       "Function",
       "Index",
@@ -7208,7 +7210,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to automatically log every change.",
+    "question": "Which database-programming object best records every change to employee salaries automatically?",
     "choices": [
       "Trigger",
       "Index",
@@ -7233,7 +7235,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to explicitly run a multi-step registration.",
+    "question": "Which database-programming object best runs an explicit month-end billing workflow?",
     "choices": [
       "Stored procedure",
       "Index",
@@ -7258,7 +7260,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to calculate and return one reusable value.",
+    "question": "Which database-programming object best returns a reusable tax calculation inside a query?",
     "choices": [
       "Function",
       "Index",
@@ -7283,7 +7285,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "medium",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to automatically log every change.",
+    "question": "Which database-programming object best records every deletion from an orders table automatically?",
     "choices": [
       "Trigger",
       "Index",
@@ -7308,7 +7310,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to explicitly run a multi-step registration.",
+    "question": "Which database-programming object best runs an explicit multi-step account-closing workflow?",
     "choices": [
       "Stored procedure",
       "Index",
@@ -7333,7 +7335,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to calculate and return one reusable value.",
+    "question": "Which database-programming object best returns a reusable age calculation inside a query?",
     "choices": [
       "Function",
       "Index",
@@ -7358,7 +7360,7 @@
     "topic": "Triggers & Procedures",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Choose the best database-programming object to automatically log every change.",
+    "question": "Which database-programming object best records every change to product prices automatically?",
     "choices": [
       "Trigger",
       "Index",
@@ -7508,7 +7510,7 @@
     "topic": "Security & Admin",
     "difficulty": "hard",
     "type": "single-choice",
-    "question": "Under least privilege, what is the best starting permission set for a auditor?",
+    "question": "Under least privilege, what is the best starting permission set for an auditor?",
     "choices": [
       "read-only access to audit records",
       "Full database administrator rights",
@@ -7558,7 +7560,7 @@
     "topic": "Security & Admin",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Under least privilege, what is the best starting permission set for a analytics service?",
+    "question": "Under least privilege, what is the best starting permission set for an analytics service?",
     "choices": [
       "read access to de-identified views",
       "Full database administrator rights",
@@ -7608,7 +7610,7 @@
     "topic": "Security & Admin",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Under least privilege, what is the best starting permission set for a application runtime?",
+    "question": "Under least privilege, what is the best starting permission set for an application runtime?",
     "choices": [
       "only permissions required by normal runtime operations",
       "Full database administrator rights",
@@ -8308,7 +8310,7 @@
     "topic": "Troubleshooting",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "Error: `sub-select returns more than 1 row`. What is the best first diagnosis?",
+    "question": "MySQL error: `Subquery returns more than 1 row`. What is the best first diagnosis?",
     "choices": [
       "A scalar comparison received a multi-row result",
       "Add DISTINCT to every query",
@@ -8318,7 +8320,7 @@
     "correctAnswers": [
       "A scalar comparison received a multi-row result"
     ],
-    "explanation": "The error points directly to this class of problem: A scalar comparison received a multi-row result. Inspect the named object and smallest failing statement.",
+    "explanation": "A scalar comparison or expression expected one value, but its subquery produced multiple rows. Inspect the subquery and the comparison that consumes it.",
     "wrongAnswerExplanations": {
       "Add DISTINCT to every query": "This does not satisfy the rule for sql error diagnosis.",
       "Disable all integrity constraints": "This does not satisfy the rule for sql error diagnosis.",
