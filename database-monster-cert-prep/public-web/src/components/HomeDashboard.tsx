@@ -104,7 +104,15 @@ export function HomeDashboard({
 
           <Card className="guided-path-strip bg-primary text-primary-foreground">
             <CardHeader className="pb-3">
-              <Badge className="w-fit bg-primary-foreground text-primary">Guided path</Badge>
+              <Badge
+                className="w-fit border-none"
+                style={{
+                  backgroundColor: "var(--primary-foreground)",
+                  color: "var(--primary)",
+                }}
+              >
+                Guided path
+              </Badge>
               <CardTitle className="text-2xl tracking-[-0.04em]">Diagnostic to timed exam.</CardTitle>
               <CardDescription className="text-primary-foreground/75">
                 The app should always make the next useful study move obvious.
