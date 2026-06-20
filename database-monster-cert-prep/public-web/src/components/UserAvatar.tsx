@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getAvatarInitials } from "@/lib/leaderboard";
+import { getAvatarInitials } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 
 const avatarPixels = {

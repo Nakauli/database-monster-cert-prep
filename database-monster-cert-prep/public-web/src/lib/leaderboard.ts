@@ -19,12 +19,6 @@ export interface PublicLeaderboardRow {
   weakest_topics: string[];
 }
 
-export function getAvatarInitials(name: string | null | undefined) {
-  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "DB";
-  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
-}
-
 export function formatPercent(value: number | null | undefined) {
   return `${Math.round(Number(value ?? 0))}%`;
 }

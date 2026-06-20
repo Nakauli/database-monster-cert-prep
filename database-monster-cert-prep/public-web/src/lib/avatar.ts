@@ -55,3 +55,9 @@ export function getAvatarPublicUrl(path: string | null | undefined, supabaseUrl?
     return null;
   }
 }
+
+export function getAvatarInitials(name: string | null | undefined) {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "DB";
+  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
+}
