@@ -5,6 +5,7 @@ import { RecentAttempts } from "@/components/dashboard/RecentAttempts";
 import { WeakTopics } from "@/components/dashboard/WeakTopics";
 import { requireUser } from "@/lib/auth";
 import { getDashboardData } from "@/lib/progress";
+import { isFirstRun } from "@/lib/onboarding";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -25,8 +26,24 @@ export default async function DashboardPage() {
         ? { label: "Practice weakest topic", href: `/practice?topic=${encodeURIComponent(weakest.topic)}`, title: `Practice ${weakest.topic} next.`, detail: `${weakest.mastery_score}% mastery is below the 80% checkpoint.` }
         : { label: "Take timed exam", href: "/exam?mode=timed", title: "Move into timed pressure.", detail: "Your repair queue is clear enough to test whether the score holds under the clock." };
 
+  const firstRun = isFirstRun(data.attempts.length);
+
   return (
     <main className="page-shell dashboard-page">
+      {firstRun && (
+        <section className="dashboard-panel progress-next-step" aria-label="New here">
+          <div className="panel-heading">
+            <div><p className="eyebrow">New here?</p><h2>Take the 2-minute tour, then your diagnostic.</h2></div>
+            <Link href="/welcome">See how it works -&gt;</Link>
+          </div>
+          <p className="muted">Database Monster guides you from a baseline diagnostic to repairing weak topics, spaced-repetition mistake review, and timed exams. Start with the walkthrough or jump straight in.</p>
+          <div className="button-row">
+            <Link className="button primary" href="/welcome">Take the tour</Link>
+            <Link className="button secondary" href="/exam?mode=diagnostic">Start diagnostic</Link>
+          </div>
+        </section>
+      )}
+
       <section className="dashboard-hero">
         <div>
           <p className="eyebrow">Progress</p>
