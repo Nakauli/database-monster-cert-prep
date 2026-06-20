@@ -11,6 +11,7 @@ const required = [
 ];
 
 const ids = new Set();
+const supplementalContextFields = ["schema", "sampleData", "code", "outputTable"];
 for (const question of questions) {
   for (const field of required) {
     if (!(field in question) || question[field] === "") {
@@ -25,24 +26,25 @@ for (const question of questions) {
   if (!Array.isArray(question.correctAnswers) || !question.correctAnswers.every((answer) => question.choices.includes(answer))) {
     throw new Error(`${question.id} has an invalid correct answer`);
   }
+  if (supplementalContextFields.some((field) => field in question)) {
+    throw new Error(`${question.id} contains supplemental context that has not been question-specifically verified`);
+  }
 }
 
 const count = (predicate) => questions.filter(predicate).length;
 const metrics = {
   questions: questions.length,
-  sqlOrCode: count((question) => Boolean(question.code)),
-  schema: count((question) => Boolean(question.schema)),
-  scenarios: count((question) => Boolean(question.scenario)),
+  inlineCode: count((question) => /`[^`]+`/.test([question.question, ...question.choices].join(" "))),
+  multipleAnswer: count((question) => question.type === "multiple-answer"),
   triggersAndProcedures: count((question) => question.topic === "Triggers & Procedures"),
   normalization: count((question) => question.topic === "Normalization"),
   security: count((question) => question.topic === "Security & Admin"),
 };
 
 const minimums = {
-  questions: 150,
-  sqlOrCode: 30,
-  schema: 20,
-  scenarios: 15,
+  questions: 360,
+  inlineCode: 200,
+  multipleAnswer: 20,
   triggersAndProcedures: 10,
   normalization: 10,
   security: 10,
