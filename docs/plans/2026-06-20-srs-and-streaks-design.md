@@ -148,7 +148,7 @@ read `node_modules/next/dist/docs/` before writing route/server code.
 ## Appendix — Full roadmap
 
 - **Phase 1 (this doc):** SRS + streaks — shared data foundation.
-- **Phase 2 — Adaptive remediation:** wrong answers auto-enroll into SRS;
+- **Phase 2 — Adaptive remediation (implemented):** wrong answers auto-enroll into SRS;
   results screen builds a micro-drill from weakest topics; each miss deep-links to
   its lesson + matching SQL lab.
 - **Phase 3 — Onboarding & exam realism:** first-run intro → diagnostic →
