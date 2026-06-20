@@ -2,6 +2,7 @@ export const primaryNavigation = [
   { href: "/", label: "Start", activePaths: ["/"] },
   { href: "/learn", label: "Learn", activePaths: ["/learn"] },
   { href: "/practice", label: "Practice", activePaths: ["/practice", "/labs"] },
+  { href: "/suggestions", label: "Suggestions", activePaths: ["/suggestions"] },
   { href: "/dashboard", label: "Progress", activePaths: ["/dashboard", "/mistakes", "/history", "/results"] },
 ];
 
