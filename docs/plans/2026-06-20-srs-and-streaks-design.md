@@ -158,5 +158,6 @@ read `node_modules/next/dist/docs/` before writing route/server code.
 - **Phase 4 — Reminders (implemented; deploy/secrets pending):** opt-in email
   reminders for due SRS cards via profile setting, scheduled pg_cron/pg_net Edge
   Function invocation, and Resend function scaffold.
-- **Phase 5 — Social & rewards:** achievements/badges (incl. streak + mastery
-  milestones) and cohort/weekly challenges on the existing leaderboard.
+- **Phase 5 — Social & rewards (implemented):** computed achievement badges,
+  dashboard next-badge guidance, and a weekly repair sprint on the existing
+  opt-in leaderboard using public-safe aggregate fields only.

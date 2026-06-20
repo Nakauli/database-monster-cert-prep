@@ -422,6 +422,26 @@ code, pre { font-family: var(--font-code), "Cascadia Code", Consolas, monospace;
 .guided-path-step:first-child { border-top: 0; }
 .guided-path-step strong { color: var(--primary-foreground); font-size: 13px; }
 .guided-path-step span { color: color-mix(in srgb, var(--primary-foreground) 72%, transparent); font-size: 12px; line-height: 1.45; }
+.achievement-badges { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.achievement-badges-compact { gap: 5px; margin-top: 6px; }
+.achievement-badge { border: 1px solid var(--line); font-weight: 850; }
+.achievement-badge-green { color: var(--green-dark); background: var(--green-soft); }
+.achievement-badge-amber { color: #6b4b00; background: var(--yellow-soft); }
+.achievement-badge-blue { color: var(--blue); background: var(--blue-soft); }
+.achievement-badge-slate { color: var(--muted); background: var(--surface-subtle); }
+.achievement-empty { color: var(--muted); font-size: 12px; font-weight: 750; }
+.rewards-summary-card { border-color: color-mix(in srgb, var(--green) 24%, var(--line)); }
+.rewards-dashboard-row { margin: 18px 0; align-items: stretch; }
+.weekly-score-inline { display: flex; gap: 10px; align-items: baseline; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.weekly-score-inline strong { font-family: var(--font-code), "Cascadia Code", Consolas, monospace; color: var(--green); font-size: 26px; }
+.weekly-score-inline span { color: var(--muted); font-size: 13px; font-weight: 750; }
+.reward-progress { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.reward-progress div { display: grid; line-height: 1.1; }
+.reward-progress div span { font-family: var(--font-code), "Cascadia Code", Consolas, monospace; font-size: 20px; font-weight: 900; color: var(--green); }
+.reward-progress div small { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.reward-progress i { height: 9px; overflow: hidden; border-radius: 999px; background: var(--green-soft); }
+.reward-progress b { display: block; height: 100%; border-radius: inherit; background: var(--green); }
+.reward-progress strong { font-family: var(--font-code), "Cascadia Code", Consolas, monospace; font-size: 13px; }
 .leaderboard-preview-card { border-color: color-mix(in srgb, var(--green) 25%, var(--line)); background: color-mix(in srgb, var(--surface) 92%, var(--green-soft)); }
 .leaderboard-preview-row, .leaderboard-row { color: var(--text); text-decoration: none; }
 .leaderboard-preview-row {
@@ -445,6 +465,15 @@ code, pre { font-family: var(--font-code), "Cascadia Code", Consolas, monospace;
 .leaderboard-score-pulse { color: var(--green); font-family: var(--font-code), "Cascadia Code", Consolas, monospace; font-weight: 900; animation: leaderboard-pulse 1.8s ease-out both; }
 .leaderboard-intro .button-row { margin-top: 22px; }
 .leaderboard-board { display: grid; gap: 18px; margin-top: 28px; }
+.weekly-challenge-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .75fr); gap: 18px; align-items: center; padding: 20px; border: 1px solid color-mix(in srgb, var(--green) 24%, var(--line)); border-radius: 18px; background: color-mix(in srgb, var(--surface) 90%, var(--green-soft)); box-shadow: var(--shadow); }
+.weekly-challenge-panel h2 { display: flex; gap: 8px; align-items: center; margin: 4px 0 6px; font-family: var(--font-display), "Segoe UI", sans-serif; font-size: 28px; letter-spacing: -.04em; }
+.weekly-challenge-panel p { margin: 0; color: var(--muted); }
+.weekly-challenge-list { display: grid; gap: 8px; }
+.weekly-challenge-list a { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-decoration: none; }
+.weekly-challenge-list a:hover { border-color: var(--green); transform: translateY(-1px); }
+.weekly-challenge-list span { color: var(--muted); font-family: var(--font-code), "Cascadia Code", Consolas, monospace; font-size: 12px; font-weight: 850; }
+.weekly-challenge-list strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.weekly-challenge-list b { color: var(--green); font-family: var(--font-code), "Cascadia Code", Consolas, monospace; }
 .leaderboard-filter { display: flex; flex-wrap: wrap; gap: 9px; }
 .leaderboard-filter-link { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 850; background: var(--surface); }
 .leaderboard-filter-link.is-active, .leaderboard-filter-link:hover { color: white; border-color: var(--green); background: var(--green); }
@@ -486,6 +515,7 @@ code, pre { font-family: var(--font-code), "Cascadia Code", Consolas, monospace;
   .home-hero-grid, .home-action-grid { grid-template-columns: 1fr; }
   .home-hero-copy { max-width: 820px; }
   .progress-card-grid { grid-template-columns: repeat(3, 1fr); }.dashboard-split { grid-template-columns: 1fr; }
+  .weekly-challenge-panel { grid-template-columns: 1fr; }
   .leaderboard-row { grid-template-columns: 42px 42px minmax(0, 1fr); }
   .leaderboard-row-stat { grid-column: span 1; justify-items: start; padding-left: 97px; }
 }
@@ -510,6 +540,9 @@ code, pre { font-family: var(--font-code), "Cascadia Code", Consolas, monospace;
   .leaderboard-row { grid-template-columns: 38px minmax(0, 1fr); }
   .leaderboard-row .leaderboard-avatar { display: none; }
   .leaderboard-row-stat { padding-left: 0; }
+  .achievement-badges-compact { display: none; }
+  .weekly-challenge-panel { padding: 16px; }
+  .weekly-challenge-panel h2 { font-size: 23px; }
   .leaderboard-preview-row { grid-template-columns: auto minmax(0, 1fr) auto; }
   .leaderboard-preview-row .leaderboard-rank { display: none; }
   .guided-path-step { grid-template-columns: 1fr; gap: 2px; }

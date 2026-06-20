@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { AchievementBadges } from "@/components/rewards/AchievementBadges";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,17 @@ export function PublicStudentProfile({ student }: { student: PublicLeaderboardRo
             <div className="mini-stat"><strong>{formatPercent(student.average_mastery)}</strong><span>Avg mastery</span></div>
           </div>
           <p className="text-sm text-muted-foreground">Last active: {formatLastActive(student.last_active_at)}</p>
+          <div>
+            <h2 className="text-sm font-semibold text-ink">Achievements</h2>
+            <div className="mt-2">
+              <AchievementBadges achievements={student.achievement_details} />
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="mini-stat"><strong>{student.current_streak}</strong><span>Current streak</span></div>
+            <div className="mini-stat"><strong>{student.longest_streak}</strong><span>Longest streak</span></div>
+            <div className="mini-stat"><strong>{student.weekly_challenge_score}</strong><span>Weekly sprint</span></div>
+          </div>
           <TopicList title="Strongest topics" topics={student.strongest_topics} />
           <TopicList title="Weakest topics to repair" topics={student.weakest_topics} />
           <Button asChild variant="outline" className="w-fit">

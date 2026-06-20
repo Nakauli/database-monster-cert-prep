@@ -85,6 +85,12 @@ Function only when the required Vault secrets are present. See
 `supabase/functions/README.md` for the required Resend, Edge Function, and Vault
 setup.
 
+The Phase 5 rewards migration extends the public leaderboard RPCs with aggregate
+achievement and weekly challenge fields. These fields are still opt-in and
+public-safe: badges, streak counts, weekly activity counts, and scores. Emails,
+raw answers, individual mistake contents, and non-opted-in students are not
+returned.
+
 ## 5. Configure email authentication
 
 In **Authentication → Providers → Email**:

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { questions } from "@/lib/questions";
+import { getWeeklyChallengeWindow } from "@/lib/rewards";
 import type { ExamResult, TopicStat } from "@/lib/types";
 
 export interface ExamAttemptRow {
@@ -63,8 +64,19 @@ export interface UserStreakRow {
 export async function getDashboardData(userId: string) {
   const supabase = await createClient();
   if (!supabase) throw new Error("Supabase is not configured.");
+  const weekWindow = getWeeklyChallengeWindow();
 
-  const [attemptsResult, topicsResult, mistakesResult, profileResult, dueResult, streakResult] =
+  const [
+    attemptsResult,
+    topicsResult,
+    mistakesResult,
+    profileResult,
+    dueResult,
+    streakResult,
+    finalBossResult,
+    weekAttemptResult,
+    weekQuestionResult,
+  ] =
     await Promise.all([
       supabase
         .from("exam_attempts")
@@ -96,6 +108,21 @@ export async function getDashboardData(userId: string) {
         .select("current_streak, longest_streak, last_active_date, daily_goal")
         .eq("user_id", userId)
         .maybeSingle(),
+      supabase
+        .from("exam_attempts")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("exam_mode", "final_boss"),
+      supabase
+        .from("exam_attempts")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .gte("created_at", weekWindow.startsAt),
+      supabase
+        .from("question_attempts")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .gte("created_at", weekWindow.startsAt),
     ]);
 
   if (attemptsResult.error) throw new Error(attemptsResult.error.message);
@@ -104,6 +131,9 @@ export async function getDashboardData(userId: string) {
   if (profileResult.error) throw new Error(profileResult.error.message);
   if (dueResult.error) throw new Error(dueResult.error.message);
   if (streakResult.error) throw new Error(streakResult.error.message);
+  if (finalBossResult.error) throw new Error(finalBossResult.error.message);
+  if (weekAttemptResult.error) throw new Error(weekAttemptResult.error.message);
+  if (weekQuestionResult.error) throw new Error(weekQuestionResult.error.message);
 
   return {
     attempts: (attemptsResult.data ?? []) as ExamAttemptRow[],
@@ -111,6 +141,9 @@ export async function getDashboardData(userId: string) {
     mistakeCount: mistakesResult.count ?? 0,
     profile: profileResult.data as ProfileRow | null,
     dueCount: dueResult.count ?? 0,
+    finalBossCount: finalBossResult.count ?? 0,
+    weekAttemptCount: weekAttemptResult.count ?? 0,
+    weekQuestionCount: weekQuestionResult.count ?? 0,
     streak: (streakResult.data as UserStreakRow | null) ?? {
       current_streak: 0,
       longest_streak: 0,

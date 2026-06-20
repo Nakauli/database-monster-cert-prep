@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getAvatarInitials } from "./avatar";
 import { COURSE_OPTIONS, normalizeCourse } from "./courses";
-import { formatLastActive } from "./leaderboard";
+import { formatLastActive, normalizeAchievementIds } from "./leaderboard";
 
 test("normalizes allowed course values", () => {
   assert.deepEqual(COURSE_OPTIONS, ["IT", "CS"]);
@@ -20,4 +20,11 @@ test("creates stable avatar initials", () => {
 test("formats last active labels without exposing raw history", () => {
   assert.equal(formatLastActive(null), "No activity yet");
   assert.match(formatLastActive("2026-06-19T00:00:00.000Z"), /2026/);
+});
+
+test("normalizes public achievement ids to known badges only", () => {
+  assert.deepEqual(
+    normalizeAchievementIds(["exam_ready", "unknown_badge", "hot_streak", "exam_ready"]),
+    ["exam_ready", "hot_streak"],
+  );
 });
