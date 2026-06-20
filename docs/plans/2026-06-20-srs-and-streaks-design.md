@@ -64,8 +64,10 @@ Two new `security invoker` RPCs (matching `save_exam_result`):
   `review_card` and by `save_exam_result`.
 
 RLS: same per-user policies as existing tables (`user_id = auth.uid()`), added to
-`002_enable_rls_policies.sql` style. `user_streaks` is also created/seeded by the
-existing profile-creation trigger path (`003_profile_trigger.sql`).
+`002_enable_rls_policies.sql` style. `user_streaks` rows are seeded lazily by
+`touch_streak()` itself (`insert ... on conflict (user_id) do nothing`), and
+`getDashboardData` falls back to a zeroed streak when no row exists yet — so no
+profile-trigger change is required.
 
 ## Section 2 — Algorithm & review UX
 
