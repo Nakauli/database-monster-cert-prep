@@ -1,7 +1,7 @@
 # Spaced Repetition + Streaks — Phase 1 Design
 
 **Date:** 2026-06-20
-**Status:** Approved design, ready for implementation
+**Status:** Implemented (Phase 1)
 **Scope:** `database-monster-cert-prep/public-web` (Next.js + Supabase)
 
 ## Why
