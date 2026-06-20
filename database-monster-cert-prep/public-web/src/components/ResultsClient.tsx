@@ -7,16 +7,24 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { hrefForReviewFile } from "@/lib/learn";
+import { labs } from "@/data/labs";
+import {
+  buildTopicPracticeHref,
+  hrefForQuestionLab,
+  hrefForQuestionLesson,
+  rankWeakTopics,
+  spacedReviewSummary,
+} from "@/lib/remediation";
 import type { ExamResult } from "@/lib/types";
 
 export function ResultsClient({ result }: { result: ExamResult }) {
   const topicRows = Object.entries(result.topicStats).sort((a, b) => a[1].percentage - b[1].percentage);
   const passed = result.score >= 80;
   const examReady = result.score >= 85;
-  const weakest = topicRows.slice(0, 3);
+  const weakest = rankWeakTopics(result.topicStats);
   const strongest = [...topicRows].reverse().slice(0, 3);
   const wrong = result.reviews.filter((review) => !review.correct);
+  const reviewSummary = spacedReviewSummary(result.reviews);
 
   return (
     <div className="exam-readable app-container page-section">
@@ -61,7 +69,7 @@ export function ResultsClient({ result }: { result: ExamResult }) {
         <Card>
           <CardHeader><CardTitle>Weakest topics</CardTitle><CardDescription>Study these next.</CardDescription></CardHeader>
           <CardContent className="grid gap-3">
-            {weakest.map(([topic, stat]) => <TopicScore key={topic} percentage={stat.percentage} topic={topic} />)}
+            {weakest.map((topic) => <TopicScore key={topic.topic} percentage={topic.percentage} topic={topic.topic} />)}
           </CardContent>
         </Card>
         <Card className="bg-accent/65">
@@ -71,6 +79,46 @@ export function ResultsClient({ result }: { result: ExamResult }) {
           </CardHeader>
           <CardContent><Button asChild variant="outline"><Link href="/roadmap">Open roadmap</Link></Button></CardContent>
         </Card>
+      </section>
+
+      <section className="mt-8">
+        <SectionHeader
+          title="Repair plan"
+          description="Start with the weakest topic, then clear the spaced review cards created from this attempt."
+        />
+        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+          <Card>
+            <CardHeader>
+              <Badge className="w-fit" variant="secondary">Adaptive remediation</Badge>
+              <CardTitle>Your next micro-drills</CardTitle>
+              <CardDescription>Each drill is untimed and focused on one weak topic from this attempt.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              {weakest.map((topic, index) => (
+                <div className="grid gap-3 rounded-xl border bg-muted/25 p-4 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center" key={topic.topic}>
+                  <Badge variant={index === 0 ? "destructive" : "outline"}>Step {index + 1}</Badge>
+                  <div>
+                    <strong>{topic.topic}</strong>
+                    <span className="block text-sm text-muted-foreground">{topic.correct}/{topic.total} correct, {topic.missed} to repair.</span>
+                  </div>
+                  <Button asChild>
+                    <Link href={topic.drillHref}>Start {topic.topic} drill</Link>
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+          <Card className="border-primary/25 bg-primary/5">
+            <CardHeader>
+              <CardTitle>{reviewSummary.label}</CardTitle>
+              <CardDescription>Missed answers from this result are already in spaced review so they can resurface again later.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-2">
+              <Button asChild><Link href="/mistakes">Repair mistakes</Link></Button>
+              <Button asChild variant="outline"><Link href="/learn">Review lessons</Link></Button>
+            </CardContent>
+          </Card>
+        </div>
       </section>
 
       <section className="mt-8">
@@ -98,7 +146,9 @@ export function ResultsClient({ result }: { result: ExamResult }) {
         )}
         <div className="mt-5 grid gap-5">
           {wrong.map((review, index) => {
-            const learnHref = hrefForReviewFile(review.question.reviewFile);
+            const learnHref = hrefForQuestionLesson(review.question);
+            const labHref = hrefForQuestionLab(review.question, labs);
+            const topicPracticeHref = buildTopicPracticeHref(review.question.topic, 8);
 
             return (
               <Card className="border-destructive/30" key={review.question.id}>
@@ -128,10 +178,15 @@ export function ResultsClient({ result }: { result: ExamResult }) {
                     <AlertTitle>Why</AlertTitle>
                     <AlertDescription>{review.question.explanation}</AlertDescription>
                   </Alert>
+                  <Alert className="border-primary/30 bg-primary/5">
+                    <AlertTitle>Auto-tracked for spaced review</AlertTitle>
+                    <AlertDescription>This miss is saved in your mistake notebook and will stay due until you repair it.</AlertDescription>
+                  </Alert>
                   <div className="flex flex-wrap gap-3">
                     <Button asChild variant="outline"><Link href="/mistakes">Repair in mistakes</Link></Button>
                     {learnHref && <Button asChild variant="secondary"><Link href={learnHref}>Read lesson</Link></Button>}
-                    <Button asChild variant="ghost"><Link href="/practice">Practice this topic</Link></Button>
+                    <Button asChild variant="secondary"><Link href={labHref}>Open SQL lab</Link></Button>
+                    <Button asChild variant="ghost"><Link href={topicPracticeHref}>Practice this topic</Link></Button>
                   </div>
                 </CardContent>
               </Card>
