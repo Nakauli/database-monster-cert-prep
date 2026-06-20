@@ -22,7 +22,7 @@ export default function RegisterPage() {
       <section className="auth-card">
         <p className="eyebrow">New member</p>
         <h2>Create account</h2>
-        <p>No public profile. No class leaderboard. Your study data stays yours.</p>
+        <p>Your study history stays private. Public leaderboard visibility and a profile photo are always optional.</p>
         {!configured && <AuthNotice />}
         <RegisterForm />
       </section>
