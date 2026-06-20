@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "audit": "npm audit --omit=dev",
     "test:data": "node tools/validate-data.mjs",
-    "test:sql": "node --import tsx --test --test-concurrency=1 src/lib/avatar.test.ts src/lib/sql-patterns.test.ts src/lib/sql-engine.test.ts src/lib/practice-drills.test.ts src/lib/questions.test.ts src/lib/readiness.test.ts src/lib/storage.test.ts src/lib/leaderboard.test.ts src/lib/learn.test.ts src/lib/suggestions.test.ts"
+    "test:sql": "node --import tsx --test --test-concurrency=1 src/lib/avatar.test.ts src/lib/sql-patterns.test.ts src/lib/sql-engine.test.ts src/lib/practice-drills.test.ts src/lib/questions.test.ts src/lib/readiness.test.ts src/lib/storage.test.ts src/lib/leaderboard.test.ts src/lib/learn.test.ts src/lib/suggestions.test.ts src/lib/srs.test.ts src/lib/streak.test.ts"
   },
   "dependencies": {
     "@codemirror/lang-sql": "^6.10.0",
