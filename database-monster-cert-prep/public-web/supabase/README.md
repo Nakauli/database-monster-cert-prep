@@ -79,6 +79,12 @@ The avatar migration creates a public `avatars` bucket with:
 
 Public delivery is intentional because leaderboard cards can be viewed while signed out. Uploading, replacing, and removing files still requires a valid authenticated session.
 
+The Phase 4 reminder migration adds opt-in email reminders for due spaced-review
+cards. It also creates a daily cron job that calls the `send-due-reminders` Edge
+Function only when the required Vault secrets are present. See
+`supabase/functions/README.md` for the required Resend, Edge Function, and Vault
+setup.
+
 ## 5. Configure email authentication
 
 In **Authentication → Providers → Email**:
@@ -147,4 +153,3 @@ rollback;
 ## 9. Recovery and deletion
 
 Deleting a user from Supabase Auth cascades to their profile, attempts, question results, mistake notebook, topic progress, suggestions, and votes. Supabase Storage objects are separate from Postgres row cascades; remove the user's avatar through the app before administrative account deletion.
-

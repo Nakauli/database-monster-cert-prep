@@ -27,6 +27,7 @@ export function ProfileForm({
   const [school, setSchool] = useState(profile?.school ?? "");
   const [course, setCourse] = useState(profile?.course === "CS" ? "CS" : "IT");
   const [leaderboardOptIn, setLeaderboardOptIn] = useState(Boolean(profile?.leaderboard_opt_in));
+  const [reviewRemindersOptIn, setReviewRemindersOptIn] = useState(Boolean(profile?.review_reminders_opt_in));
   const [avatarPath, setAvatarPath] = useState(profile?.avatar_path ?? null);
   const [avatarUrl, setAvatarUrl] = useState(currentAvatarUrl ?? null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -82,6 +83,7 @@ export function ProfileForm({
       course,
       avatar_path: nextAvatarPath,
       leaderboard_opt_in: leaderboardOptIn,
+      review_reminders_opt_in: reviewRemindersOptIn,
     });
 
     if (error) {
@@ -152,6 +154,18 @@ export function ProfileForm({
       </label>
       <p className="field-help">
         Public cards show your profile photo, display name, course, readiness score, rank, broad topic strengths, and recent activity only.
+      </p>
+      <label className="check-field" htmlFor="profile-review-reminders">
+        <input
+          id="profile-review-reminders"
+          type="checkbox"
+          checked={reviewRemindersOptIn}
+          onChange={(event) => setReviewRemindersOptIn(event.target.checked)}
+        />
+        <span>Email me when spaced-review cards are due</span>
+      </label>
+      <p className="field-help">
+        Reminders are opt-in and only nudge you back to your private mistake notebook. Turn this off any time.
       </p>
       {message && <p className={`form-message ${message.type}`} role="status">{message.text}</p>}
       <button className="button primary" type="submit" disabled={saving}>{saving ? "Saving…" : "Save profile"}</button>
