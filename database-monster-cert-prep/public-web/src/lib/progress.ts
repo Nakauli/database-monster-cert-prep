@@ -33,6 +33,11 @@ export interface MistakeRow {
   explanation: string | null;
   mistake_count: number;
   last_mistaken_at: string;
+  next_review_at: string;
+  interval_days: number;
+  ease: number;
+  reps: number;
+  last_reviewed_at: string | null;
 }
 
 export interface ProfileRow {
@@ -46,43 +51,70 @@ export interface ProfileRow {
   updated_at: string;
 }
 
+export interface UserStreakRow {
+  current_streak: number;
+  longest_streak: number;
+  last_active_date: string | null;
+  daily_goal: number;
+}
+
 export async function getDashboardData(userId: string) {
   const supabase = await createClient();
   if (!supabase) throw new Error("Supabase is not configured.");
 
-  const [attemptsResult, topicsResult, mistakesResult, profileResult] = await Promise.all([
-    supabase
-      .from("exam_attempts")
-      .select("id, exam_mode, score, total_questions, correct_count, time_spent_seconds, topic_breakdown, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(20),
-    supabase
-      .from("user_topic_progress")
-      .select("id, topic, attempted_count, correct_count, mastery_score, last_practiced_at")
-      .eq("user_id", userId)
-      .order("mastery_score", { ascending: true }),
-    supabase
-      .from("mistake_notebook")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId),
-    supabase
-      .from("profiles")
-      .select("id, display_name, school, course, avatar_path, leaderboard_opt_in, created_at, updated_at")
-      .eq("id", userId)
-      .maybeSingle(),
-  ]);
+  const [attemptsResult, topicsResult, mistakesResult, profileResult, dueResult, streakResult] =
+    await Promise.all([
+      supabase
+        .from("exam_attempts")
+        .select("id, exam_mode, score, total_questions, correct_count, time_spent_seconds, topic_breakdown, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(20),
+      supabase
+        .from("user_topic_progress")
+        .select("id, topic, attempted_count, correct_count, mastery_score, last_practiced_at")
+        .eq("user_id", userId)
+        .order("mastery_score", { ascending: true }),
+      supabase
+        .from("mistake_notebook")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId),
+      supabase
+        .from("profiles")
+        .select("id, display_name, school, course, avatar_path, leaderboard_opt_in, created_at, updated_at")
+        .eq("id", userId)
+        .maybeSingle(),
+      supabase
+        .from("mistake_notebook")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .lte("next_review_at", new Date().toISOString()),
+      supabase
+        .from("user_streaks")
+        .select("current_streak, longest_streak, last_active_date, daily_goal")
+        .eq("user_id", userId)
+        .maybeSingle(),
+    ]);
 
   if (attemptsResult.error) throw new Error(attemptsResult.error.message);
   if (topicsResult.error) throw new Error(topicsResult.error.message);
   if (mistakesResult.error) throw new Error(mistakesResult.error.message);
   if (profileResult.error) throw new Error(profileResult.error.message);
+  if (dueResult.error) throw new Error(dueResult.error.message);
+  if (streakResult.error) throw new Error(streakResult.error.message);
 
   return {
     attempts: (attemptsResult.data ?? []) as ExamAttemptRow[],
     topics: (topicsResult.data ?? []) as TopicProgressRow[],
     mistakeCount: mistakesResult.count ?? 0,
     profile: profileResult.data as ProfileRow | null,
+    dueCount: dueResult.count ?? 0,
+    streak: (streakResult.data as UserStreakRow | null) ?? {
+      current_streak: 0,
+      longest_streak: 0,
+      last_active_date: null,
+      daily_goal: 10,
+    },
   };
 }
 
@@ -91,7 +123,7 @@ export async function getMistakes(userId: string): Promise<MistakeRow[]> {
   if (!supabase) throw new Error("Supabase is not configured.");
   const { data, error } = await supabase
     .from("mistake_notebook")
-    .select("id, question_id, topic, difficulty, question_snapshot, selected_answers, correct_answers, explanation, mistake_count, last_mistaken_at")
+    .select("id, question_id, topic, difficulty, question_snapshot, selected_answers, correct_answers, explanation, mistake_count, last_mistaken_at, next_review_at, interval_days, ease, reps, last_reviewed_at")
     .eq("user_id", userId)
     .order("mistake_count", { ascending: false })
     .order("last_mistaken_at", { ascending: false });
