@@ -42,29 +42,73 @@ export function CodeBlock({ code, label = "SQL query" }: { code: string; label?:
 }
 
 export function SchemaDisplay({ schemas, compact = false }: { schemas: SchemaTable[]; compact?: boolean }) {
+  if (compact) {
+    return (
+      <div className="grid gap-3">
+        {schemas.map((schema) => (
+          <div className="min-w-0 rounded-xl border border-primary/15 bg-background p-3 shadow-none" key={schema.table}>
+            <div className="mb-2 flex min-w-0 flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-semibold text-ink">
+                Table: <code className="font-mono">{schema.table}</code>
+              </p>
+              <Badge variant="secondary">Schema</Badge>
+            </div>
+            <ul className="flex flex-wrap gap-1.5">
+              {schema.columns.map((column) => (
+                <li
+                  className="inline-flex max-w-full items-center gap-1.5 rounded-full border bg-muted/20 px-2.5 py-1 text-xs"
+                  key={column.name}
+                >
+                  <span className="flex min-w-0 items-baseline gap-1.5">
+                    <code className="truncate font-semibold text-ink">{column.name}</code>
+                    <span className="shrink-0 font-mono text-[0.62rem] text-muted-foreground">{column.type}</span>
+                  </span>
+                  {(column.key || column.nullable === false) && (
+                    <span className="flex shrink-0 gap-1">
+                      {column.key && (
+                        <span className="rounded-full border bg-background px-1.5 py-0.5 text-[0.58rem] font-medium leading-none text-muted-foreground">
+                          {column.key === "PRIMARY KEY" ? "PK" : column.key === "FOREIGN KEY" ? "FK" : column.key}
+                        </span>
+                      )}
+                      {column.nullable === false && (
+                        <span className="rounded-full border bg-background px-1.5 py-0.5 text-[0.58rem] font-medium leading-none text-muted-foreground">
+                          NOT NULL
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className={`${compact ? "grid gap-3" : "my-5 grid gap-3 md:grid-cols-2"}`}>
+    <div className="my-5 grid gap-3 md:grid-cols-2">
       {schemas.map((schema) => (
         <Card className="min-w-0 bg-card/90" key={schema.table}>
-          <CardHeader className={compact ? "px-4 py-3" : undefined}>
-            <CardTitle className={`flex min-w-0 flex-wrap items-center justify-between gap-2 ${compact ? "text-base" : ""}`}>
+          <CardHeader>
+            <CardTitle className="flex min-w-0 flex-wrap items-center justify-between gap-2">
               <span className="min-w-0">Table: <code className="break-words">{schema.table}</code></span>
               <Badge variant="secondary">Schema</Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent className={compact ? "px-4 pb-4 pt-0" : undefined}>
+          <CardContent>
             <ul className="flex flex-col gap-2">
               {schema.columns.map((column) => (
                 <li
-                  className={`${compact ? "flex flex-col" : "grid grid-cols-[1fr_auto]"} min-w-0 gap-2 rounded-lg border bg-muted/30 p-3 text-sm`}
+                  className="grid min-w-0 grid-cols-[1fr_auto] gap-2 rounded-lg border bg-muted/30 p-3 text-sm"
                   key={column.name}
                 >
-                  <div className={`${compact ? "flex flex-wrap items-baseline" : "contents"} min-w-0 gap-x-2 gap-y-1`}>
+                  <div className="contents min-w-0 gap-x-2 gap-y-1">
                     <code className="min-w-0 break-words font-semibold text-ink">{column.name}</code>
                     <span className="shrink-0 font-mono text-xs text-muted-foreground">{column.type}</span>
                   </div>
                   {(column.key || column.nullable === false) && (
-                    <span className={`${compact ? "" : "col-span-2"} flex flex-wrap gap-2`}>
+                    <span className="col-span-2 flex flex-wrap gap-2">
                       {column.key && <Badge variant="outline">{column.key}</Badge>}
                       {column.nullable === false && <Badge variant="outline">NOT NULL</Badge>}
                     </span>

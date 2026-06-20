@@ -584,6 +584,20 @@ code, pre { font-family: var(--font-code), "Cascadia Code", Consolas, monospace;
     @apply overflow-x-auto rounded-b-xl bg-code p-4 text-sm leading-7 text-code-foreground;
   }
 
+  .sql-sandbox-container {
+    container-type: inline-size;
+  }
+
+  .sql-sandbox-grid {
+    @apply grid gap-4;
+  }
+
+  @container (min-width: 54rem) {
+    .sql-sandbox-grid[data-has-left="true"] {
+      grid-template-columns: minmax(17rem, 0.68fr) minmax(0, 1.62fr);
+    }
+  }
+
   .sql-editor .cm-editor {
     @apply bg-background font-mono text-sm;
   }

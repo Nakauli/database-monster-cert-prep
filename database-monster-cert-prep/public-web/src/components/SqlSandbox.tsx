@@ -117,6 +117,197 @@ export function SqlSandbox({
   const isRunning = status.kind === "running";
   const resultSet =
     status.kind === "ran" ? status.result : status.kind === "graded" ? status.result : null;
+  const hasContext = schema.length > 0 || hints.length > 0 || expectedPatterns.length > 0;
+  const hasLeftPanel = hasContext || sampleData.length > 0;
+
+  const toolbar = (
+    <div className="flex flex-wrap items-center gap-2">
+      <Button className="min-h-10" type="button" onClick={handleRun} disabled={isRunning}>
+        {isRunning ? <LoaderCircle className="animate-spin" data-icon="inline-start" /> : <Play data-icon="inline-start" />}
+        Run
+      </Button>
+      {expectedSql && (
+        <Button className="min-h-10" type="button" variant="secondary" onClick={handleCheck} disabled={isRunning}>
+          <CheckCircle data-icon="inline-start" />
+          Check result
+        </Button>
+      )}
+      <Button className="min-h-10" type="button" variant="outline" onClick={() => setValue(starter)} disabled={isRunning}>
+        <RotateCcw data-icon="inline-start" />
+        Reset
+      </Button>
+      {answer && (
+        <Button className="min-h-10" type="button" variant="ghost" onClick={() => setShowAnswer((current) => !current)} aria-expanded={showAnswer}>
+          <Eye data-icon="inline-start" />
+          {showAnswer ? "Hide solution" : "Reveal solution"}
+        </Button>
+      )}
+      <Button className="min-h-10" type="button" variant="ghost" onClick={() => setShowFallbackEditor((current) => !current)}>
+        {showFallbackEditor ? "Use editor" : "Plain textarea"}
+      </Button>
+    </div>
+  );
+
+  const contextPanel = hasLeftPanel ? (
+    <div className="grid content-start gap-4">
+      {hasContext && (
+        <div className="grid gap-4">
+          {(hints.length > 0 || expectedPatterns.length > 0) && (
+            <div className="rounded-xl border border-primary/15 bg-background p-4 shadow-sm">
+              <p className="mb-3 text-sm font-semibold text-ink">How to answer this</p>
+              {hints.length > 0 && (
+                <ol className="grid gap-2 pl-5 text-sm leading-6 text-muted-foreground">
+                  {hints.map((hint) => <li className="list-decimal" key={hint}>{hint}</li>)}
+                </ol>
+              )}
+              {expectedPatterns.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {expectedPatterns.map((pattern) => <Badge key={pattern.id} variant="outline">{pattern.label}</Badge>)}
+                </div>
+              )}
+            </div>
+          )}
+
+          {schema.length > 0 && (
+            <div className="rounded-xl border border-primary/15 bg-muted/20 p-4 shadow-sm">
+              <p className="mb-3 text-sm font-semibold text-ink">Available tables and columns</p>
+              <SchemaDisplay compact schemas={schema} />
+            </div>
+          )}
+        </div>
+      )}
+
+      {sampleData.map((table, index) => (
+        <ResultTable data={table} key={`${table.table ?? table.label ?? "sample"}-${index}`} />
+      ))}
+    </div>
+  ) : null;
+
+  const editorPanel = (
+    <div className="min-w-0 overflow-hidden rounded-xl border border-primary/20 bg-background shadow-sm">
+      <div className="flex flex-col gap-3 border-b bg-muted/35 px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <p className="mono-label">SQL editor</p>
+          <p className="mt-1 text-sm text-muted-foreground">Write, run, check, refine.</p>
+        </div>
+        {toolbar}
+      </div>
+
+      <div className="min-w-0">
+        {showFallbackEditor ? (
+          <Textarea
+            aria-label="SQL answer"
+            className="min-h-72 w-full resize-y border-0 font-mono text-sm leading-6 shadow-none [field-sizing:fixed] focus-visible:ring-0"
+            spellCheck={false}
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+          />
+        ) : (
+          <CodeMirror
+            aria-label="SQL answer"
+            basicSetup={{ foldGutter: false, highlightActiveLine: true, lineNumbers: true }}
+            className="sql-editor"
+            extensions={extensions}
+            minHeight="288px"
+            onChange={setValue}
+            value={value}
+          />
+        )}
+      </div>
+    </div>
+  );
+
+  const feedbackPanel = (
+    <div className="grid min-w-0 gap-4">
+      {patternResult && (
+        <div className="rounded-xl border bg-muted/30 p-4">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+            <Progress className="h-2" value={patternResult.score} />
+            <span className="font-mono text-sm font-semibold text-ink">{patternResult.score}% pattern match</span>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-semibold text-ink">Matched</p>
+              <div className="flex flex-wrap gap-2">
+                {patternResult.matched.length ? (
+                  patternResult.matched.map((item) => <Badge key={item.id}>{item.label}</Badge>)
+                ) : (
+                  <span className="text-sm text-muted-foreground">No required patterns matched yet.</span>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-semibold text-ink">Still missing</p>
+              <div className="flex flex-wrap gap-2">
+                {patternResult.missing.length ? (
+                  patternResult.missing.map((item) => <Badge key={item.id} variant="outline">{item.label}</Badge>)
+                ) : (
+                  <span className="text-sm text-muted-foreground">All required patterns are present.</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {status.kind === "running" && (
+        <Alert>
+          <LoaderCircle className="animate-spin" />
+          <AlertTitle>{status.label}</AlertTitle>
+          <AlertDescription>Seeding a fresh database and evaluating your SQL.</AlertDescription>
+        </Alert>
+      )}
+
+      {status.kind === "hint" && (
+        <Alert>
+          <CircleAlert />
+          <AlertTitle>Replace starter hints first</AlertTitle>
+          <AlertDescription>
+            <ul className="grid gap-1">
+              {status.messages.map((message) => <li key={message}>{message}</li>)}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {status.kind === "error" && (
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>SQL error</AlertTitle>
+          <AlertDescription className="font-mono">{status.message}</AlertDescription>
+        </Alert>
+      )}
+
+      {status.kind === "ran" && !status.result && (
+        <Alert>
+          <CheckCircle />
+          <AlertTitle>Statement executed</AlertTitle>
+          <AlertDescription>{status.rowsAffected} row{status.rowsAffected === 1 ? "" : "s"} affected.</AlertDescription>
+        </Alert>
+      )}
+
+      {status.kind === "graded" && (
+        <Alert variant={status.pass ? "default" : "destructive"}>
+          {status.pass ? <CheckCircle /> : <CircleAlert />}
+          <AlertTitle>{status.pass ? "Result matches" : "Keep refining"}</AlertTitle>
+          <AlertDescription>{status.message}</AlertDescription>
+        </Alert>
+      )}
+
+      {resultSet && <ResultTable data={toDataTable(resultSet)} />}
+
+      {rubric.length > 0 && (
+        <div className="rounded-xl border bg-background p-4">
+          <p className="mb-3 text-sm font-semibold text-ink">Rubric</p>
+          <ul className="grid gap-2 text-sm text-muted-foreground md:grid-cols-3">
+            {rubric.map((item) => <li className="rounded-lg bg-muted/40 px-3 py-2" key={item}>{item}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {showAnswer && answer && <CodeBlock code={answer} label="Reference solution" />}
+    </div>
+  );
 
   return (
     <Card className="overflow-hidden border-primary/20 bg-card/95 shadow-[0_18px_60px_rgb(23_37_44_/_0.08)]">
@@ -132,169 +323,14 @@ export function SqlSandbox({
           <Badge variant="secondary">SQLite sandbox</Badge>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {(schema.length > 0 || hints.length > 0 || expectedPatterns.length > 0) && (
-          <div className="grid gap-4 2xl:grid-cols-[0.9fr_1.1fr]">
-            <div className="rounded-xl border bg-muted/25 p-4">
-              <p className="mb-3 text-sm font-semibold text-ink">How to answer this</p>
-              <ol className="grid gap-2 pl-5 text-sm text-muted-foreground">
-                {hints.map((hint) => <li className="list-decimal" key={hint}>{hint}</li>)}
-                {expectedPatterns.length > 0 && (
-                  <li className="list-decimal">Make sure your query includes the required concepts below.</li>
-                )}
-              </ol>
-              {expectedPatterns.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {expectedPatterns.map((pattern) => <Badge key={pattern.id} variant="outline">{pattern.label}</Badge>)}
-                </div>
-              )}
-            </div>
-            {schema.length > 0 && (
-              <div className="rounded-xl border bg-background p-4">
-                <p className="mb-3 text-sm font-semibold text-ink">Available tables and columns</p>
-                <SchemaDisplay compact schemas={schema} />
-              </div>
-            )}
+      <CardContent className="sql-sandbox-container p-4">
+        <div className="sql-sandbox-grid" data-has-left={hasLeftPanel ? "true" : "false"}>
+          {contextPanel}
+          <div className="grid min-w-0 content-start gap-4">
+            {editorPanel}
+            {feedbackPanel}
           </div>
-        )}
-
-        {sampleData.map((table, index) => <ResultTable data={table} key={`${table.table ?? table.label ?? "sample"}-${index}`} />)}
-
-        <div className="overflow-hidden rounded-xl border bg-background">
-          {showFallbackEditor ? (
-            <Textarea
-              aria-label="SQL answer"
-              className="min-h-64 w-full resize-y border-0 font-mono text-sm leading-6 shadow-none [field-sizing:fixed] focus-visible:ring-0"
-              spellCheck={false}
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-            />
-          ) : (
-            <CodeMirror
-              aria-label="SQL answer"
-              basicSetup={{ foldGutter: false, highlightActiveLine: true, lineNumbers: true }}
-              className="sql-editor"
-              extensions={extensions}
-              minHeight="260px"
-              onChange={setValue}
-              value={value}
-            />
-          )}
         </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Button type="button" onClick={handleRun} disabled={isRunning}>
-            {isRunning ? <LoaderCircle className="animate-spin" data-icon="inline-start" /> : <Play data-icon="inline-start" />}
-            Run
-          </Button>
-          {expectedSql && (
-            <Button type="button" variant="secondary" onClick={handleCheck} disabled={isRunning}>
-              <CheckCircle data-icon="inline-start" />
-              Check result
-            </Button>
-          )}
-          <Button type="button" variant="outline" onClick={() => setValue(starter)} disabled={isRunning}>
-            <RotateCcw data-icon="inline-start" />
-            Reset
-          </Button>
-          {answer && (
-            <Button type="button" variant="ghost" onClick={() => setShowAnswer((current) => !current)} aria-expanded={showAnswer}>
-              <Eye data-icon="inline-start" />
-              {showAnswer ? "Hide solution" : "Reveal solution"}
-            </Button>
-          )}
-          <Button type="button" variant="ghost" onClick={() => setShowFallbackEditor((current) => !current)}>
-            {showFallbackEditor ? "Use editor" : "Plain textarea"}
-          </Button>
-        </div>
-
-        {patternResult && (
-          <div className="rounded-xl border bg-muted/30 p-4">
-            <div className="mb-3 flex items-center gap-3">
-              <Progress className="h-2" value={patternResult.score} />
-              <span className="font-mono text-sm font-semibold text-ink">{patternResult.score}% pattern match</span>
-            </div>
-            <div className="grid gap-3 xl:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <p className="text-sm font-semibold text-ink">Matched</p>
-                <div className="flex flex-wrap gap-2">
-                  {patternResult.matched.length ? (
-                    patternResult.matched.map((item) => <Badge key={item.id}>{item.label}</Badge>)
-                  ) : (
-                    <span className="text-sm text-muted-foreground">No required patterns matched yet.</span>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <p className="text-sm font-semibold text-ink">Still missing</p>
-                <div className="flex flex-wrap gap-2">
-                  {patternResult.missing.length ? (
-                    patternResult.missing.map((item) => <Badge key={item.id} variant="outline">{item.label}</Badge>)
-                  ) : (
-                    <span className="text-sm text-muted-foreground">All required patterns are present.</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {status.kind === "running" && (
-          <Alert>
-            <LoaderCircle className="animate-spin" />
-            <AlertTitle>{status.label}</AlertTitle>
-            <AlertDescription>Seeding a fresh database and evaluating your SQL.</AlertDescription>
-          </Alert>
-        )}
-
-        {status.kind === "hint" && (
-          <Alert>
-            <CircleAlert />
-            <AlertTitle>Replace starter hints first</AlertTitle>
-            <AlertDescription>
-              <ul className="grid gap-1">
-                {status.messages.map((message) => <li key={message}>{message}</li>)}
-              </ul>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {status.kind === "error" && (
-          <Alert variant="destructive">
-            <CircleAlert />
-            <AlertTitle>SQL error</AlertTitle>
-            <AlertDescription className="font-mono">{status.message}</AlertDescription>
-          </Alert>
-        )}
-
-        {status.kind === "ran" && !status.result && (
-          <Alert>
-            <CheckCircle />
-            <AlertTitle>Statement executed</AlertTitle>
-            <AlertDescription>{status.rowsAffected} row{status.rowsAffected === 1 ? "" : "s"} affected.</AlertDescription>
-          </Alert>
-        )}
-
-        {status.kind === "graded" && (
-          <Alert variant={status.pass ? "default" : "destructive"}>
-            {status.pass ? <CheckCircle /> : <CircleAlert />}
-            <AlertTitle>{status.pass ? "Result matches" : "Keep refining"}</AlertTitle>
-            <AlertDescription>{status.message}</AlertDescription>
-          </Alert>
-        )}
-
-        {resultSet && <ResultTable data={toDataTable(resultSet)} />}
-
-        {rubric.length > 0 && (
-          <div className="rounded-xl border bg-background p-4">
-            <p className="mb-3 text-sm font-semibold text-ink">Rubric</p>
-            <ul className="grid gap-2 text-sm text-muted-foreground xl:grid-cols-3">
-              {rubric.map((item) => <li className="rounded-lg bg-muted/40 p-3" key={item}>{item}</li>)}
-            </ul>
-          </div>
-        )}
-
-        {showAnswer && answer && <CodeBlock code={answer} label="Reference solution" />}
       </CardContent>
     </Card>
   );
