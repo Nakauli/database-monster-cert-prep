@@ -13,6 +13,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { hrefForReviewFile } from "@/lib/learn";
 import type { MistakeRow } from "@/lib/progress";
+import { computeNextReview, isDue, type ReviewGrade } from "@/lib/srs";
 import { createClient } from "@/lib/supabase/client";
 
 export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRow[] }) {
@@ -24,21 +25,47 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
   const topics = [...new Set(mistakes.map((mistake) => mistake.topic))].sort();
   const visible = filter === "all" ? mistakes : mistakes.filter((mistake) => mistake.topic === filter);
   const repeated = useMemo(() => mistakes.filter((mistake) => mistake.mistake_count > 1).length, [mistakes]);
+  const dueMistakes = useMemo(() => {
+    const now = new Date();
+    return mistakes
+      .filter((mistake) => isDue({ nextReviewAt: mistake.next_review_at }, now))
+      .sort((a, b) => new Date(a.next_review_at).getTime() - new Date(b.next_review_at).getTime());
+  }, [mistakes]);
 
-  async function removeMistake(id: string): Promise<boolean> {
+  async function reviewCard(id: string, grade: ReviewGrade): Promise<number | null> {
     const supabase = createClient();
     if (!supabase) {
       setMessage("Account storage is not configured.");
-      return false;
+      return null;
     }
-    const { error } = await supabase.from("mistake_notebook").delete().eq("id", id);
+    const { data, error } = await supabase.rpc("review_card", { p_mistake_id: id, p_grade: grade });
     if (error) {
       setMessage(error.message);
-      return false;
+      return null;
     }
-    setMistakes((current) => current.filter((mistake) => mistake.id !== id));
-    setMessage("Mistake marked as mastered and removed.");
-    return true;
+    const nextReviewAt = typeof data === "string" ? data : new Date().toISOString();
+    const target = mistakes.find((mistake) => mistake.id === id);
+    const local = computeNextReview(
+      target
+        ? { ease: target.ease, intervalDays: target.interval_days, reps: target.reps }
+        : { ease: 2.5, intervalDays: 0, reps: 0 },
+      grade,
+    );
+    setMistakes((current) =>
+      current.map((mistake) =>
+        mistake.id === id
+          ? {
+              ...mistake,
+              next_review_at: nextReviewAt,
+              interval_days: local.intervalDays,
+              ease: local.ease,
+              reps: local.reps,
+              last_reviewed_at: new Date().toISOString(),
+            }
+          : mistake,
+      ),
+    );
+    return local.intervalDays;
   }
 
   return (
@@ -75,7 +102,7 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
                 <NotebookTabs data-icon="inline-start" />
                 Notebook
               </Button>
-              <Button type="button" variant={view === "flashcards" ? "secondary" : "outline"} onClick={() => setView("flashcards")} disabled={!mistakes.length}>
+              <Button type="button" variant={view === "flashcards" ? "secondary" : "outline"} onClick={() => setView("flashcards")} disabled={!dueMistakes.length}>
                 <PanelsTopLeft data-icon="inline-start" />
                 Flashcards
               </Button>
@@ -105,9 +132,9 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
         </Alert>
       )}
 
-      {view === "flashcards" && mistakes.length > 0 ? (
+      {view === "flashcards" && dueMistakes.length > 0 ? (
         <div className="mt-6">
-          <FlashcardReview mistakes={mistakes} onResolve={removeMistake} />
+          <FlashcardReview mistakes={dueMistakes} onGrade={reviewCard} />
         </div>
       ) : !visible.length ? (
         <div className="mt-6">
@@ -150,8 +177,8 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
                     <AlertDescription>{mistake.explanation ?? "Review the correct answer and try this topic again."}</AlertDescription>
                   </Alert>
                   <div className="flex flex-wrap gap-3">
-                    <Button type="button" variant="outline" onClick={() => void removeMistake(mistake.id)}>
-                      Mark as mastered
+                    <Button type="button" variant="outline" onClick={() => setView("flashcards")}>
+                      Review in flashcards
                     </Button>
                     {learnHref && <Button asChild variant="secondary"><Link href={learnHref}>Read lesson</Link></Button>}
                     <Button asChild variant="ghost"><Link href="/practice">Practice this topic</Link></Button>
