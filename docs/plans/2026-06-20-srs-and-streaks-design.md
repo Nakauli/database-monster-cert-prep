@@ -155,6 +155,8 @@ read `node_modules/next/dist/docs/` before writing route/server code.
   intro → diagnostic → roadmap, with a new-user banner on the dashboard. Exam
   realism (countdown timer, per-question flag-for-review, review-before-submit
   screen) audited and confirmed already present in `ExamClient`.
-- **Phase 4 — Reminders:** email / web-push "your queue is due today."
+- **Phase 4 — Reminders (implemented; deploy/secrets pending):** opt-in email
+  reminders for due SRS cards via profile setting, scheduled pg_cron/pg_net Edge
+  Function invocation, and Resend function scaffold.
 - **Phase 5 — Social & rewards:** achievements/badges (incl. streak + mastery
   milestones) and cohort/weekly challenges on the existing leaderboard.
