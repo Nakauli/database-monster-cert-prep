@@ -118,7 +118,8 @@ Three new surfaces on `HomeDashboard`, reusing existing `Card`/`ProgressRing`:
 3. **Activity heatmap** — 12-week calendar grid colored by reviews/day, derived
    from `last_reviewed_at` + attempt dates already in scope. No new table.
 
-**Test plan** (Vitest, matching existing `*.test.ts`):
+**Test plan** (`node:test` + `tsx`, matching existing `*.test.ts`; new files added
+to the `test:sql` script in `package.json`):
 
 - `srs.test.ts` — interval progression (0→1→3→ease-scaled), Again resets reps +
   drops ease, Hard/Easy modifiers, ease clamping at 1.30/3.00, `isDue`/`dueCount`
