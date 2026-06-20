@@ -32,6 +32,14 @@ export async function saveExamResult(result: ExamResult): Promise<string> {
 
   if (error) throw new Error(error.message);
   if (typeof data !== "string") throw new Error("The saved exam did not return an attempt ID.");
+
+  // Best-effort streak bump — a streak failure must never block the saved exam.
+  try {
+    await supabase.rpc("touch_streak");
+  } catch {
+    // Ignore network/unexpected errors; the exam result is already persisted.
+  }
+
   return data;
 }
 
