@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import { ProgressCards } from "@/components/dashboard/ProgressCards";
 import { RecentAttempts } from "@/components/dashboard/RecentAttempts";
 import { WeakTopics } from "@/components/dashboard/WeakTopics";
+import { AchievementBadges, NextAchievementCard } from "@/components/rewards/AchievementBadges";
 import { requireUser } from "@/lib/auth";
 import { getDashboardData } from "@/lib/progress";
 import { isFirstRun } from "@/lib/onboarding";
+import { computeWeeklyChallengeScore, getEarnedAchievements, getNextAchievement, type RewardSignals } from "@/lib/rewards";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -16,6 +18,24 @@ export default async function DashboardPage() {
   const bestScore = scores.length ? Math.max(...scores) : 0;
   const latestScore = scores[0] ?? 0;
   const averageScore = scores.length ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : 0;
+  const averageMastery = data.topics.length
+    ? Math.round(data.topics.reduce((sum, topic) => sum + Number(topic.mastery_score), 0) / data.topics.length)
+    : 0;
+  const rewardSignals: RewardSignals = {
+    currentStreak: data.streak.current_streak,
+    longestStreak: data.streak.longest_streak,
+    bestScore,
+    attemptCount: data.attempts.length,
+    averageMastery,
+    finalBossCount: data.finalBossCount,
+    mistakeCount: data.mistakeCount,
+    dueCount: data.dueCount,
+    weekAttemptCount: data.weekAttemptCount,
+    weekQuestionCount: data.weekQuestionCount,
+  };
+  const earnedAchievements = getEarnedAchievements(rewardSignals);
+  const nextAchievement = getNextAchievement(rewardSignals);
+  const weeklyChallengeScore = computeWeeklyChallengeScore(rewardSignals);
   const weakest = data.topics[0];
   const displayName = data.profile?.display_name || user.email?.split("@")[0] || "Database learner";
   const nextAction = !data.attempts.length
@@ -76,6 +96,22 @@ export default async function DashboardPage() {
         averageScore={averageScore}
         mistakeCount={data.mistakeCount}
       />
+
+      <section className="dashboard-split rewards-dashboard-row">
+        <article className="dashboard-panel">
+          <div className="panel-heading">
+            <div><p className="eyebrow">Rewards</p><h2>Starter achievements</h2></div>
+            <Link href="/leaderboard">Class board -&gt;</Link>
+          </div>
+          <p className="muted">Badges are based on aggregate study signals, not private answer history.</p>
+          <AchievementBadges achievements={earnedAchievements} />
+          <div className="weekly-score-inline">
+            <strong>{weeklyChallengeScore}</strong>
+            <span>weekly repair sprint points</span>
+          </div>
+        </article>
+        <NextAchievementCard next={nextAchievement} />
+      </section>
 
       {data.attempts.length > 1 && (
         <section className="dashboard-panel progress-over-time">

@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { InfoCard, SectionHeader, StatGrid } from "@/components/DesignSystem";
 import { LeaderboardPreview } from "@/components/leaderboard/LeaderboardPreview";
+import { AchievementBadges, NextAchievementCard } from "@/components/rewards/AchievementBadges";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { secondaryNavigation } from "@/lib/navigation";
 import type { PublicLeaderboardRow } from "@/lib/leaderboard";
 import type { getDashboardData } from "@/lib/progress";
+import { computeWeeklyChallengeScore, getEarnedAchievements, getNextAchievement, type RewardSignals } from "@/lib/rewards";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
 
@@ -91,6 +93,25 @@ export function HomeDashboard({
   const dueCount = dashboardData?.dueCount ?? 0;
   const streak = dashboardData?.streak ?? { current_streak: 0, longest_streak: 0, last_active_date: null, daily_goal: 10 };
   const activeDays = new Set((dashboardData?.attempts ?? []).map((attempt) => attempt.created_at.slice(0, 10)));
+  const scores = dashboardData?.attempts.map((attempt) => Number(attempt.score)) ?? [];
+  const averageMastery = dashboardData?.topics.length
+    ? Math.round(dashboardData.topics.reduce((sum, topic) => sum + Number(topic.mastery_score), 0) / dashboardData.topics.length)
+    : 0;
+  const rewardSignals: RewardSignals = {
+    currentStreak: streak.current_streak,
+    longestStreak: streak.longest_streak,
+    bestScore: scores.length ? Math.max(...scores) : 0,
+    attemptCount: dashboardData?.attempts.length ?? 0,
+    averageMastery,
+    finalBossCount: dashboardData?.finalBossCount ?? 0,
+    mistakeCount: dashboardData?.mistakeCount ?? 0,
+    dueCount,
+    weekAttemptCount: dashboardData?.weekAttemptCount ?? 0,
+    weekQuestionCount: dashboardData?.weekQuestionCount ?? 0,
+  };
+  const earnedAchievements = getEarnedAchievements(rewardSignals);
+  const nextAchievement = getNextAchievement(rewardSignals);
+  const weeklyChallengeScore = computeWeeklyChallengeScore(rewardSignals);
 
   return (
     <div>
@@ -158,7 +179,7 @@ export function HomeDashboard({
           title="Stay on top of reviews."
           description="Spaced repetition and streak tracking keep the next study session obvious."
         />
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader>
               <span className="mono-label">Spaced repetition</span>
@@ -198,6 +219,20 @@ export function HomeDashboard({
               <ActivityHeatmap activeDays={activeDays} />
             </CardContent>
           </Card>
+
+          <Card className="rewards-summary-card">
+            <CardHeader>
+              <span className="mono-label">Rewards</span>
+              <CardTitle className="text-2xl">{earnedAchievements.length} badge{earnedAchievements.length === 1 ? "" : "s"}</CardTitle>
+              <CardDescription>Weekly sprint score: {weeklyChallengeScore}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AchievementBadges achievements={earnedAchievements} compact />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="mt-4">
+          <NextAchievementCard next={nextAchievement} />
         </div>
       </section>
 
