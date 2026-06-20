@@ -72,9 +72,9 @@ for (const source of [sqlQuestionsSource, labsSource]) {
 }
 
 const learnTopicBlocks = learnTopicsSource
-  .split(/\n  \{\n    title: /)
+  .split(/\r?\n  \{\r?\n    title: /)
   .slice(1)
-  .map((block) => `title: ${block.split(/\n  \},/)[0]}`);
+  .map((block) => `title: ${block.split(/\r?\n  \},/)[0]}`);
 
 if (learnTopicBlocks.length !== 12) {
   throw new Error(`Learn topics: expected 12, found ${learnTopicBlocks.length}`);
@@ -83,7 +83,7 @@ if (learnTopicBlocks.length !== 12) {
 const learnTopicSlugs = new Set();
 for (const block of learnTopicBlocks) {
   const title = block.match(/title: "([^"]+)"/)?.[1] ?? "unknown learn topic";
-  const topicSlug = block.match(/\n    slug: "([^"]+)"/)?.[1];
+  const topicSlug = block.match(/\r?\n    slug: "([^"]+)"/)?.[1];
   if (!topicSlug) throw new Error(`${title} learn topic is missing slug`);
   if (learnTopicSlugs.has(topicSlug)) throw new Error(`Duplicate learn topic slug: ${topicSlug}`);
   learnTopicSlugs.add(topicSlug);
