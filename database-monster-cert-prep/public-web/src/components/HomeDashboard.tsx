@@ -17,6 +17,26 @@ const flowSteps = [
   { title: "4. Timed exam", detail: "Prove readiness under the clock before the real test." },
 ];
 
+function ActivityHeatmap({ activeDays }: { activeDays: Set<string> }) {
+  const cells: Array<{ key: string; active: boolean }> = [];
+  const today = new Date();
+  for (let i = 83; i >= 0; i -= 1) {
+    const day = new Date(today.getTime() - i * 86_400_000).toISOString().slice(0, 10);
+    cells.push({ key: day, active: activeDays.has(day) });
+  }
+  return (
+    <div className="grid grid-flow-col grid-rows-7 gap-1" aria-label="Activity over the last 12 weeks">
+      {cells.map((cell) => (
+        <span
+          key={cell.key}
+          title={cell.key}
+          className={`size-3 rounded-sm ${cell.active ? "bg-primary" : "bg-muted"}`}
+        />
+      ))}
+    </div>
+  );
+}
+
 function getNextAction(data: DashboardData | null) {
   if (!data || !data.attempts.length) {
     return {
@@ -68,6 +88,9 @@ export function HomeDashboard({
   const nextAction = getNextAction(dashboardData);
   const displayName = dashboardData?.profile?.display_name || userEmail?.split("@")[0];
   const secondaryCards = secondaryNavigation.filter((item) => ["/learn", "/labs", "/roadmap", "/about"].includes(item.href));
+  const dueCount = dashboardData?.dueCount ?? 0;
+  const streak = dashboardData?.streak ?? { current_streak: 0, longest_streak: 0, last_active_date: null, daily_goal: 10 };
+  const activeDays = new Set((dashboardData?.attempts ?? []).map((attempt) => attempt.created_at.slice(0, 10)));
 
   return (
     <div>
@@ -125,6 +148,54 @@ export function HomeDashboard({
                   <span>{step.detail}</span>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section className="app-container page-section pt-0">
+        <SectionHeader
+          title="Stay on top of reviews."
+          description="Spaced repetition and streak tracking keep the next study session obvious."
+        />
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <span className="mono-label">Spaced repetition</span>
+              <CardTitle className="text-2xl">
+                {dueCount > 0 ? `${dueCount} card${dueCount === 1 ? "" : "s"} due` : "All caught up"}
+              </CardTitle>
+              <CardDescription>
+                {dueCount > 0
+                  ? "Clear your queue to lock in the topics you missed."
+                  : "No reviews due right now — great work."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild>
+                <Link href="/mistakes">{dueCount > 0 ? "Start review" : "Open notebook"}</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <span className="mono-label">Study streak</span>
+              <CardTitle className="text-2xl">🔥 {streak.current_streak} day{streak.current_streak === 1 ? "" : "s"}</CardTitle>
+              <CardDescription>Longest: {streak.longest_streak} days · Goal: {streak.daily_goal}/day</CardDescription>
+            </CardHeader>
+          </Card>
+          {/* TODO(phase-1.1): live daily-goal ring needs a reviews-today count not yet in getDashboardData */}
+
+          <Card>
+            <CardHeader>
+              <span className="mono-label">Activity</span>
+              <CardTitle className="text-2xl">Last 12 weeks</CardTitle>
+              <CardDescription>Days you completed an exam.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* TODO(phase-1.1): fold in last_reviewed_at once a per-review activity feed exists */}
+              <ActivityHeatmap activeDays={activeDays} />
             </CardContent>
           </Card>
         </div>
