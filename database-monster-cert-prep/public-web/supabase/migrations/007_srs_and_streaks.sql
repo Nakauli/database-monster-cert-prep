@@ -2,9 +2,9 @@ begin;
 
 -- 1. SRS scheduling fields on the existing notebook (SM-2 lite).
 alter table public.mistake_notebook
-  add column if not exists ease numeric(4,2) not null default 2.50,
-  add column if not exists interval_days integer not null default 0,
-  add column if not exists reps integer not null default 0,
+  add column if not exists ease numeric(4,2) not null default 2.50 check (ease between 1.30 and 3.00),
+  add column if not exists interval_days integer not null default 0 check (interval_days >= 0),
+  add column if not exists reps integer not null default 0 check (reps >= 0),
   add column if not exists next_review_at timestamptz not null default now(),
   add column if not exists last_reviewed_at timestamptz;
 
