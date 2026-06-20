@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Trophy } from "lucide-react";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatPercent, getAvatarInitials, type PublicLeaderboardRow } from "@/lib/leaderboard";
+import { formatPercent, type PublicLeaderboardRow } from "@/lib/leaderboard";
 
 export function LeaderboardPreview({
   rows,
@@ -32,7 +33,7 @@ export function LeaderboardPreview({
               style={{ animationDelay: `${index * 90}ms` }}
             >
               <span className="leaderboard-rank">#{row.rank}</span>
-              <span className="leaderboard-avatar" aria-hidden="true">{getAvatarInitials(row.display_name)}</span>
+              <UserAvatar name={row.display_name} src={row.avatar_url} />
               <span className="min-w-0 flex-1">
                 <strong>{row.display_name}</strong>
                 <small>{row.course ?? "Course pending"}</small>
