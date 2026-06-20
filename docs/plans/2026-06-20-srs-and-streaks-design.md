@@ -151,9 +151,10 @@ read `node_modules/next/dist/docs/` before writing route/server code.
 - **Phase 2 — Adaptive remediation (implemented):** wrong answers auto-enroll into SRS;
   results screen builds a micro-drill from weakest topics; each miss deep-links to
   its lesson + matching SQL lab.
-- **Phase 3 — Onboarding & exam realism:** first-run intro → diagnostic →
-  personalized roadmap; audit `ExamClient` for timer, flag-for-review,
-  review-before-submit.
+- **Phase 3 — Onboarding & exam realism (implemented):** first-run `/welcome`
+  intro → diagnostic → roadmap, with a new-user banner on the dashboard. Exam
+  realism (countdown timer, per-question flag-for-review, review-before-submit
+  screen) audited and confirmed already present in `ExamClient`.
 - **Phase 4 — Reminders:** email / web-push "your queue is due today."
 - **Phase 5 — Social & rewards:** achievements/badges (incl. streak + mastery
   milestones) and cohort/weekly challenges on the existing leaderboard.
