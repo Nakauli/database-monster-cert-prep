@@ -44,28 +44,29 @@ export function MistakesClient({ initialMistakes }: { initialMistakes: MistakeRo
       return null;
     }
     const nextReviewAt = typeof data === "string" ? data : new Date().toISOString();
-    const target = mistakes.find((mistake) => mistake.id === id);
-    const local = computeNextReview(
-      target
-        ? { ease: target.ease, intervalDays: target.interval_days, reps: target.reps }
-        : { ease: 2.5, intervalDays: 0, reps: 0 },
-      grade,
-    );
+    // Derive the optimistic schedule from the latest state (`current`), not a stale
+    // closure, so rapid successive grades stay consistent. The assignment is idempotent,
+    // so a double-invoked updater (React StrictMode) yields the same result.
+    let nextIntervalDays = 0;
     setMistakes((current) =>
-      current.map((mistake) =>
-        mistake.id === id
-          ? {
-              ...mistake,
-              next_review_at: nextReviewAt,
-              interval_days: local.intervalDays,
-              ease: local.ease,
-              reps: local.reps,
-              last_reviewed_at: new Date().toISOString(),
-            }
-          : mistake,
-      ),
+      current.map((mistake) => {
+        if (mistake.id !== id) return mistake;
+        const local = computeNextReview(
+          { ease: mistake.ease, intervalDays: mistake.interval_days, reps: mistake.reps },
+          grade,
+        );
+        nextIntervalDays = local.intervalDays;
+        return {
+          ...mistake,
+          next_review_at: nextReviewAt,
+          interval_days: local.intervalDays,
+          ease: local.ease,
+          reps: local.reps,
+          last_reviewed_at: new Date().toISOString(),
+        };
+      }),
     );
-    return local.intervalDays;
+    return nextIntervalDays;
   }
 
   return (
