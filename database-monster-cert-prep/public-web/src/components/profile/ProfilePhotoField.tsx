@@ -79,7 +79,7 @@ export function ProfilePhotoField({
           src={shownAvatarUrl}
         />
         <div className="profile-photo-actions">
-          <label className="button outline profile-photo-picker" htmlFor="profile-photo">
+          <label className="button secondary profile-photo-picker" htmlFor="profile-photo">
             Choose photo
           </label>
           <input
@@ -90,12 +90,12 @@ export function ProfilePhotoField({
             type="file"
           />
           {(shownAvatarUrl || currentAvatarUrl) && (
-            <button className="button ghost" onClick={removePhoto} type="button">
+            <button className="button mark" onClick={removePhoto} type="button">
               Remove photo
             </button>
           )}
           {hasChange && (
-            <button className="button ghost" onClick={cancelChange} type="button">
+            <button className="button mark" onClick={cancelChange} type="button">
               Cancel change
             </button>
           )}
