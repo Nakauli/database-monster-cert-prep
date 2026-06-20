@@ -67,13 +67,17 @@ npx supabase migration list
 npx supabase db push
 ```
 
-If the CLI is unavailable, open **SQL Editor** in Supabase and run these files in order:
+Prefer `npx supabase db push` so migration history stays synchronized. The migrations create private progress tables, RLS policies, profile automation, the opt-in leaderboard, the public suggestions board, and the avatar Storage bucket.
 
-1. `migrations/001_create_user_progress_tables.sql`
-2. `migrations/002_enable_rls_policies.sql`
-3. `migrations/003_profile_trigger.sql`
+The avatar migration creates a public `avatars` bucket with:
 
-Migration 001 creates the profile/progress tables and the atomic `save_exam_result` RPC. Migration 002 enables RLS and restricts every row to its authenticated owner. Migration 003 creates a profile automatically after Auth creates a user.
+- a 2 MB object limit;
+- JPEG, PNG, and WebP MIME allow-listing;
+- immutable random object names inside the authenticated user's UUID folder;
+- owner-only insert, management-select, and delete policies;
+- a profile constraint that prevents referencing another user's avatar path.
+
+Public delivery is intentional because leaderboard cards can be viewed while signed out. Uploading, replacing, and removing files still requires a valid authenticated session.
 
 ## 5. Configure email authentication
 
@@ -142,5 +146,5 @@ rollback;
 
 ## 9. Recovery and deletion
 
-Deleting a user from Supabase Auth cascades to their profile, attempts, question results, mistake notebook, and topic progress. Test this behavior with a disposable account before launch.
+Deleting a user from Supabase Auth cascades to their profile, attempts, question results, mistake notebook, topic progress, suggestions, and votes. Supabase Storage objects are separate from Postgres row cascades; remove the user's avatar through the app before administrative account deletion.
 

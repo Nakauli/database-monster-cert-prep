@@ -6,6 +6,8 @@ A premium, account-backed, unofficial Certiport-style database fundamentals prac
 
 - Supabase email/password registration, login, confirmation, reset, and logout
 - Private profile, exam history, topic mastery, and mistake notebook
+- Optional profile photo uploads backed by Supabase Storage
+- Opt-in public readiness leaderboard and public student cards
 - Row Level Security on every user-specific table
 - Atomic exam saving through the `save_exam_result` Postgres function
 - Diagnostic, 50-minute timed, Final Boss, Panic Review, and topic practice
@@ -50,7 +52,7 @@ npm run audit
 
 1. Create a Supabase project.
 2. Add localhost and production auth redirect URLs.
-3. Run the three files in `supabase/migrations/` in order.
+3. Link the project and run every pending file in `supabase/migrations/` with `npx supabase db push`.
 4. Add the URL and anon/publishable key to `.env.local`.
 5. Create two test users and verify they cannot see each other's data.
 
@@ -60,7 +62,7 @@ The complete procedure and RLS test are in [supabase/README.md](supabase/README.
 
 The app uses `@supabase/ssr` with cookie-based browser/server clients. `src/proxy.ts` refreshes sessions and redirects users:
 
-- Public: `/`, `/roadmap`, `/labs`, `/about`, `/login`, `/register`, `/forgot-password`
+- Public: `/`, `/learn`, `/roadmap`, `/labs`, `/leaderboard`, `/suggestions`, `/students/*`, `/about`, `/login`, `/register`, `/forgot-password`
 - Protected: `/dashboard`, `/exam`, `/practice`, `/results`, `/mistakes`, `/history`, `/profile`
 
 Passwords are submitted directly to Supabase Auth. The application does not store, hash, log, or inspect passwords.
@@ -78,7 +80,9 @@ Permanent progress lives in Supabase. `localStorage` is limited to theme, last m
 
 ## RLS ownership
 
-Every user-specific table has RLS enabled. Policies compare `auth.uid()` with `user_id`; `profiles` compares `auth.uid()` with `id`. Anonymous table access is explicitly revoked. The service-role key is never used by the frontend.
+Every user-specific table has RLS enabled. Policies compare `auth.uid()` with `user_id`; `profiles` compares `auth.uid()` with `id`. Avatar writes are limited to each authenticated user's UUID folder in the `avatars` bucket. Anonymous table access is explicitly revoked. The service-role key is never used by the frontend.
+
+Profile photos accept JPEG, PNG, or WebP files up to 2 MB. The bucket is public because opted-in leaderboard cards must be viewable without authentication. Object names contain the owner UUID plus a random upload UUID, while RLS prevents users from uploading, listing, or deleting another user's objects.
 
 ## Deploy to Vercel
 
