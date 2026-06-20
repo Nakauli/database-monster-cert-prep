@@ -164,12 +164,20 @@ export function PracticeClient() {
             title="Live query challenges"
             description="These are typed SQL reps that run against the seeded dataset. They stay outside the timed exam flow."
           />
-          <div className="mt-5 grid gap-5 lg:grid-cols-[18rem_minmax(0,1fr)]">
-            <Card className="h-fit">
-              <CardContent className="grid gap-2">
+          <div className="mt-5 grid gap-5">
+            <Card>
+              <CardContent className="grid gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-ink">Choose a challenge</p>
+                    <p className="text-xs text-muted-foreground">The selected workspace opens full width below.</p>
+                  </div>
+                  <span className="mono-label">{visibleChallenges.length} available</span>
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1">
                 {visibleChallenges.map((challenge) => (
                   <Button
-                    className="h-auto justify-start rounded-xl p-3 text-left whitespace-normal"
+                    className="h-auto min-w-64 shrink-0 justify-start rounded-xl p-3 text-left whitespace-normal"
                     key={challenge.id}
                     onClick={() => setSelectedChallengeId(challenge.id)}
                     type="button"
@@ -181,6 +189,7 @@ export function PracticeClient() {
                     </span>
                   </Button>
                 ))}
+                </div>
               </CardContent>
             </Card>
             {selectedChallenge && (
