@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { UserAvatar } from "@/components/UserAvatar";
 import { COURSE_OPTIONS, normalizeCourse } from "@/lib/courses";
-import { formatLastActive, formatPercent, getAvatarInitials, type PublicLeaderboardRow } from "@/lib/leaderboard";
+import { formatLastActive, formatPercent, type PublicLeaderboardRow } from "@/lib/leaderboard";
 import { cn } from "@/lib/utils";
 
 const filters = ["All", ...COURSE_OPTIONS] as const;
@@ -46,7 +47,7 @@ export function LeaderboardTable({
                 key={row.user_id}
               >
                 <span className="leaderboard-row-rank">#{row.rank}</span>
-                <span className="leaderboard-avatar" aria-hidden="true">{getAvatarInitials(row.display_name)}</span>
+                <UserAvatar name={row.display_name} src={row.avatar_url} />
                 <span className="leaderboard-row-main">
                   <span className="leaderboard-row-name">
                     {row.display_name}

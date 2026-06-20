@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { getAvatarInitials } from "./avatar";
 import { COURSE_OPTIONS, normalizeCourse } from "./courses";
-import { formatLastActive, getAvatarInitials } from "./leaderboard";
+import { formatLastActive } from "./leaderboard";
 
 test("normalizes allowed course values", () => {
   assert.deepEqual(COURSE_OPTIONS, ["IT", "CS"]);

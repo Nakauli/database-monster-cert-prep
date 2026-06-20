@@ -1,10 +1,14 @@
 import { normalizeCourse } from "@/lib/courses";
+import { getAvatarPublicUrl } from "@/lib/avatar";
+import { getSupabaseConfig } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export interface PublicLeaderboardRow {
   user_id: string;
   display_name: string;
   course: string | null;
+  avatar_path: string | null;
+  avatar_url: string | null;
   rank: number;
   readiness_score: number;
   best_score: number;
@@ -13,12 +17,6 @@ export interface PublicLeaderboardRow {
   last_active_at: string | null;
   strongest_topics: string[];
   weakest_topics: string[];
-}
-
-export function getAvatarInitials(name: string | null | undefined) {
-  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "DB";
-  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
 }
 
 export function formatPercent(value: number | null | undefined) {
@@ -34,6 +32,14 @@ export function formatLastActive(value: string | null | undefined) {
   }).format(new Date(value));
 }
 
+function withAvatarUrls(rows: Omit<PublicLeaderboardRow, "avatar_url">[]): PublicLeaderboardRow[] {
+  const supabaseUrl = getSupabaseConfig()?.url;
+  return rows.map((row) => ({
+    ...row,
+    avatar_url: getAvatarPublicUrl(row.avatar_path, supabaseUrl),
+  }));
+}
+
 export async function getPublicLeaderboard(course?: string | null, limit?: number): Promise<PublicLeaderboardRow[]> {
   const supabase = await createClient();
   if (!supabase) return [];
@@ -43,7 +49,7 @@ export async function getPublicLeaderboard(course?: string | null, limit?: numbe
   });
   if (error) throw new Error(error.message);
 
-  const rows = (data ?? []) as PublicLeaderboardRow[];
+  const rows = withAvatarUrls((data ?? []) as Omit<PublicLeaderboardRow, "avatar_url">[]);
   return typeof limit === "number" ? rows.slice(0, limit) : rows;
 }
 
@@ -56,6 +62,6 @@ export async function getPublicStudentProfile(userId: string): Promise<PublicLea
   });
   if (error) throw new Error(error.message);
 
-  const rows = (data ?? []) as PublicLeaderboardRow[];
+  const rows = withAvatarUrls((data ?? []) as Omit<PublicLeaderboardRow, "avatar_url">[]);
   return rows[0] ?? null;
 }

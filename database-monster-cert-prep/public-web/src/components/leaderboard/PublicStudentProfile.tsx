@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatLastActive, formatPercent, getAvatarInitials, type PublicLeaderboardRow } from "@/lib/leaderboard";
+import { formatLastActive, formatPercent, type PublicLeaderboardRow } from "@/lib/leaderboard";
 
 function TopicList({ title, topics }: { title: string; topics: string[] }) {
   return (
@@ -28,9 +29,13 @@ export function PublicStudentProfile({ student }: { student: PublicLeaderboardRo
             Back to leaderboard
           </Link>
           <div className="mt-4 flex items-center gap-4">
-            <span className="leaderboard-avatar public-student-avatar" aria-hidden="true">
-              {getAvatarInitials(student.display_name)}
-            </span>
+            <UserAvatar
+              alt={`${student.display_name}'s profile photo`}
+              className="public-student-avatar"
+              name={student.display_name}
+              size="lg"
+              src={student.avatar_url}
+            />
             <div>
               <Badge variant="secondary" className="mb-2 w-fit">Rank #{student.rank}</Badge>
               <CardTitle className="text-3xl">{student.display_name}</CardTitle>

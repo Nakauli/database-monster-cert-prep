@@ -5,7 +5,8 @@ This application uses Supabase Auth and Postgres for private, per-user progress.
 ## Data handling
 
 - Supabase Auth stores account email and password credentials. Passwords never pass through custom storage.
-- Optional display name, school, and course fields are stored in the protected `profiles` table.
+- Optional display name, school, course, and profile-photo object path are stored in the protected `profiles` table.
+- Profile-photo bytes are stored in the public Supabase `avatars` bucket. Users should upload only photos they are comfortable showing publicly.
 - Exam attempts, question results, topic mastery, and mistakes are stored in Supabase Postgres.
 - `localStorage` is limited to theme, last selected mode, and temporary unfinished exam state.
 - Question and lab content uses fictional sample data.
@@ -20,12 +21,15 @@ All question content is bundled JSON controlled by the repository. React renders
 - All five user tables have RLS enabled.
 - Anonymous/public table privileges are revoked.
 - Ownership policies compare `auth.uid()` with `user_id`, or with `profiles.id`.
+- Avatar object policies restrict insert, select-for-management, and delete operations to the authenticated user's UUID folder and storage ownership.
+- Avatar bucket limits enforce a 2 MB maximum and allow only JPEG, PNG, and WebP. SVG and other active-content formats are rejected.
+- The profile table constraint requires every stored avatar path to begin with that profile's own user ID.
 - The atomic save function derives its user ID from `auth.uid()` and never accepts a caller-supplied user ID.
 - The frontend uses only the anon/publishable key. Never configure a service-role key in `NEXT_PUBLIC_*`.
 
 ## Deployment protections
 
-`vercel.json` applies a restrictive Content Security Policy, permits authenticated API/WebSocket connections only to Supabase, blocks clickjacking and MIME sniffing, restricts browser permissions, and applies a conservative referrer policy. The `wasm-unsafe-eval` script policy permits WebAssembly compilation for the bundled SQLite engine without enabling JavaScript `eval`.
+`vercel.json` applies a restrictive Content Security Policy, permits authenticated API/WebSocket connections and avatar images only from Supabase, blocks clickjacking and MIME sniffing, restricts browser permissions, and applies a conservative referrer policy. The `wasm-unsafe-eval` script policy permits WebAssembly compilation for the bundled SQLite engine without enabling JavaScript `eval`.
 
 ## Dependency checks
 
