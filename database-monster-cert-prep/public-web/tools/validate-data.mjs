@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { extremeQuestionPack } from "./extreme-question-pack.mjs";
 
 const questions = JSON.parse(await readFile(resolve("src/data/questions.json"), "utf8"));
 const sqlQuestionsSource = await readFile(resolve("src/data/sql-questions.ts"), "utf8");
@@ -127,7 +128,7 @@ const metrics = {
 };
 
 const minimums = {
-  questions: 360,
+  questions: 410,
   topics: 12,
   inlineCode: 200,
   multipleAnswer: 20,
@@ -145,9 +146,27 @@ for (const question of questions) {
   topicCounts.set(question.topic, (topicCounts.get(question.topic) ?? 0) + 1);
 }
 for (const [topic, topicQuestionCount] of topicCounts) {
-  if (topicQuestionCount !== 30) {
-    throw new Error(`${topic}: expected 30 questions, found ${topicQuestionCount}`);
+  if (topicQuestionCount < 30) {
+    throw new Error(`${topic}: expected at least 30 questions, found ${topicQuestionCount}`);
   }
+}
+
+if (extremeQuestionPack.length < 50) {
+  throw new Error(`Extreme question pack: expected at least 50 questions, found ${extremeQuestionPack.length}`);
+}
+
+const extremeIds = new Set();
+const extremePrompts = new Set();
+for (const question of extremeQuestionPack) {
+  const normalizedPrompt = question.question.trim().toLowerCase();
+  if (extremeIds.has(question.id)) {
+    throw new Error(`Extreme question pack has duplicate ID: ${question.id}`);
+  }
+  if (extremePrompts.has(normalizedPrompt)) {
+    throw new Error(`Extreme question pack repeats this prompt: ${question.question}`);
+  }
+  extremeIds.add(question.id);
+  extremePrompts.add(normalizedPrompt);
 }
 
 const sqlChallengeBlocks = sqlQuestionsSource.match(/\{\n\s+id: "sqlw-[\s\S]*?\n\s+\},/g) ?? [];
