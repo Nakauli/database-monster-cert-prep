@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { extremeQuestionPack } from "./extreme-question-pack.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const sourcePath = resolve(here, "../../data/question_bank.json");
@@ -29,7 +30,10 @@ const typeNames = {
   multi_select: "multiple-answer",
 };
 
-const raw = JSON.parse(await readFile(sourcePath, "utf8"));
+const raw = [
+  ...JSON.parse(await readFile(sourcePath, "utf8")),
+  ...extremeQuestionPack,
+];
 const counters = {};
 const questions = raw.map((question) => {
   const topic = topicNames[question.topic] ?? question.topic;

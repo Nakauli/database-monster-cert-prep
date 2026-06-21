@@ -8878,5 +8878,1255 @@
     },
     "relatedConcept": "systematic SQL debugging",
     "reviewFile": "notes/12_troubleshooting.md"
+  },
+  {
+    "id": "erd-and-design-031",
+    "legacyId": "XQ001",
+    "topic": "ERD & Design",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "An `enrollments` table has a surrogate `enrollment_id`, while the business rule forbids the same student from joining the same section twice. Which key design preserves both requirements?",
+    "choices": [
+      "`PRIMARY KEY (enrollment_id)` plus `UNIQUE (student_id, section_id)`",
+      "`PRIMARY KEY (student_id)` with no other constraint",
+      "`PRIMARY KEY (section_id)` with no other constraint",
+      "No key, because enrollment history may contain duplicates"
+    ],
+    "correctAnswers": [
+      "`PRIMARY KEY (enrollment_id)` plus `UNIQUE (student_id, section_id)`"
+    ],
+    "explanation": "The surrogate key identifies each row, while the composite UNIQUE constraint enforces the real-world enrollment rule.",
+    "wrongAnswerExplanations": {
+      "`PRIMARY KEY (student_id)` with no other constraint": "This choice does not correctly apply surrogate keys and alternate composite keys.",
+      "`PRIMARY KEY (section_id)` with no other constraint": "This choice does not correctly apply surrogate keys and alternate composite keys.",
+      "No key, because enrollment history may contain duplicates": "This choice does not correctly apply surrogate keys and alternate composite keys."
+    },
+    "relatedConcept": "surrogate keys and alternate composite keys",
+    "reviewFile": "notes/02_database_design_erd.md"
+  },
+  {
+    "id": "normalization-031",
+    "legacyId": "XQ003",
+    "topic": "Normalization",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "`Students(student_id, full_name, course_code, course_name, department_name)` uses `student_id` as its key. Both names are determined through `course_code`. Which redesign removes the transitive dependencies?",
+    "choices": [
+      "Keep student facts in Students and move course and department facts into related tables",
+      "Make `full_name` the primary key and retain every column",
+      "Remove `student_id` and use `course_code` as the only key",
+      "Store course and department names in a comma-separated column"
+    ],
+    "correctAnswers": [
+      "Keep student facts in Students and move course and department facts into related tables"
+    ],
+    "explanation": "Course and department attributes should be represented once and referenced by keys instead of repeated in each student row.",
+    "wrongAnswerExplanations": {
+      "Make `full_name` the primary key and retain every column": "This choice does not correctly apply 3NF transitive dependencies.",
+      "Remove `student_id` and use `course_code` as the only key": "This choice does not correctly apply 3NF transitive dependencies.",
+      "Store course and department names in a comma-separated column": "This choice does not correctly apply 3NF transitive dependencies."
+    },
+    "relatedConcept": "3NF transitive dependencies",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "normalization-032",
+    "legacyId": "XQ004",
+    "topic": "Normalization",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "`StudentGrades(student_no, full_name, course_code, course_name, instructor_name, grade)` mixes facts from several entities. Which decomposition best addresses the largest normalization problem?",
+    "choices": [
+      "Students, Courses, Instructors, Sections, and Enrollments/Grades",
+      "One wider StudentGrades table with more nullable columns",
+      "A Students table plus a comma-separated course list",
+      "One table per grade value"
+    ],
+    "correctAnswers": [
+      "Students, Courses, Instructors, Sections, and Enrollments/Grades"
+    ],
+    "explanation": "The original relation repeats student, course, and instructor facts for every enrollment and creates update, insertion, and deletion anomalies.",
+    "wrongAnswerExplanations": {
+      "One wider StudentGrades table with more nullable columns": "This choice does not correctly apply entity decomposition and update anomalies.",
+      "A Students table plus a comma-separated course list": "This choice does not correctly apply entity decomposition and update anomalies.",
+      "One table per grade value": "This choice does not correctly apply entity decomposition and update anomalies."
+    },
+    "relatedConcept": "entity decomposition and update anomalies",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "erd-and-design-032",
+    "legacyId": "XQ005",
+    "topic": "ERD & Design",
+    "difficulty": "hard",
+    "type": "multiple-answer",
+    "question": "A section may have many students, a student may join many sections, and duplicate student-section pairs are forbidden. Select TWO necessary design elements.",
+    "choices": [
+      "A junction table containing both foreign keys",
+      "A UNIQUE constraint covering the student-section pair",
+      "A foreign key from Students directly to one Section",
+      "A repeating `section_ids` text column in Students"
+    ],
+    "correctAnswers": [
+      "A junction table containing both foreign keys",
+      "A UNIQUE constraint covering the student-section pair"
+    ],
+    "explanation": "The junction table models the many-to-many relationship, and uniqueness prevents duplicate membership pairs.",
+    "wrongAnswerExplanations": {
+      "A foreign key from Students directly to one Section": "This choice does not correctly apply many-to-many relationship integrity.",
+      "A repeating `section_ids` text column in Students": "This choice does not correctly apply many-to-many relationship integrity."
+    },
+    "relatedConcept": "many-to-many relationship integrity",
+    "reviewFile": "notes/02_database_design_erd.md"
+  },
+  {
+    "id": "constraints-and-indexes-031",
+    "legacyId": "XQ006",
+    "topic": "Constraints & Indexes",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "A payment system must store exact values up to 99,999,999.99 without binary floating-point rounding. Which column definition is safest?",
+    "choices": [
+      "`amount DECIMAL(10,2)`",
+      "`amount FLOAT`",
+      "`amount DOUBLE`",
+      "`amount VARCHAR(20)`"
+    ],
+    "correctAnswers": [
+      "`amount DECIMAL(10,2)`"
+    ],
+    "explanation": "DECIMAL stores fixed-precision base-10 values and is appropriate for exact currency calculations.",
+    "wrongAnswerExplanations": {
+      "`amount FLOAT`": "This choice does not correctly apply exact numeric data types.",
+      "`amount DOUBLE`": "This choice does not correctly apply exact numeric data types.",
+      "`amount VARCHAR(20)`": "This choice does not correctly apply exact numeric data types."
+    },
+    "relatedConcept": "exact numeric data types",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "security-and-admin-031",
+    "legacyId": "XQ007",
+    "topic": "Security & Admin",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "An application account must run only `AddEnrollment` and `GetStudentBalance`; direct table reads and writes are prohibited. Which grant best implements the rule?",
+    "choices": [
+      "Grant EXECUTE on only those two procedures",
+      "Grant ALL PRIVILEGES on the database",
+      "Grant SELECT, INSERT, UPDATE, and DELETE on every table",
+      "Share the database administrator password with the application"
+    ],
+    "correctAnswers": [
+      "Grant EXECUTE on only those two procedures"
+    ],
+    "explanation": "Procedure-level EXECUTE grants expose only the approved operations and follow least privilege.",
+    "wrongAnswerExplanations": {
+      "Grant ALL PRIVILEGES on the database": "This choice does not correctly apply least privilege through stored procedures.",
+      "Grant SELECT, INSERT, UPDATE, and DELETE on every table": "This choice does not correctly apply least privilege through stored procedures.",
+      "Share the database administrator password with the application": "This choice does not correctly apply least privilege through stored procedures."
+    },
+    "relatedConcept": "least privilege through stored procedures",
+    "reviewFile": "notes/11_security_backup.md"
+  },
+  {
+    "id": "joins-031",
+    "legacyId": "XQ008",
+    "topic": "Joins",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A report must show every department, including departments with no courses and departments whose courses have no students. Which join chain and aggregate are required?",
+    "choices": [
+      "LEFT JOIN departments to courses, LEFT JOIN courses to students, then `COUNT(student_id)`",
+      "INNER JOIN both relationships, then `COUNT(*)`",
+      "CROSS JOIN all three tables, then `SUM(student_id)`",
+      "RIGHT JOIN students to departments without using courses"
+    ],
+    "correctAnswers": [
+      "LEFT JOIN departments to courses, LEFT JOIN courses to students, then `COUNT(student_id)`"
+    ],
+    "explanation": "Both optional relationship levels require LEFT JOIN, and counting the nullable student key returns zero for unmatched departments.",
+    "wrongAnswerExplanations": {
+      "INNER JOIN both relationships, then `COUNT(*)`": "This choice does not correctly apply multi-level outer joins and zero counts.",
+      "CROSS JOIN all three tables, then `SUM(student_id)`": "This choice does not correctly apply multi-level outer joins and zero counts.",
+      "RIGHT JOIN students to departments without using courses": "This choice does not correctly apply multi-level outer joins and zero counts."
+    },
+    "relatedConcept": "multi-level outer joins and zero counts",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "aggregation-031",
+    "legacyId": "XQ011",
+    "topic": "Aggregation",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Students with no payment rows must appear with `total_paid = 0`. Which expression and join combination is correct?",
+    "choices": [
+      "`LEFT JOIN payments` and `COALESCE(SUM(p.amount), 0)`",
+      "`INNER JOIN payments` and `SUM(p.amount)`",
+      "`CROSS JOIN payments` and `COUNT(p.amount)`",
+      "`LEFT JOIN payments` and `SUM(student_id)`"
+    ],
+    "correctAnswers": [
+      "`LEFT JOIN payments` and `COALESCE(SUM(p.amount), 0)`"
+    ],
+    "explanation": "LEFT JOIN preserves students without payments, and COALESCE converts their NULL aggregate result to zero.",
+    "wrongAnswerExplanations": {
+      "`INNER JOIN payments` and `SUM(p.amount)`": "This choice does not correctly apply outer joins with nullable aggregates.",
+      "`CROSS JOIN payments` and `COUNT(p.amount)`": "This choice does not correctly apply outer joins with nullable aggregates.",
+      "`LEFT JOIN payments` and `SUM(student_id)`": "This choice does not correctly apply outer joins with nullable aggregates."
+    },
+    "relatedConcept": "outer joins with nullable aggregates",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "constraints-and-indexes-032",
+    "legacyId": "XQ013",
+    "topic": "Constraints & Indexes",
+    "difficulty": "final boss",
+    "type": "multiple-answer",
+    "question": "A write-heavy enrollment table is frequently searched by `student_id`. Select TWO consequences of adding an index on that column.",
+    "choices": [
+      "The lookup and related joins may become faster",
+      "INSERT and UPDATE operations may incur additional maintenance work",
+      "The index replaces the foreign key constraint",
+      "The index guarantees that backups are valid"
+    ],
+    "correctAnswers": [
+      "The lookup and related joins may become faster",
+      "INSERT and UPDATE operations may incur additional maintenance work"
+    ],
+    "explanation": "Indexes trade additional storage and write maintenance for faster access paths on suitable reads.",
+    "wrongAnswerExplanations": {
+      "The index replaces the foreign key constraint": "This choice does not correctly apply index read/write tradeoffs.",
+      "The index guarantees that backups are valid": "This choice does not correctly apply index read/write tradeoffs."
+    },
+    "relatedConcept": "index read/write tradeoffs",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "transactions-031",
+    "legacyId": "XQ014",
+    "topic": "Transactions",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A procedure updates a student's course and inserts an audit row. The audit insert fails. Which design guarantees that the course update does not remain by itself?",
+    "choices": [
+      "Run both writes in one transaction and roll back on SQL exception",
+      "Commit immediately after the course update",
+      "Disable foreign keys before running the procedure",
+      "Retry only the failed audit insert later"
+    ],
+    "correctAnswers": [
+      "Run both writes in one transaction and roll back on SQL exception"
+    ],
+    "explanation": "Atomic transaction handling prevents a partially completed business operation.",
+    "wrongAnswerExplanations": {
+      "Commit immediately after the course update": "This choice does not correctly apply transactional atomicity in procedures.",
+      "Disable foreign keys before running the procedure": "This choice does not correctly apply transactional atomicity in procedures.",
+      "Retry only the failed audit insert later": "This choice does not correctly apply transactional atomicity in procedures."
+    },
+    "relatedConcept": "transactional atomicity in procedures",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "triggers-and-procedures-031",
+    "legacyId": "XQ015",
+    "topic": "Triggers & Procedures",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "A MySQL procedure parameter supplies a student ID to the routine but is not intended to return a changed value. Which mode should it use?",
+    "choices": [
+      "IN",
+      "OUT",
+      "INOUT",
+      "RETURN"
+    ],
+    "correctAnswers": [
+      "IN"
+    ],
+    "explanation": "An IN parameter is input-only from the caller's perspective.",
+    "wrongAnswerExplanations": {
+      "OUT": "This choice does not correctly apply stored procedure parameter modes.",
+      "INOUT": "This choice does not correctly apply stored procedure parameter modes.",
+      "RETURN": "This choice does not correctly apply stored procedure parameter modes."
+    },
+    "relatedConcept": "stored procedure parameter modes",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-032",
+    "legacyId": "XQ016",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Inside a MySQL procedure, what does `SELECT COALESCE(SUM(amount),0) INTO p_total FROM payments ...` accomplish?",
+    "choices": [
+      "It assigns the scalar query result to the local or OUT variable `p_total`",
+      "It creates a permanent table named `p_total`",
+      "It returns every matching payment row directly to the caller",
+      "It starts an implicit trigger"
+    ],
+    "correctAnswers": [
+      "It assigns the scalar query result to the local or OUT variable `p_total`"
+    ],
+    "explanation": "SELECT ... INTO captures a single-row result in a procedure variable.",
+    "wrongAnswerExplanations": {
+      "It creates a permanent table named `p_total`": "This choice does not correctly apply SELECT INTO in stored routines.",
+      "It returns every matching payment row directly to the caller": "This choice does not correctly apply SELECT INTO in stored routines.",
+      "It starts an implicit trigger": "This choice does not correctly apply SELECT INTO in stored routines."
+    },
+    "relatedConcept": "SELECT INTO in stored routines",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-033",
+    "legacyId": "XQ019",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "`AddPayment(p_student_id, p_amount)` changes financial data. Which implementation is most defensible?",
+    "choices": [
+      "Validate the student, require a positive amount, and insert with transaction-aware error handling",
+      "Insert immediately and allow negative amounts for flexibility",
+      "Store the amount as text and remove the student foreign key",
+      "Delete earlier payments before every insert"
+    ],
+    "correctAnswers": [
+      "Validate the student, require a positive amount, and insert with transaction-aware error handling"
+    ],
+    "explanation": "The procedure should enforce required business rules and preserve integrity when the write fails.",
+    "wrongAnswerExplanations": {
+      "Insert immediately and allow negative amounts for flexibility": "This choice does not correctly apply defensive stored procedure design.",
+      "Store the amount as text and remove the student foreign key": "This choice does not correctly apply defensive stored procedure design.",
+      "Delete earlier payments before every insert": "This choice does not correctly apply defensive stored procedure design."
+    },
+    "relatedConcept": "defensive stored procedure design",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-034",
+    "legacyId": "XQ020",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Which MySQL declaration is designed to roll back and exit a routine when any SQL exception occurs?",
+    "choices": [
+      "`DECLARE EXIT HANDLER FOR SQLEXCEPTION`",
+      "`DECLARE PRIMARY KEY HANDLER`",
+      "`CREATE ERROR CATCH`",
+      "`IF ERROR THEN ROLLBACK`"
+    ],
+    "correctAnswers": [
+      "`DECLARE EXIT HANDLER FOR SQLEXCEPTION`"
+    ],
+    "explanation": "An EXIT handler for SQLEXCEPTION can execute ROLLBACK and RESIGNAL before leaving the procedure.",
+    "wrongAnswerExplanations": {
+      "`DECLARE PRIMARY KEY HANDLER`": "This choice does not correctly apply MySQL exception handlers.",
+      "`CREATE ERROR CATCH`": "This choice does not correctly apply MySQL exception handlers.",
+      "`IF ERROR THEN ROLLBACK`": "This choice does not correctly apply MySQL exception handlers."
+    },
+    "relatedConcept": "MySQL exception handlers",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-035",
+    "legacyId": "XQ021",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Which property distinguishes a trigger from a stored procedure?",
+    "choices": [
+      "A trigger runs automatically for a configured table event; a procedure is explicitly invoked",
+      "A trigger is invoked with CALL; a procedure runs automatically",
+      "A trigger cannot contain SQL statements",
+      "A procedure can never accept parameters"
+    ],
+    "correctAnswers": [
+      "A trigger runs automatically for a configured table event; a procedure is explicitly invoked"
+    ],
+    "explanation": "Their activation model is the key distinction even though both can contain database logic.",
+    "wrongAnswerExplanations": {
+      "A trigger is invoked with CALL; a procedure runs automatically": "This choice does not correctly apply trigger and procedure activation.",
+      "A trigger cannot contain SQL statements": "This choice does not correctly apply trigger and procedure activation.",
+      "A procedure can never accept parameters": "This choice does not correctly apply trigger and procedure activation."
+    },
+    "relatedConcept": "trigger and procedure activation",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-036",
+    "legacyId": "XQ022",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A status-change audit must record both the previous and new values after a row update. Which trigger design fits?",
+    "choices": [
+      "An AFTER UPDATE row trigger reading `OLD.status` and `NEW.status`",
+      "A BEFORE INSERT trigger reading only `OLD.status`",
+      "An AFTER DELETE trigger reading `NEW.status`",
+      "A SELECT trigger reading both transition rows"
+    ],
+    "correctAnswers": [
+      "An AFTER UPDATE row trigger reading `OLD.status` and `NEW.status`"
+    ],
+    "explanation": "UPDATE exposes both transition states, and AFTER timing records a change that completed successfully.",
+    "wrongAnswerExplanations": {
+      "A BEFORE INSERT trigger reading only `OLD.status`": "This choice does not correctly apply audit triggers with OLD and NEW.",
+      "An AFTER DELETE trigger reading `NEW.status`": "This choice does not correctly apply audit triggers with OLD and NEW.",
+      "A SELECT trigger reading both transition rows": "This choice does not correctly apply audit triggers with OLD and NEW."
+    },
+    "relatedConcept": "audit triggers with OLD and NEW",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-037",
+    "legacyId": "XQ023",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A MySQL BEFORE INSERT trigger must reject a stock movement when `NEW.quantity <= 0`. Which action should its body take?",
+    "choices": [
+      "`SIGNAL SQLSTATE '45000'` with a descriptive message",
+      "Set `OLD.quantity = 1`",
+      "Commit the invalid row and delete it afterward",
+      "Call `DROP TRIGGER`"
+    ],
+    "correctAnswers": [
+      "`SIGNAL SQLSTATE '45000'` with a descriptive message"
+    ],
+    "explanation": "A user-defined SIGNAL from BEFORE INSERT prevents the invalid row from being written.",
+    "wrongAnswerExplanations": {
+      "Set `OLD.quantity = 1`": "This choice does not correctly apply validation triggers and SIGNAL.",
+      "Commit the invalid row and delete it afterward": "This choice does not correctly apply validation triggers and SIGNAL.",
+      "Call `DROP TRIGGER`": "This choice does not correctly apply validation triggers and SIGNAL."
+    },
+    "relatedConcept": "validation triggers and SIGNAL",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-038",
+    "legacyId": "XQ024",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Which task is the strongest trigger use case?",
+    "choices": [
+      "Automatically append an audit record whenever a payment amount changes",
+      "Run a user-selected multi-step registration workflow",
+      "Generate an optional report only when a user clicks a button",
+      "Replace all primary and foreign key constraints"
+    ],
+    "correctAnswers": [
+      "Automatically append an audit record whenever a payment amount changes"
+    ],
+    "explanation": "Audit logging is tightly coupled to the data-change event and should occur regardless of the client that performs it.",
+    "wrongAnswerExplanations": {
+      "Run a user-selected multi-step registration workflow": "This choice does not correctly apply appropriate trigger use cases.",
+      "Generate an optional report only when a user clicks a button": "This choice does not correctly apply appropriate trigger use cases.",
+      "Replace all primary and foreign key constraints": "This choice does not correctly apply appropriate trigger use cases."
+    },
+    "relatedConcept": "appropriate trigger use cases",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-039",
+    "legacyId": "XQ025",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Which task is better modeled as an explicitly called stored procedure than as a hidden trigger?",
+    "choices": [
+      "A multi-step enrollment workflow initiated by a user",
+      "Capturing every row's old amount after any update",
+      "Rejecting an invalid quantity before insert",
+      "Setting a missing creation timestamp"
+    ],
+    "correctAnswers": [
+      "A multi-step enrollment workflow initiated by a user"
+    ],
+    "explanation": "Explicit business workflows benefit from visible invocation, parameters, result handling, and predictable control flow.",
+    "wrongAnswerExplanations": {
+      "Capturing every row's old amount after any update": "This choice does not correctly apply appropriate procedure use cases.",
+      "Rejecting an invalid quantity before insert": "This choice does not correctly apply appropriate procedure use cases.",
+      "Setting a missing creation timestamp": "This choice does not correctly apply appropriate procedure use cases."
+    },
+    "relatedConcept": "appropriate procedure use cases",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-040",
+    "legacyId": "XQ026",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Why is a large amount of hidden business logic inside triggers risky?",
+    "choices": [
+      "It creates implicit side effects that are harder to trace, test, order, and debug",
+      "Triggers cannot execute INSERT or UPDATE statements",
+      "Triggers automatically disable transactions",
+      "Every trigger runs only once per database lifetime"
+    ],
+    "correctAnswers": [
+      "It creates implicit side effects that are harder to trace, test, order, and debug"
+    ],
+    "explanation": "Complex trigger chains can surprise callers and make performance and failure behavior difficult to reason about.",
+    "wrongAnswerExplanations": {
+      "Triggers cannot execute INSERT or UPDATE statements": "This choice does not correctly apply trigger maintainability risks.",
+      "Triggers automatically disable transactions": "This choice does not correctly apply trigger maintainability risks.",
+      "Every trigger runs only once per database lifetime": "This choice does not correctly apply trigger maintainability risks."
+    },
+    "relatedConcept": "trigger maintainability risks",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "security-and-admin-032",
+    "legacyId": "XQ027",
+    "topic": "Security & Admin",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Application code builds `CALL GetStudentById(` + userInput + `)`. What is the primary vulnerability?",
+    "choices": [
+      "SQL injection through concatenated input",
+      "A foreign key cascade",
+      "A dirty read caused by isolation",
+      "A duplicate index"
+    ],
+    "correctAnswers": [
+      "SQL injection through concatenated input"
+    ],
+    "explanation": "Procedure calls are not safe merely because they call a routine; untrusted arguments must still be bound as parameters.",
+    "wrongAnswerExplanations": {
+      "A foreign key cascade": "This choice does not correctly apply SQL injection in procedure calls.",
+      "A dirty read caused by isolation": "This choice does not correctly apply SQL injection in procedure calls.",
+      "A duplicate index": "This choice does not correctly apply SQL injection in procedure calls."
+    },
+    "relatedConcept": "SQL injection in procedure calls",
+    "reviewFile": "notes/11_security_backup.md"
+  },
+  {
+    "id": "security-and-admin-033",
+    "legacyId": "XQ028",
+    "topic": "Security & Admin",
+    "difficulty": "final boss",
+    "type": "multiple-answer",
+    "question": "Select TWO properties of a defensible production backup strategy.",
+    "choices": [
+      "Backups are stored separately from the primary system",
+      "Restore procedures are tested regularly",
+      "A successful backup log is accepted without a restore test",
+      "All copies remain on the same disk as the database"
+    ],
+    "correctAnswers": [
+      "Backups are stored separately from the primary system",
+      "Restore procedures are tested regularly"
+    ],
+    "explanation": "Separation protects against shared failure, while restore testing proves the backup is usable.",
+    "wrongAnswerExplanations": {
+      "A successful backup log is accepted without a restore test": "This choice does not correctly apply backup resilience and restore verification.",
+      "All copies remain on the same disk as the database": "This choice does not correctly apply backup resilience and restore verification."
+    },
+    "relatedConcept": "backup resilience and restore verification",
+    "reviewFile": "notes/11_security_backup.md"
+  },
+  {
+    "id": "joins-032",
+    "legacyId": "XQ029",
+    "topic": "Joins",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A student appears three times after joining Students to Enrollments. No data is duplicated. What is the most likely explanation?",
+    "choices": [
+      "The student legitimately has three matching enrollment rows",
+      "INNER JOIN always duplicates every left row exactly three times",
+      "The primary key on Students is broken",
+      "GROUP BY automatically generated extra rows"
+    ],
+    "correctAnswers": [
+      "The student legitimately has three matching enrollment rows"
+    ],
+    "explanation": "One-to-many joins return one result row per matching child unless the query aggregates or otherwise reshapes them.",
+    "wrongAnswerExplanations": {
+      "INNER JOIN always duplicates every left row exactly three times": "This choice does not correctly apply join cardinality and result multiplicity.",
+      "The primary key on Students is broken": "This choice does not correctly apply join cardinality and result multiplicity.",
+      "GROUP BY automatically generated extra rows": "This choice does not correctly apply join cardinality and result multiplicity."
+    },
+    "relatedConcept": "join cardinality and result multiplicity",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "aggregation-032",
+    "legacyId": "XQ030",
+    "topic": "Aggregation",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A section is full when its count of `ENROLLED` rows is at least its capacity. Which query shape is logically correct?",
+    "choices": [
+      "Join Sections to Enrollments, filter enrolled rows, group by section and capacity, then HAVING the count >= capacity",
+      "Filter `COUNT(*) >= capacity` in WHERE before joining",
+      "CROSS JOIN Sections and Enrollments and compare total table sizes",
+      "Select Sections without joining and test `capacity IS NULL`"
+    ],
+    "correctAnswers": [
+      "Join Sections to Enrollments, filter enrolled rows, group by section and capacity, then HAVING the count >= capacity"
+    ],
+    "explanation": "Capacity is compared with an aggregate count at the section grouping level, so the final condition belongs in HAVING.",
+    "wrongAnswerExplanations": {
+      "Filter `COUNT(*) >= capacity` in WHERE before joining": "This choice does not correctly apply capacity checks with grouped joins.",
+      "CROSS JOIN Sections and Enrollments and compare total table sizes": "This choice does not correctly apply capacity checks with grouped joins.",
+      "Select Sections without joining and test `capacity IS NULL`": "This choice does not correctly apply capacity checks with grouped joins."
+    },
+    "relatedConcept": "capacity checks with grouped joins",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "constraints-and-indexes-033",
+    "legacyId": "XQ031",
+    "topic": "Constraints & Indexes",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "What is the full effect of `DROP TABLE payment_audit`?",
+    "choices": [
+      "It removes the table definition and its stored rows",
+      "It removes rows but preserves the table structure",
+      "It rolls back only uncommitted rows",
+      "It removes one selected column"
+    ],
+    "correctAnswers": [
+      "It removes the table definition and its stored rows"
+    ],
+    "explanation": "DROP is a DDL operation that removes the database object itself.",
+    "wrongAnswerExplanations": {
+      "It removes rows but preserves the table structure": "This choice does not correctly apply DROP versus row deletion.",
+      "It rolls back only uncommitted rows": "This choice does not correctly apply DROP versus row deletion.",
+      "It removes one selected column": "This choice does not correctly apply DROP versus row deletion."
+    },
+    "relatedConcept": "DROP versus row deletion",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "constraints-and-indexes-034",
+    "legacyId": "XQ033",
+    "topic": "Constraints & Indexes",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Before inserting a row whose `course_id` is a foreign key, which condition must hold unless the key is nullable and omitted?",
+    "choices": [
+      "The referenced course row must already exist",
+      "The child row must use the next course sequence number",
+      "The foreign key value must be globally unique",
+      "The Courses table must contain no other rows"
+    ],
+    "correctAnswers": [
+      "The referenced course row must already exist"
+    ],
+    "explanation": "Referential integrity requires each non-NULL child key to match a referenced parent key.",
+    "wrongAnswerExplanations": {
+      "The child row must use the next course sequence number": "This choice does not correctly apply foreign key insertion order.",
+      "The foreign key value must be globally unique": "This choice does not correctly apply foreign key insertion order.",
+      "The Courses table must contain no other rows": "This choice does not correctly apply foreign key insertion order."
+    },
+    "relatedConcept": "foreign key insertion order",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "constraints-and-indexes-035",
+    "legacyId": "XQ034",
+    "topic": "Constraints & Indexes",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "Which table definition correctly creates a child key referencing `departments(department_id)`?",
+    "choices": [
+      "`department_id INT, FOREIGN KEY (department_id) REFERENCES departments(department_id)`",
+      "`department_id INT UNIQUE REFERENCES students(student_id)`",
+      "`FOREIGN department_id TO departments`",
+      "`department_id VARCHAR PRIMARY KEY departments`"
+    ],
+    "correctAnswers": [
+      "`department_id INT, FOREIGN KEY (department_id) REFERENCES departments(department_id)`"
+    ],
+    "explanation": "A foreign key declaration names the child column and the referenced parent table and key.",
+    "wrongAnswerExplanations": {
+      "`department_id INT UNIQUE REFERENCES students(student_id)`": "This choice does not correctly apply foreign key DDL syntax.",
+      "`FOREIGN department_id TO departments`": "This choice does not correctly apply foreign key DDL syntax.",
+      "`department_id VARCHAR PRIMARY KEY departments`": "This choice does not correctly apply foreign key DDL syntax."
+    },
+    "relatedConcept": "foreign key DDL syntax",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "aggregation-033",
+    "legacyId": "XQ035",
+    "topic": "Aggregation",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A query filters active students, groups by course, and uses `HAVING COUNT(*) > 20`. What does one returned row represent?",
+    "choices": [
+      "One course that has more than 20 active students",
+      "One active student with more than 20 courses",
+      "Every course, including those with no students",
+      "One department with exactly 20 students"
+    ],
+    "correctAnswers": [
+      "One course that has more than 20 active students"
+    ],
+    "explanation": "The WHERE clause selects active rows, GROUP BY creates course groups, and HAVING keeps groups above the threshold.",
+    "wrongAnswerExplanations": {
+      "One active student with more than 20 courses": "This choice does not correctly apply interpreting grouped query output.",
+      "Every course, including those with no students": "This choice does not correctly apply interpreting grouped query output.",
+      "One department with exactly 20 students": "This choice does not correctly apply interpreting grouped query output."
+    },
+    "relatedConcept": "interpreting grouped query output",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "transactions-032",
+    "legacyId": "XQ037",
+    "topic": "Transactions",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Which statement changes only ACTIVE students enrolled in the course whose code is `BSCS`?",
+    "choices": [
+      "`UPDATE students SET year_level=4 WHERE status='ACTIVE' AND course_id=(SELECT course_id FROM courses WHERE course_code='BSCS');`",
+      "`UPDATE students SET year_level=4;`",
+      "`ALTER students year_level=4 WHERE BSCS;`",
+      "`INSERT INTO students(year_level) VALUES(4);`"
+    ],
+    "correctAnswers": [
+      "`UPDATE students SET year_level=4 WHERE status='ACTIVE' AND course_id=(SELECT course_id FROM courses WHERE course_code='BSCS');`"
+    ],
+    "explanation": "The correlated business criteria are expressed in WHERE, preventing an unintended all-row update.",
+    "wrongAnswerExplanations": {
+      "`UPDATE students SET year_level=4;`": "This choice does not correctly apply safe targeted updates with subqueries.",
+      "`ALTER students year_level=4 WHERE BSCS;`": "This choice does not correctly apply safe targeted updates with subqueries.",
+      "`INSERT INTO students(year_level) VALUES(4);`": "This choice does not correctly apply safe targeted updates with subqueries."
+    },
+    "relatedConcept": "safe targeted updates with subqueries",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "triggers-and-procedures-041",
+    "legacyId": "XQ038",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A MySQL procedure returns a value through OUT parameter `p_total`. Which invocation pattern correctly receives it?",
+    "choices": [
+      "`CALL CountStudents('BSCS', @total); SELECT @total;`",
+      "`SELECT CountStudents('BSCS') INTO @total;`",
+      "`EXEC CountStudents OUT @total ONLY;`",
+      "`DECLARE @total CALL CountStudents;`"
+    ],
+    "correctAnswers": [
+      "`CALL CountStudents('BSCS', @total); SELECT @total;`"
+    ],
+    "explanation": "A MySQL session variable can receive an OUT argument from CALL and then be selected.",
+    "wrongAnswerExplanations": {
+      "`SELECT CountStudents('BSCS') INTO @total;`": "This choice does not correctly apply receiving OUT parameters.",
+      "`EXEC CountStudents OUT @total ONLY;`": "This choice does not correctly apply receiving OUT parameters.",
+      "`DECLARE @total CALL CountStudents;`": "This choice does not correctly apply receiving OUT parameters."
+    },
+    "relatedConcept": "receiving OUT parameters",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-042",
+    "legacyId": "XQ040",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "multiple-answer",
+    "question": "Select TWO capabilities that distinguish a stored procedure from a single ad hoc SELECT.",
+    "choices": [
+      "It can encapsulate multiple reusable SQL statements",
+      "It can accept parameters and contain control flow",
+      "It must always return exactly one scalar value",
+      "It exists only in the browser that called it"
+    ],
+    "correctAnswers": [
+      "It can encapsulate multiple reusable SQL statements",
+      "It can accept parameters and contain control flow"
+    ],
+    "explanation": "Stored procedures are named database objects that can package parameterized multi-statement logic.",
+    "wrongAnswerExplanations": {
+      "It must always return exactly one scalar value": "This choice does not correctly apply stored procedure capabilities.",
+      "It exists only in the browser that called it": "This choice does not correctly apply stored procedure capabilities."
+    },
+    "relatedConcept": "stored procedure capabilities",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "aggregation-034",
+    "legacyId": "XQ041",
+    "topic": "Aggregation",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Which query plan correctly returns course codes with at least five ACTIVE students?",
+    "choices": [
+      "Join Courses to Students, filter ACTIVE in WHERE, group by course code, and HAVING `COUNT(student_id) >= 5`",
+      "Group Courses first, then place `status='ACTIVE'` in HAVING without joining Students",
+      "LEFT JOIN every table and filter `COUNT(*)` in WHERE",
+      "Order active students by course code and use LIMIT 5"
+    ],
+    "correctAnswers": [
+      "Join Courses to Students, filter ACTIVE in WHERE, group by course code, and HAVING `COUNT(student_id) >= 5`"
+    ],
+    "explanation": "Row status is filtered before aggregation, while the minimum group size is applied afterward.",
+    "wrongAnswerExplanations": {
+      "Group Courses first, then place `status='ACTIVE'` in HAVING without joining Students": "This choice does not correctly apply WHERE and HAVING in aggregate reports.",
+      "LEFT JOIN every table and filter `COUNT(*)` in WHERE": "This choice does not correctly apply WHERE and HAVING in aggregate reports.",
+      "Order active students by course code and use LIMIT 5": "This choice does not correctly apply WHERE and HAVING in aggregate reports."
+    },
+    "relatedConcept": "WHERE and HAVING in aggregate reports",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "aggregation-035",
+    "legacyId": "XQ042",
+    "topic": "Aggregation",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A report must list only students whose total payments exceed 5000. Which clause correctly applies the threshold?",
+    "choices": [
+      "`HAVING SUM(p.amount) > 5000` after grouping by the student",
+      "`WHERE SUM(p.amount) > 5000` before grouping",
+      "`ON SUM(p.amount) > 5000` before joining",
+      "`ORDER BY SUM(p.amount) > 5000`"
+    ],
+    "correctAnswers": [
+      "`HAVING SUM(p.amount) > 5000` after grouping by the student"
+    ],
+    "explanation": "The threshold depends on an aggregate total and therefore belongs in HAVING.",
+    "wrongAnswerExplanations": {
+      "`WHERE SUM(p.amount) > 5000` before grouping": "This choice does not correctly apply aggregate thresholds.",
+      "`ON SUM(p.amount) > 5000` before joining": "This choice does not correctly apply aggregate thresholds.",
+      "`ORDER BY SUM(p.amount) > 5000`": "This choice does not correctly apply aggregate thresholds."
+    },
+    "relatedConcept": "aggregate thresholds",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "joins-033",
+    "legacyId": "XQ043",
+    "topic": "Joins",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A course-count report must retain courses with no students. Why is `COUNT(s.student_id)` safer than `COUNT(*)` after a LEFT JOIN?",
+    "choices": [
+      "`COUNT(s.student_id)` ignores the NULL-extended child row and returns zero",
+      "`COUNT(*)` is invalid whenever LEFT JOIN is used",
+      "`COUNT(s.student_id)` automatically removes duplicate courses",
+      "`COUNT(*)` counts only non-NULL child keys"
+    ],
+    "correctAnswers": [
+      "`COUNT(s.student_id)` ignores the NULL-extended child row and returns zero"
+    ],
+    "explanation": "COUNT(*) counts the preserved parent result row, while COUNT of the nullable child key counts only real matches.",
+    "wrongAnswerExplanations": {
+      "`COUNT(*)` is invalid whenever LEFT JOIN is used": "This choice does not correctly apply counting matches after outer joins.",
+      "`COUNT(s.student_id)` automatically removes duplicate courses": "This choice does not correctly apply counting matches after outer joins.",
+      "`COUNT(*)` counts only non-NULL child keys": "This choice does not correctly apply counting matches after outer joins."
+    },
+    "relatedConcept": "counting matches after outer joins",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "constraints-and-indexes-036",
+    "legacyId": "XQ044",
+    "topic": "Constraints & Indexes",
+    "difficulty": "final boss",
+    "type": "multiple-answer",
+    "question": "An audit table stores old and new payment amounts. Select TWO appropriate column-design choices.",
+    "choices": [
+      "Use an independent auto-increment primary key for each audit event",
+      "Store monetary before/after values in DECIMAL columns",
+      "Use `payment_id` as the only primary key so each payment can be audited once",
+      "Store amounts in free-form text to preserve formatting"
+    ],
+    "correctAnswers": [
+      "Use an independent auto-increment primary key for each audit event",
+      "Store monetary before/after values in DECIMAL columns"
+    ],
+    "explanation": "Each change is a separate audit event, and exact decimal types preserve financial values.",
+    "wrongAnswerExplanations": {
+      "Use `payment_id` as the only primary key so each payment can be audited once": "This choice does not correctly apply audit table schema design.",
+      "Store amounts in free-form text to preserve formatting": "This choice does not correctly apply audit table schema design."
+    },
+    "relatedConcept": "audit table schema design",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "triggers-and-procedures-043",
+    "legacyId": "XQ045",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "An AFTER UPDATE payment trigger should avoid logging when the amount did not actually change. Which condition is NULL-safe in MySQL?",
+    "choices": [
+      "`IF NOT (OLD.amount <=> NEW.amount) THEN ... END IF;`",
+      "`IF OLD.amount = NEW.amount THEN INSERT ...; END IF;`",
+      "`IF OLD.amount <> NULL THEN INSERT ...; END IF;`",
+      "`IF NEW.amount IS NULL THEN always INSERT ...; END IF;`"
+    ],
+    "correctAnswers": [
+      "`IF NOT (OLD.amount <=> NEW.amount) THEN ... END IF;`"
+    ],
+    "explanation": "MySQL's null-safe equality operator treats two NULLs as equal and detects all actual value changes.",
+    "wrongAnswerExplanations": {
+      "`IF OLD.amount = NEW.amount THEN INSERT ...; END IF;`": "This choice does not correctly apply NULL-safe audit trigger comparisons.",
+      "`IF OLD.amount <> NULL THEN INSERT ...; END IF;`": "This choice does not correctly apply NULL-safe audit trigger comparisons.",
+      "`IF NEW.amount IS NULL THEN always INSERT ...; END IF;`": "This choice does not correctly apply NULL-safe audit trigger comparisons."
+    },
+    "relatedConcept": "NULL-safe audit trigger comparisons",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-044",
+    "legacyId": "XQ046",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A stock movement trigger applies `IN` as addition and `OUT` as subtraction. What additional safeguard prevents committed negative inventory?",
+    "choices": [
+      "Validate available stock before an OUT movement and signal an error when quantity exceeds it",
+      "Convert `stock_qty` to VARCHAR before subtracting",
+      "Commit the movement before checking stock",
+      "Use a CROSS JOIN to products"
+    ],
+    "correctAnswers": [
+      "Validate available stock before an OUT movement and signal an error when quantity exceeds it"
+    ],
+    "explanation": "The business operation must reject an outbound movement that would violate the nonnegative-stock invariant.",
+    "wrongAnswerExplanations": {
+      "Convert `stock_qty` to VARCHAR before subtracting": "This choice does not correctly apply inventory trigger invariants.",
+      "Commit the movement before checking stock": "This choice does not correctly apply inventory trigger invariants.",
+      "Use a CROSS JOIN to products": "This choice does not correctly apply inventory trigger invariants."
+    },
+    "relatedConcept": "inventory trigger invariants",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-045",
+    "legacyId": "XQ047",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "`GetStudentPaymentTotal` uses an OUT DECIMAL parameter. Why should its SELECT assign `COALESCE(SUM(amount),0)` rather than only `SUM(amount)`?",
+    "choices": [
+      "SUM over no matching payment rows returns NULL, but the business result should be zero",
+      "COALESCE makes the procedure run outside a transaction",
+      "SUM cannot be used in a procedure without COALESCE",
+      "COALESCE converts DECIMAL values to text"
+    ],
+    "correctAnswers": [
+      "SUM over no matching payment rows returns NULL, but the business result should be zero"
+    ],
+    "explanation": "COALESCE gives callers a stable numeric result for students who have not paid anything.",
+    "wrongAnswerExplanations": {
+      "COALESCE makes the procedure run outside a transaction": "This choice does not correctly apply NULL aggregates in OUT parameters.",
+      "SUM cannot be used in a procedure without COALESCE": "This choice does not correctly apply NULL aggregates in OUT parameters.",
+      "COALESCE converts DECIMAL values to text": "This choice does not correctly apply NULL aggregates in OUT parameters."
+    },
+    "relatedConcept": "NULL aggregates in OUT parameters",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-046",
+    "legacyId": "XQ048",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A procedure validates `p_amount > 0` and then inserts a payment. Which statement raises a caller-visible business-rule error in MySQL?",
+    "choices": [
+      "`SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Payment amount must be greater than zero';`",
+      "`PRINT ERROR 'Payment amount';`",
+      "`THROW SQLSTATE NEGATIVE_AMOUNT;`",
+      "`ROLLBACK MESSAGE 'Payment amount';`"
+    ],
+    "correctAnswers": [
+      "`SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Payment amount must be greater than zero';`"
+    ],
+    "explanation": "SQLSTATE 45000 is commonly used for an unhandled user-defined exception.",
+    "wrongAnswerExplanations": {
+      "`PRINT ERROR 'Payment amount';`": "This choice does not correctly apply business-rule errors in MySQL.",
+      "`THROW SQLSTATE NEGATIVE_AMOUNT;`": "This choice does not correctly apply business-rule errors in MySQL.",
+      "`ROLLBACK MESSAGE 'Payment amount';`": "This choice does not correctly apply business-rule errors in MySQL."
+    },
+    "relatedConcept": "business-rule errors in MySQL",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-047",
+    "legacyId": "XQ049",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A procedure's EXIT handler executes `ROLLBACK; RESIGNAL;`. Why is `RESIGNAL` important after rollback?",
+    "choices": [
+      "It propagates the original failure to the caller instead of silently reporting success",
+      "It commits the transaction after rollback",
+      "It retries every failed statement automatically",
+      "It disables the handler for later calls"
+    ],
+    "correctAnswers": [
+      "It propagates the original failure to the caller instead of silently reporting success"
+    ],
+    "explanation": "Rollback restores atomicity; RESIGNAL preserves transparent error reporting.",
+    "wrongAnswerExplanations": {
+      "It commits the transaction after rollback": "This choice does not correctly apply transaction error propagation.",
+      "It retries every failed statement automatically": "This choice does not correctly apply transaction error propagation.",
+      "It disables the handler for later calls": "This choice does not correctly apply transaction error propagation."
+    },
+    "relatedConcept": "transaction error propagation",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "aggregation-036",
+    "legacyId": "XQ050",
+    "topic": "Aggregation",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "Which clause sequence finds duplicate non-NULL instructor emails?",
+    "choices": [
+      "`WHERE email IS NOT NULL GROUP BY email HAVING COUNT(*) > 1`",
+      "`HAVING email IS NOT NULL WHERE COUNT(*) > 1`",
+      "`GROUP BY instructor_id HAVING email = NULL`",
+      "`ORDER BY email WHERE DISTINCT email`"
+    ],
+    "correctAnswers": [
+      "`WHERE email IS NOT NULL GROUP BY email HAVING COUNT(*) > 1`"
+    ],
+    "explanation": "WHERE removes NULL rows before grouping, and HAVING keeps only groups with multiple rows.",
+    "wrongAnswerExplanations": {
+      "`HAVING email IS NOT NULL WHERE COUNT(*) > 1`": "This choice does not correctly apply duplicate detection with grouping.",
+      "`GROUP BY instructor_id HAVING email = NULL`": "This choice does not correctly apply duplicate detection with grouping.",
+      "`ORDER BY email WHERE DISTINCT email`": "This choice does not correctly apply duplicate detection with grouping."
+    },
+    "relatedConcept": "duplicate detection with grouping",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "aggregation-037",
+    "legacyId": "XQ051",
+    "topic": "Aggregation",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A MySQL report ranks courses by enrolled-student count. Which final operations return only the top three?",
+    "choices": [
+      "`ORDER BY enrolled_count DESC LIMIT 3`",
+      "`HAVING enrolled_count = 3`",
+      "`WHERE COUNT(*) <= 3`",
+      "`GROUP BY enrolled_count ASC`"
+    ],
+    "correctAnswers": [
+      "`ORDER BY enrolled_count DESC LIMIT 3`"
+    ],
+    "explanation": "Descending order places the largest groups first, and LIMIT restricts the result to three rows.",
+    "wrongAnswerExplanations": {
+      "`HAVING enrolled_count = 3`": "This choice does not correctly apply top-N aggregate queries.",
+      "`WHERE COUNT(*) <= 3`": "This choice does not correctly apply top-N aggregate queries.",
+      "`GROUP BY enrolled_count ASC`": "This choice does not correctly apply top-N aggregate queries."
+    },
+    "relatedConcept": "top-N aggregate queries",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "triggers-and-procedures-048",
+    "legacyId": "XQ052",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "multiple-answer",
+    "question": "A broken trigger uses `AFTER INSERT`, tests `created_at = NULL`, and assigns `created_at = NOW()`. Select TWO required corrections.",
+    "choices": [
+      "Use BEFORE INSERT and reference `NEW.created_at`",
+      "Test with `NEW.created_at IS NULL` and assign with `SET NEW.created_at = NOW()`",
+      "Keep AFTER INSERT and update the unqualified local name",
+      "Use `OLD.created_at` for the incoming row"
+    ],
+    "correctAnswers": [
+      "Use BEFORE INSERT and reference `NEW.created_at`",
+      "Test with `NEW.created_at IS NULL` and assign with `SET NEW.created_at = NOW()`"
+    ],
+    "explanation": "The incoming value is NEW, NULL requires IS NULL, and it must be changed before the row is stored.",
+    "wrongAnswerExplanations": {
+      "Keep AFTER INSERT and update the unqualified local name": "This choice does not correctly apply repairing row trigger timing and syntax.",
+      "Use `OLD.created_at` for the incoming row": "This choice does not correctly apply repairing row trigger timing and syntax."
+    },
+    "relatedConcept": "repairing row trigger timing and syntax",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "triggers-and-procedures-049",
+    "legacyId": "XQ053",
+    "topic": "Triggers & Procedures",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "`CountStudentsByCourse` accepts a course code and returns an OUT count. Why can a LEFT JOIN be useful even though WHERE selects one course row?",
+    "choices": [
+      "It lets an existing course with no students return a count of zero",
+      "It includes students from every other course",
+      "It converts the OUT parameter into an INOUT parameter",
+      "It removes the need to group or count"
+    ],
+    "correctAnswers": [
+      "It lets an existing course with no students return a count of zero"
+    ],
+    "explanation": "The course row survives without matches, and COUNT of the nullable student key yields zero.",
+    "wrongAnswerExplanations": {
+      "It includes students from every other course": "This choice does not correctly apply OUT counts for empty relationships.",
+      "It converts the OUT parameter into an INOUT parameter": "This choice does not correctly apply OUT counts for empty relationships.",
+      "It removes the need to group or count": "This choice does not correctly apply OUT counts for empty relationships."
+    },
+    "relatedConcept": "OUT counts for empty relationships",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "advanced-queries-031",
+    "legacyId": "XQ054",
+    "topic": "Advanced Queries",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A report needs students who have no successful payment during 2026, while retaining students who paid in earlier years. Which correlated predicate places both child conditions at the correct scope?",
+    "choices": [
+      "`WHERE NOT EXISTS (SELECT 1 FROM payments p WHERE p.student_id=s.student_id AND p.status='SUCCESS' AND p.paid_at >= '2026-01-01' AND p.paid_at < '2027-01-01')`",
+      "`WHERE NOT EXISTS (SELECT 1 FROM payments p WHERE p.student_id=s.student_id) AND p.status='SUCCESS'`",
+      "`WHERE s.student_id NOT IN (SELECT student_id FROM payments WHERE paid_at >= '2026-01-01')`",
+      "`LEFT JOIN payments p ON p.student_id=s.student_id WHERE p.status <> 'SUCCESS'`"
+    ],
+    "correctAnswers": [
+      "`WHERE NOT EXISTS (SELECT 1 FROM payments p WHERE p.student_id=s.student_id AND p.status='SUCCESS' AND p.paid_at >= '2026-01-01' AND p.paid_at < '2027-01-01')`"
+    ],
+    "explanation": "The correlation, success status, and half-open date range all belong inside NOT EXISTS so earlier or failed payments do not disqualify the student.",
+    "wrongAnswerExplanations": {
+      "`WHERE NOT EXISTS (SELECT 1 FROM payments p WHERE p.student_id=s.student_id) AND p.status='SUCCESS'`": "This choice does not correctly apply conditional correlated anti-joins.",
+      "`WHERE s.student_id NOT IN (SELECT student_id FROM payments WHERE paid_at >= '2026-01-01')`": "This choice does not correctly apply conditional correlated anti-joins.",
+      "`LEFT JOIN payments p ON p.student_id=s.student_id WHERE p.status <> 'SUCCESS'`": "This choice does not correctly apply conditional correlated anti-joins."
+    },
+    "relatedConcept": "conditional correlated anti-joins",
+    "reviewFile": "notes/07_subqueries_views.md"
+  },
+  {
+    "id": "transactions-033",
+    "legacyId": "XQ056",
+    "topic": "Transactions",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A multi-step routine commits after its first update, then its second update fails. What is the central design defect?",
+    "choices": [
+      "The logical operation was split across transaction boundaries and can be only partially completed",
+      "COMMIT automatically rolls back the first update",
+      "The second update should use SELECT instead",
+      "Transactions cannot contain more than one update"
+    ],
+    "correctAnswers": [
+      "The logical operation was split across transaction boundaries and can be only partially completed"
+    ],
+    "explanation": "All related writes should share one atomic transaction and commit only after every step succeeds.",
+    "wrongAnswerExplanations": {
+      "COMMIT automatically rolls back the first update": "This choice does not correctly apply transaction boundary design.",
+      "The second update should use SELECT instead": "This choice does not correctly apply transaction boundary design.",
+      "Transactions cannot contain more than one update": "This choice does not correctly apply transaction boundary design."
+    },
+    "relatedConcept": "transaction boundary design",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "troubleshooting-031",
+    "legacyId": "XQ057",
+    "topic": "Troubleshooting",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A grouped report returns one row per active student instead of one row per course. Which mistake is most likely?",
+    "choices": [
+      "The GROUP BY includes a student-level column such as `student_id`",
+      "The query uses HAVING after GROUP BY",
+      "The query counts a nullable child key",
+      "The query orders the groups by count"
+    ],
+    "correctAnswers": [
+      "The GROUP BY includes a student-level column such as `student_id`"
+    ],
+    "explanation": "Adding a more granular key changes the grouping level from course to student.",
+    "wrongAnswerExplanations": {
+      "The query uses HAVING after GROUP BY": "This choice does not correctly apply incorrect aggregation granularity.",
+      "The query counts a nullable child key": "This choice does not correctly apply incorrect aggregation granularity.",
+      "The query orders the groups by count": "This choice does not correctly apply incorrect aggregation granularity."
+    },
+    "relatedConcept": "incorrect aggregation granularity",
+    "reviewFile": "notes/12_troubleshooting.md"
+  },
+  {
+    "id": "troubleshooting-032",
+    "legacyId": "XQ058",
+    "topic": "Troubleshooting",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "An audit trigger records two rows for one update. The table has two AFTER UPDATE triggers that both insert into the same log. What should be investigated first?",
+    "choices": [
+      "Duplicate or overlapping trigger definitions and their execution order",
+      "Whether the SELECT list uses DISTINCT",
+      "Whether the audit table has a foreign key",
+      "Whether the caller used a prepared statement"
+    ],
+    "correctAnswers": [
+      "Duplicate or overlapping trigger definitions and their execution order"
+    ],
+    "explanation": "Multiple triggers on the same event can produce overlapping side effects even when the original update runs once.",
+    "wrongAnswerExplanations": {
+      "Whether the SELECT list uses DISTINCT": "This choice does not correctly apply debugging trigger side effects.",
+      "Whether the audit table has a foreign key": "This choice does not correctly apply debugging trigger side effects.",
+      "Whether the caller used a prepared statement": "This choice does not correctly apply debugging trigger side effects."
+    },
+    "relatedConcept": "debugging trigger side effects",
+    "reviewFile": "notes/12_troubleshooting.md"
+  },
+  {
+    "id": "security-and-admin-034",
+    "legacyId": "XQ059",
+    "topic": "Security & Admin",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A procedure owner has broad table rights, while callers receive only EXECUTE. Which security risk must still be reviewed?",
+    "choices": [
+      "Whether the routine can be abused through unsafe dynamic SQL or over-broad operations",
+      "Whether EXECUTE automatically grants every table privilege to the caller",
+      "Whether stored procedures disable authentication",
+      "Whether an index exposes the administrator password"
+    ],
+    "correctAnswers": [
+      "Whether the routine can be abused through unsafe dynamic SQL or over-broad operations"
+    ],
+    "explanation": "A privileged routine is a controlled security boundary only when its inputs and allowed behavior are narrowly designed.",
+    "wrongAnswerExplanations": {
+      "Whether EXECUTE automatically grants every table privilege to the caller": "This choice does not correctly apply secure privileged stored routines.",
+      "Whether stored procedures disable authentication": "This choice does not correctly apply secure privileged stored routines.",
+      "Whether an index exposes the administrator password": "This choice does not correctly apply secure privileged stored routines."
+    },
+    "relatedConcept": "secure privileged stored routines",
+    "reviewFile": "notes/11_security_backup.md"
+  },
+  {
+    "id": "advanced-queries-032",
+    "legacyId": "XQ060",
+    "topic": "Advanced Queries",
+    "difficulty": "final boss",
+    "type": "single-choice",
+    "question": "A view exposes active students but should hide email addresses from report users. Which design best supports that goal?",
+    "choices": [
+      "Define the view with only approved columns and grant users access to the view instead of the base table",
+      "Select every base-table column and rely on users not to read email",
+      "Copy the table into a public schema after every update",
+      "Grant direct table SELECT and remove the view"
+    ],
+    "correctAnswers": [
+      "Define the view with only approved columns and grant users access to the view instead of the base table"
+    ],
+    "explanation": "A restricted projection can simplify access and reduce exposed data, provided the view's security behavior is configured correctly.",
+    "wrongAnswerExplanations": {
+      "Select every base-table column and rely on users not to read email": "This choice does not correctly apply views as controlled data projections.",
+      "Copy the table into a public schema after every update": "This choice does not correctly apply views as controlled data projections.",
+      "Grant direct table SELECT and remove the view": "This choice does not correctly apply views as controlled data projections."
+    },
+    "relatedConcept": "views as controlled data projections",
+    "reviewFile": "notes/07_subqueries_views.md"
   }
 ]
