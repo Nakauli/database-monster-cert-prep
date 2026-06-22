@@ -1,17 +1,15 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { mapPathToPresence } from "@/lib/presence";
+import { mapPathToPresence } from "@/lib/presence-shared";
 import { createClient } from "@/lib/supabase/client";
 
 const HEARTBEAT_INTERVAL_MS = 60_000;
 
 export function PresenceHeartbeat() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const routeKey = `${pathname}?${searchParams.toString()}`;
-  const presence = useMemo(() => mapPathToPresence(routeKey), [routeKey]);
+  const presence = useMemo(() => mapPathToPresence(pathname), [pathname]);
 
   useEffect(() => {
     const supabase = createClient();

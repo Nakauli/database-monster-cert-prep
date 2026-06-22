@@ -1,7 +1,7 @@
 import { Activity } from "lucide-react";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Badge } from "@/components/ui/badge";
-import { formatPresenceFreshness, type PublicPresenceRow } from "@/lib/presence";
+import { formatPresenceFreshness, type PublicPresenceRow } from "@/lib/presence-shared";
 
 export function LiveClassmatesPanel({ rows }: { rows: PublicPresenceRow[] }) {
   return (
