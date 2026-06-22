@@ -1,4 +1,4 @@
-import questionData from "@/data/questions.json";
+import questionData from "@/data/exam-whiteboard.json";
 import type { Difficulty, ExamQuestion, Question } from "@/lib/types";
 
 export const questions = questionData as unknown as Question[];

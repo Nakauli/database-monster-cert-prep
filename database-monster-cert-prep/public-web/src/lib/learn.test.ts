@@ -14,22 +14,19 @@ import {
 } from "@/lib/learn";
 
 test("defines the approved learn topic groups", () => {
-  assert.equal(learnTopics.length, 12);
+  assert.equal(learnTopics.length, 9);
   assert.deepEqual(
     learnTopics.map((topic) => topic.title),
     [
-      "Database Concepts",
-      "ERD & Design",
+      "DDL - Data Definition Language",
+      "DML - Data Manipulation Language",
+      "DQL - Data Query Language",
       "Normalization",
-      "SQL",
       "Joins",
-      "Aggregation",
-      "Advanced Queries",
-      "Constraints & Indexes",
-      "Transactions",
-      "Stored Routines, Functions & Triggers",
-      "Security & Admin",
-      "Troubleshooting",
+      "ERD & Keys",
+      "Table Relationships",
+      "Stored Procedures & Functions",
+      "Triggers",
     ],
   );
 });
@@ -38,7 +35,7 @@ test("every learn topic has detailed subtopic lessons", () => {
   for (const topic of learnTopics) {
     assert.ok(topic.slug, `${topic.title} needs a slug`);
     assert.ok(topic.reviewFile.startsWith("notes/"), `${topic.title} needs a notes review file`);
-    assert.ok(topic.lessons.length >= 5, `${topic.title} needs multiple lessons`);
+    assert.ok(topic.lessons.length >= 4, `${topic.title} needs multiple lessons`);
 
     for (const lesson of topic.lessons) {
       assert.ok(lesson.slug, `${topic.title} / ${lesson.title} needs a slug`);

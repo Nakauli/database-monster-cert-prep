@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { InfoCard, SectionHeader, StatGrid } from "@/components/DesignSystem";
 import { LeaderboardPreview } from "@/components/leaderboard/LeaderboardPreview";
 import { AchievementBadges, NextAchievementCard } from "@/components/rewards/AchievementBadges";
@@ -115,6 +116,7 @@ export function HomeDashboard({
 
   return (
     <div>
+      <AnnouncementBanner />
       <section className="app-container page-section home-hero-section">
         <div className="home-hero-grid">
           <div className="home-hero-copy">

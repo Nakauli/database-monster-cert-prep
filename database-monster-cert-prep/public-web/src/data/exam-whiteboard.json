@@ -1,0 +1,2234 @@
+[
+  {
+    "id": "wb-ddl-001",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "What does DDL stand for, and what is it used for?",
+    "choices": [
+      "Data Definition Language — defines and changes the structure of database objects.",
+      "Data Display Language — formats query results for reports.",
+      "Data Deletion Language — removes rows from tables.",
+      "Dynamic Data Loader — imports files into tables."
+    ],
+    "correctAnswers": [
+      "Data Definition Language — defines and changes the structure of database objects."
+    ],
+    "explanation": "DDL (Data Definition Language) defines and alters the structure of database objects such as tables, indexes, and schemas. Its core statements are CREATE, ALTER, and DROP.",
+    "wrongAnswerExplanations": {
+      "Data Display Language — formats query results for reports.": "Formatting output is a presentation concern, not what DDL means.",
+      "Data Deletion Language — removes rows from tables.": "Removing rows is DELETE, which is DML, not DDL.",
+      "Dynamic Data Loader — imports files into tables.": "Importing data is a data-loading task, not the definition of DDL."
+    },
+    "relatedConcept": "DDL definition",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-002",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement creates a new table structure in the database?",
+    "choices": [
+      "CREATE TABLE",
+      "INSERT INTO",
+      "SELECT INTO buffer",
+      "ADD TABLE"
+    ],
+    "correctAnswers": [
+      "CREATE TABLE"
+    ],
+    "explanation": "CREATE TABLE is the DDL statement that defines a new table along with its columns, data types, and constraints.",
+    "wrongAnswerExplanations": {
+      "INSERT INTO": "INSERT adds rows to an existing table; it is DML and does not create structure.",
+      "SELECT INTO buffer": "There is no standard 'SELECT INTO buffer' statement for creating a table.",
+      "ADD TABLE": "ADD TABLE is not a valid SQL statement."
+    },
+    "relatedConcept": "CREATE TABLE",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-003",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement permanently removes an entire table, including its structure and data?",
+    "choices": [
+      "DROP TABLE students;",
+      "DELETE FROM students;",
+      "TRUNCATE TABLE students;",
+      "ALTER TABLE students DROP COLUMN;"
+    ],
+    "correctAnswers": [
+      "DROP TABLE students;"
+    ],
+    "explanation": "DROP TABLE removes the entire table object — its data, structure, indexes, and constraints — from the database.",
+    "wrongAnswerExplanations": {
+      "DELETE FROM students;": "DELETE removes all rows but keeps the table structure in place.",
+      "TRUNCATE TABLE students;": "TRUNCATE empties the table of rows but leaves the table definition intact.",
+      "ALTER TABLE students DROP COLUMN;": "This removes a single column, not the whole table, and is also incomplete syntax."
+    },
+    "relatedConcept": "DROP statement",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-004",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "You need to add a new column 'phone' to an existing 'customers' table without losing existing data. Which statement do you use?",
+    "choices": [
+      "ALTER TABLE customers ADD phone VARCHAR(20);",
+      "UPDATE customers ADD phone VARCHAR(20);",
+      "CREATE COLUMN phone ON customers;",
+      "INSERT COLUMN phone INTO customers;"
+    ],
+    "correctAnswers": [
+      "ALTER TABLE customers ADD phone VARCHAR(20);"
+    ],
+    "explanation": "ALTER TABLE modifies an existing table's structure. ADD introduces a new column while preserving all existing rows and data.",
+    "wrongAnswerExplanations": {
+      "UPDATE customers ADD phone VARCHAR(20);": "UPDATE changes values in existing columns; it cannot add a column.",
+      "CREATE COLUMN phone ON customers;": "CREATE COLUMN is not valid SQL; column changes go through ALTER TABLE.",
+      "INSERT COLUMN phone INTO customers;": "INSERT adds rows, not columns, and this is not valid syntax."
+    },
+    "relatedConcept": "ALTER statement",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-005",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement quickly removes ALL rows from a table, keeps the structure, and (in most databases) cannot be rolled back and resets identity counters?",
+    "choices": [
+      "TRUNCATE TABLE orders;",
+      "DELETE FROM orders;",
+      "DROP TABLE orders;",
+      "ALTER TABLE orders CLEAR;"
+    ],
+    "correctAnswers": [
+      "TRUNCATE TABLE orders;"
+    ],
+    "explanation": "TRUNCATE is a DDL operation that removes all rows in one fast operation, keeps the table structure, typically cannot be rolled back, and usually resets auto-increment/identity values.",
+    "wrongAnswerExplanations": {
+      "DELETE FROM orders;": "DELETE is DML, logs each row, can be rolled back, and does not reset identity counters by default.",
+      "DROP TABLE orders;": "DROP removes the whole table including its structure, not just the rows.",
+      "ALTER TABLE orders CLEAR;": "There is no CLEAR option in ALTER TABLE."
+    },
+    "relatedConcept": "TRUNCATE vs DELETE",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-006",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which of the following is the correct DDL statement to rename or change a column's data type?",
+    "choices": [
+      "ALTER TABLE",
+      "UPDATE TABLE",
+      "MODIFY ROW",
+      "SELECT CHANGE"
+    ],
+    "correctAnswers": [
+      "ALTER TABLE"
+    ],
+    "explanation": "Structural changes to a table — adding, dropping, renaming, or changing the type of a column — are all performed with ALTER TABLE.",
+    "wrongAnswerExplanations": {
+      "UPDATE TABLE": "UPDATE changes the data inside rows, not the table's structure.",
+      "MODIFY ROW": "MODIFY ROW is not a valid statement; MODIFY is only a clause inside ALTER TABLE in some dialects.",
+      "SELECT CHANGE": "SELECT only retrieves data and cannot change structure."
+    },
+    "relatedConcept": "ALTER statement",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-007",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "medium",
+    "type": "multiple-answer",
+    "question": "Select ALL statements that are classified as DDL (Data Definition Language).",
+    "choices": [
+      "CREATE TABLE",
+      "ALTER TABLE",
+      "DROP TABLE",
+      "INSERT INTO"
+    ],
+    "correctAnswers": [
+      "CREATE TABLE",
+      "ALTER TABLE",
+      "DROP TABLE"
+    ],
+    "explanation": "CREATE, ALTER, and DROP define or change database structure, so all three are DDL. INSERT manipulates data, so it is DML.",
+    "wrongAnswerExplanations": {
+      "INSERT INTO": "INSERT adds data rows, which makes it DML (Data Manipulation Language), not DDL."
+    },
+    "relatedConcept": "DDL classification",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-008",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "A developer runs DELETE FROM logs; and is surprised the auto-increment id keeps counting up from where it left off, while a colleague's TRUNCATE TABLE logs; reset it to 1. Why?",
+    "choices": [
+      "DELETE (DML) removes rows but preserves the identity sequence; TRUNCATE (DDL) resets table-level metadata including the identity counter.",
+      "DELETE always resets identity; the colleague made an error.",
+      "TRUNCATE and DELETE behave identically; the difference is random.",
+      "Identity counters only reset when the table is dropped and recreated."
+    ],
+    "correctAnswers": [
+      "DELETE (DML) removes rows but preserves the identity sequence; TRUNCATE (DDL) resets table-level metadata including the identity counter."
+    ],
+    "explanation": "DELETE works row by row as a DML operation and leaves table metadata (like the identity/auto-increment seed) untouched. TRUNCATE is a DDL operation that resets the table, including its identity counter, in most database systems.",
+    "wrongAnswerExplanations": {
+      "DELETE always resets identity; the colleague made an error.": "This is reversed — DELETE preserves the identity counter by default.",
+      "TRUNCATE and DELETE behave identically; the difference is random.": "They differ in logging, rollback, and identity handling; the behavior is not random.",
+      "Identity counters only reset when the table is dropped and recreated.": "TRUNCATE also resets the counter in most databases without dropping the table."
+    },
+    "relatedConcept": "DDL vs DML side effects",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-dml-001",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "What does DML stand for?",
+    "choices": [
+      "Data Manipulation Language",
+      "Data Modeling Language",
+      "Database Management Layer",
+      "Data Mapping Logic"
+    ],
+    "correctAnswers": [
+      "Data Manipulation Language"
+    ],
+    "explanation": "DML stands for Data Manipulation Language — the statements that work with the data inside tables: INSERT, UPDATE, and DELETE.",
+    "wrongAnswerExplanations": {
+      "Data Modeling Language": "Data modeling is a design activity, not what DML stands for.",
+      "Database Management Layer": "This describes software architecture, not the DML acronym.",
+      "Data Mapping Logic": "Data mapping is unrelated to the meaning of DML."
+    },
+    "relatedConcept": "DML definition",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-002",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement adds new rows of data to a table?",
+    "choices": [
+      "INSERT",
+      "CREATE",
+      "ALTER",
+      "SELECT"
+    ],
+    "correctAnswers": [
+      "INSERT"
+    ],
+    "explanation": "INSERT adds one or more new rows of data into an existing table.",
+    "wrongAnswerExplanations": {
+      "CREATE": "CREATE defines new database structures (DDL), it does not add data rows.",
+      "ALTER": "ALTER changes table structure (DDL), not the data within it.",
+      "SELECT": "SELECT retrieves existing rows; it does not add new ones."
+    },
+    "relatedConcept": "INSERT statement",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-003",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What happens if you run UPDATE employees SET salary = 50000; without a WHERE clause?",
+    "choices": [
+      "Every row in the employees table is updated to a salary of 50000.",
+      "Only the first row is updated.",
+      "The statement is rejected because WHERE is required.",
+      "A new column called salary is created."
+    ],
+    "correctAnswers": [
+      "Every row in the employees table is updated to a salary of 50000."
+    ],
+    "explanation": "An UPDATE without a WHERE clause applies the change to every row in the table — a common and costly mistake.",
+    "wrongAnswerExplanations": {
+      "Only the first row is updated.": "Without WHERE there is no row filter, so all rows are affected, not just the first.",
+      "The statement is rejected because WHERE is required.": "WHERE is optional in standard SQL; the statement runs and updates all rows.",
+      "A new column called salary is created.": "UPDATE changes values in an existing column; it does not create columns."
+    },
+    "relatedConcept": "UPDATE without WHERE",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-004",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement removes specific rows from a table based on a condition, and can be rolled back inside a transaction?",
+    "choices": [
+      "DELETE FROM orders WHERE status = 'cancelled';",
+      "DROP FROM orders WHERE status = 'cancelled';",
+      "TRUNCATE orders WHERE status = 'cancelled';",
+      "REMOVE FROM orders WHERE status = 'cancelled';"
+    ],
+    "correctAnswers": [
+      "DELETE FROM orders WHERE status = 'cancelled';"
+    ],
+    "explanation": "DELETE is the DML statement that removes rows matching a WHERE condition, and because it is DML it can be rolled back within a transaction.",
+    "wrongAnswerExplanations": {
+      "DROP FROM orders WHERE status = 'cancelled';": "DROP removes whole objects and does not take a WHERE clause for rows.",
+      "TRUNCATE orders WHERE status = 'cancelled';": "TRUNCATE removes all rows and cannot filter with WHERE.",
+      "REMOVE FROM orders WHERE status = 'cancelled';": "REMOVE is not a valid SQL statement."
+    },
+    "relatedConcept": "DELETE statement",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-005",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "medium",
+    "type": "multiple-answer",
+    "question": "Select ALL statements that belong to DML (Data Manipulation Language).",
+    "choices": [
+      "INSERT",
+      "UPDATE",
+      "DELETE",
+      "CREATE"
+    ],
+    "correctAnswers": [
+      "INSERT",
+      "UPDATE",
+      "DELETE"
+    ],
+    "explanation": "INSERT, UPDATE, and DELETE all manipulate the data stored in tables, so they are DML. CREATE defines structure and is DDL.",
+    "wrongAnswerExplanations": {
+      "CREATE": "CREATE defines database structure, which makes it DDL, not DML."
+    },
+    "relatedConcept": "DML classification",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-006",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement changes the values of existing rows in a table?",
+    "choices": [
+      "UPDATE",
+      "INSERT",
+      "SELECT",
+      "DROP"
+    ],
+    "correctAnswers": [
+      "UPDATE"
+    ],
+    "explanation": "UPDATE modifies the values in one or more existing rows, usually combined with a WHERE clause to target specific rows.",
+    "wrongAnswerExplanations": {
+      "INSERT": "INSERT adds brand-new rows; it does not modify existing ones.",
+      "SELECT": "SELECT reads data without changing it.",
+      "DROP": "DROP removes structural objects, not row values."
+    },
+    "relatedConcept": "UPDATE statement",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dql-001",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement is the core of DQL (Data Query Language), used to retrieve data?",
+    "choices": [
+      "SELECT",
+      "INSERT",
+      "UPDATE",
+      "CREATE"
+    ],
+    "correctAnswers": [
+      "SELECT"
+    ],
+    "explanation": "SELECT is the primary DQL statement; it queries and retrieves rows from one or more tables.",
+    "wrongAnswerExplanations": {
+      "INSERT": "INSERT adds data (DML); it does not retrieve it.",
+      "UPDATE": "UPDATE modifies data (DML); it does not retrieve it.",
+      "CREATE": "CREATE defines structure (DDL); it does not retrieve data."
+    },
+    "relatedConcept": "SELECT / DQL",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-dql-002",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which clause filters individual rows BEFORE any grouping happens?",
+    "choices": [
+      "WHERE",
+      "HAVING",
+      "GROUP BY",
+      "ORDER BY"
+    ],
+    "correctAnswers": [
+      "WHERE"
+    ],
+    "explanation": "WHERE filters individual rows before grouping and aggregation occur.",
+    "wrongAnswerExplanations": {
+      "HAVING": "HAVING filters groups after GROUP BY, not individual rows beforehand.",
+      "GROUP BY": "GROUP BY collapses rows into groups; it does not filter them.",
+      "ORDER BY": "ORDER BY only sorts the final result set."
+    },
+    "relatedConcept": "WHERE clause",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-dql-003",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which function returns the total number of rows in a result set?",
+    "choices": [
+      "COUNT(*)",
+      "SUM(*)",
+      "TOTAL()",
+      "ROWS()"
+    ],
+    "correctAnswers": [
+      "COUNT(*)"
+    ],
+    "explanation": "COUNT(*) is an aggregate function that returns the number of rows, including rows with NULLs.",
+    "wrongAnswerExplanations": {
+      "SUM(*)": "SUM adds numeric values of a column; SUM(*) is not valid syntax for counting rows.",
+      "TOTAL()": "TOTAL() is not a standard SQL counting function.",
+      "ROWS()": "ROWS() is not a standard aggregate function for counting result rows."
+    },
+    "relatedConcept": "aggregate functions",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "wb-dql-004",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is the key difference between an aggregate function and a scalar function?",
+    "choices": [
+      "An aggregate function operates on a set of rows and returns one summary value; a scalar function operates on a single value per row and returns one value per row.",
+      "An aggregate function works on one row; a scalar function works on all rows at once.",
+      "They are the same; the names are interchangeable.",
+      "Scalar functions can only be used in DDL statements."
+    ],
+    "correctAnswers": [
+      "An aggregate function operates on a set of rows and returns one summary value; a scalar function operates on a single value per row and returns one value per row."
+    ],
+    "explanation": "Aggregate functions (COUNT, SUM, AVG, MIN, MAX) summarize many rows into a single value. Scalar functions (UPPER, ROUND, LEN) transform one input value and return one value per row.",
+    "wrongAnswerExplanations": {
+      "An aggregate function works on one row; a scalar function works on all rows at once.": "This is reversed: aggregates work across many rows, scalars work per row.",
+      "They are the same; the names are interchangeable.": "They behave differently — one summarizes groups, the other transforms single values.",
+      "Scalar functions can only be used in DDL statements.": "Scalar functions are used in queries (DQL), not restricted to DDL."
+    },
+    "relatedConcept": "aggregate vs scalar functions",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "wb-dql-005",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "multiple-answer",
+    "question": "Select ALL of the following that are scalar functions (one value in, one value out per row).",
+    "choices": [
+      "UPPER(name)",
+      "ROUND(price, 2)",
+      "LEN(description)",
+      "AVG(price)"
+    ],
+    "correctAnswers": [
+      "UPPER(name)",
+      "ROUND(price, 2)",
+      "LEN(description)"
+    ],
+    "explanation": "UPPER, ROUND, and LEN each take a single value and return a single transformed value per row, making them scalar functions. AVG summarizes many rows into one value, so it is an aggregate function.",
+    "wrongAnswerExplanations": {
+      "AVG(price)": "AVG computes an average across many rows, which makes it an aggregate function, not a scalar function."
+    },
+    "relatedConcept": "scalar functions",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "wb-dql-006",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "You want the total sales per region, but only regions whose total exceeds 10000. Which clause filters the grouped totals?",
+    "choices": [
+      "HAVING SUM(sales) > 10000",
+      "WHERE SUM(sales) > 10000",
+      "ORDER BY SUM(sales) > 10000",
+      "GROUP BY sales > 10000"
+    ],
+    "correctAnswers": [
+      "HAVING SUM(sales) > 10000"
+    ],
+    "explanation": "HAVING filters groups after aggregation, so it is the correct place to test an aggregate like SUM(sales) > 10000.",
+    "wrongAnswerExplanations": {
+      "WHERE SUM(sales) > 10000": "WHERE runs before grouping and cannot reference aggregate results like SUM.",
+      "ORDER BY SUM(sales) > 10000": "ORDER BY sorts results; it does not filter them.",
+      "GROUP BY sales > 10000": "GROUP BY defines grouping columns; it does not filter aggregated totals."
+    },
+    "relatedConcept": "HAVING vs WHERE",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "wb-dql-007",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which set of functions are all aggregate functions?",
+    "choices": [
+      "COUNT, SUM, AVG, MIN, MAX",
+      "UPPER, LOWER, TRIM, ROUND",
+      "CREATE, ALTER, DROP",
+      "INSERT, UPDATE, DELETE"
+    ],
+    "correctAnswers": [
+      "COUNT, SUM, AVG, MIN, MAX"
+    ],
+    "explanation": "COUNT, SUM, AVG, MIN, and MAX are the classic aggregate functions that summarize many rows into a single value.",
+    "wrongAnswerExplanations": {
+      "UPPER, LOWER, TRIM, ROUND": "These are scalar functions that transform one value per row.",
+      "CREATE, ALTER, DROP": "These are DDL statements, not functions.",
+      "INSERT, UPDATE, DELETE": "These are DML statements, not aggregate functions."
+    },
+    "relatedConcept": "aggregate functions",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "wb-dql-008",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Why does WHERE COUNT(*) > 5 cause an error, while HAVING COUNT(*) > 5 works?",
+    "choices": [
+      "WHERE is evaluated before grouping/aggregation, so aggregate values do not yet exist; HAVING is evaluated after grouping, when aggregates are available.",
+      "COUNT can never be used with a comparison operator.",
+      "HAVING is invalid SQL; the query only works by coincidence.",
+      "WHERE only works on text columns, never on numbers."
+    ],
+    "correctAnswers": [
+      "WHERE is evaluated before grouping/aggregation, so aggregate values do not yet exist; HAVING is evaluated after grouping, when aggregates are available."
+    ],
+    "explanation": "In logical query processing, WHERE filters rows before GROUP BY aggregates them, so aggregate results are not yet computed. HAVING runs after grouping, which is why aggregate conditions belong there.",
+    "wrongAnswerExplanations": {
+      "COUNT can never be used with a comparison operator.": "COUNT can be compared — just in HAVING, not WHERE.",
+      "HAVING is invalid SQL; the query only works by coincidence.": "HAVING is valid standard SQL designed exactly for filtering aggregates.",
+      "WHERE only works on text columns, never on numbers.": "WHERE works on any data type; the issue is timing relative to aggregation."
+    },
+    "relatedConcept": "query processing order",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "wb-dql-009",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which clause sorts the final result set of a SELECT query?",
+    "choices": [
+      "ORDER BY",
+      "GROUP BY",
+      "SORT ON",
+      "WHERE"
+    ],
+    "correctAnswers": [
+      "ORDER BY"
+    ],
+    "explanation": "ORDER BY sorts the returned rows, ascending (ASC) by default or descending (DESC) when specified.",
+    "wrongAnswerExplanations": {
+      "GROUP BY": "GROUP BY groups rows for aggregation; it does not guarantee sorted output.",
+      "SORT ON": "SORT ON is not a valid SQL clause.",
+      "WHERE": "WHERE filters rows; it does not sort them."
+    },
+    "relatedConcept": "ORDER BY",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-norm-001",
+    "topic": "Normalization",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "What is the main goal of database normalization?",
+    "choices": [
+      "Reduce data redundancy and avoid update, insert, and delete anomalies.",
+      "Make every query run faster by adding more columns.",
+      "Combine all data into a single large table.",
+      "Increase storage usage for backup safety."
+    ],
+    "correctAnswers": [
+      "Reduce data redundancy and avoid update, insert, and delete anomalies."
+    ],
+    "explanation": "Normalization organizes data into related tables to minimize redundancy and prevent anomalies that occur when the same fact is stored in multiple places.",
+    "wrongAnswerExplanations": {
+      "Make every query run faster by adding more columns.": "Normalization can sometimes require more joins; its goal is integrity, not raw speed.",
+      "Combine all data into a single large table.": "That is the opposite — a single wide table causes the redundancy normalization removes.",
+      "Increase storage usage for backup safety.": "Normalization typically reduces redundant storage, and backups are a separate concern."
+    },
+    "relatedConcept": "purpose of normalization",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-002",
+    "topic": "Normalization",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "First Normal Form (1NF) primarily requires that:",
+    "choices": [
+      "Each column holds a single atomic value, with no repeating groups or multi-valued cells.",
+      "Every non-key column depends on the whole primary key.",
+      "There are no transitive dependencies.",
+      "All tables are merged into one."
+    ],
+    "correctAnswers": [
+      "Each column holds a single atomic value, with no repeating groups or multi-valued cells."
+    ],
+    "explanation": "1NF requires atomic (indivisible) values in each cell and eliminates repeating groups, so a column like 'phone_numbers' holding '123, 456' violates 1NF.",
+    "wrongAnswerExplanations": {
+      "Every non-key column depends on the whole primary key.": "That describes 2NF, which builds on 1NF.",
+      "There are no transitive dependencies.": "That describes 3NF, a later normal form.",
+      "All tables are merged into one.": "Normalization splits data into related tables; it does not merge everything."
+    },
+    "relatedConcept": "1NF",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-003",
+    "topic": "Normalization",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Second Normal Form (2NF) is achieved when a table is in 1NF and:",
+    "choices": [
+      "Every non-key column depends on the entire primary key, removing partial dependencies.",
+      "Every column holds only atomic values.",
+      "There are no transitive dependencies between non-key columns.",
+      "All foreign keys are removed."
+    ],
+    "correctAnswers": [
+      "Every non-key column depends on the entire primary key, removing partial dependencies."
+    ],
+    "explanation": "2NF removes partial dependencies: in a table with a composite key, no non-key column may depend on only part of that key.",
+    "wrongAnswerExplanations": {
+      "Every column holds only atomic values.": "That is the 1NF requirement, which 2NF assumes is already met.",
+      "There are no transitive dependencies between non-key columns.": "That is the 3NF requirement, which comes after 2NF.",
+      "All foreign keys are removed.": "Foreign keys are essential to relationships and are not removed by normalization."
+    },
+    "relatedConcept": "2NF / partial dependency",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-004",
+    "topic": "Normalization",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Third Normal Form (3NF) requires a table to be in 2NF and to additionally remove:",
+    "choices": [
+      "Transitive dependencies, where a non-key column depends on another non-key column.",
+      "Partial dependencies on part of a composite key.",
+      "Repeating groups within a single column.",
+      "All indexes from the table."
+    ],
+    "correctAnswers": [
+      "Transitive dependencies, where a non-key column depends on another non-key column."
+    ],
+    "explanation": "3NF eliminates transitive dependencies — for example, if zip determines city, then city should not sit in a table keyed only by employee_id alongside zip.",
+    "wrongAnswerExplanations": {
+      "Partial dependencies on part of a composite key.": "Removing partial dependencies is the 2NF rule, achieved before 3NF.",
+      "Repeating groups within a single column.": "Removing repeating groups is the 1NF rule.",
+      "All indexes from the table.": "Indexes are unrelated to normal forms."
+    },
+    "relatedConcept": "3NF / transitive dependency",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-005",
+    "topic": "Normalization",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "A 'students' table stores courses as a single cell: courses = 'Math, Science, History'. Which normal form does this violate?",
+    "choices": [
+      "1NF, because the cell is not atomic and holds a repeating group.",
+      "2NF, because of a partial dependency.",
+      "3NF, because of a transitive dependency.",
+      "It violates no normal form."
+    ],
+    "correctAnswers": [
+      "1NF, because the cell is not atomic and holds a repeating group."
+    ],
+    "explanation": "Storing multiple courses in one cell breaks the atomic-value rule, which is exactly what 1NF forbids. The fix is to store each course in its own row.",
+    "wrongAnswerExplanations": {
+      "2NF, because of a partial dependency.": "2NF concerns dependencies on part of a composite key, not multi-valued cells.",
+      "3NF, because of a transitive dependency.": "3NF concerns non-key-to-non-key dependencies, not multi-valued cells.",
+      "It violates no normal form.": "It clearly violates 1NF's atomic-value requirement."
+    },
+    "relatedConcept": "1NF violation",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-006",
+    "topic": "Normalization",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "An order_items table has a composite key (order_id, product_id). It also stores product_name, which depends only on product_id. Which normal form is violated?",
+    "choices": [
+      "2NF, because product_name has a partial dependency on only part of the composite key.",
+      "1NF, because values are not atomic.",
+      "3NF, because of a transitive dependency.",
+      "Nothing; the design is fully normalized."
+    ],
+    "correctAnswers": [
+      "2NF, because product_name has a partial dependency on only part of the composite key."
+    ],
+    "explanation": "product_name depends on product_id alone, which is only part of the composite key. That partial dependency violates 2NF; product_name belongs in a products table.",
+    "wrongAnswerExplanations": {
+      "1NF, because values are not atomic.": "The values shown are atomic, so 1NF is satisfied.",
+      "3NF, because of a transitive dependency.": "The issue is dependence on part of the key (partial), not a non-key-to-non-key chain.",
+      "Nothing; the design is fully normalized.": "It is not fully normalized because of the partial dependency."
+    },
+    "relatedConcept": "2NF violation",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-007",
+    "topic": "Normalization",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "An employees table has employee_id (PK), department_id, and department_name. department_name depends on department_id, not on employee_id. Which normal form does this violate, and how is it fixed?",
+    "choices": [
+      "3NF (transitive dependency); move department_name into a departments table keyed by department_id.",
+      "1NF (non-atomic values); split the department_name into multiple columns.",
+      "2NF (partial dependency); add department_id to the primary key.",
+      "It is already in 3NF; no change is needed."
+    ],
+    "correctAnswers": [
+      "3NF (transitive dependency); move department_name into a departments table keyed by department_id."
+    ],
+    "explanation": "department_name depends on department_id, which is a non-key column — a transitive dependency that violates 3NF. The fix is a separate departments table so department_name is stored once.",
+    "wrongAnswerExplanations": {
+      "1NF (non-atomic values); split the department_name into multiple columns.": "The values are atomic, so 1NF is not the issue.",
+      "2NF (partial dependency); add department_id to the primary key.": "The primary key is a single column, so partial dependency (2NF) does not apply here.",
+      "It is already in 3NF; no change is needed.": "It violates 3NF because of the transitive dependency through department_id."
+    },
+    "relatedConcept": "3NF violation",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-008",
+    "topic": "Normalization",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement about the order of normal forms is correct?",
+    "choices": [
+      "A table must satisfy 1NF before 2NF, and 2NF before 3NF — each form builds on the previous one.",
+      "You can reach 3NF without first satisfying 1NF or 2NF.",
+      "2NF is stricter than 3NF.",
+      "The order of normal forms does not matter."
+    ],
+    "correctAnswers": [
+      "A table must satisfy 1NF before 2NF, and 2NF before 3NF — each form builds on the previous one."
+    ],
+    "explanation": "Normal forms are cumulative: a table in 3NF is also in 2NF and 1NF. You progress through them in order.",
+    "wrongAnswerExplanations": {
+      "You can reach 3NF without first satisfying 1NF or 2NF.": "3NF includes all lower-form requirements, so they must be satisfied first.",
+      "2NF is stricter than 3NF.": "3NF is stricter; it adds the no-transitive-dependency rule on top of 2NF.",
+      "The order of normal forms does not matter.": "The forms are defined cumulatively, so order does matter."
+    },
+    "relatedConcept": "normal form progression",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-norm-009",
+    "topic": "Normalization",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "On the exam topics list, 4th and 5th Normal Form were marked 'optional'. What are they generally used for?",
+    "choices": [
+      "Handling more advanced redundancy cases like multi-valued dependencies (4NF) and join dependencies (5NF), beyond what 3NF covers.",
+      "Replacing 1NF, 2NF, and 3NF entirely.",
+      "Speeding up queries by removing all keys.",
+      "They are only used in NoSQL databases."
+    ],
+    "correctAnswers": [
+      "Handling more advanced redundancy cases like multi-valued dependencies (4NF) and join dependencies (5NF), beyond what 3NF covers."
+    ],
+    "explanation": "4NF addresses multi-valued dependencies and 5NF addresses join dependencies. Most practical designs stop at 3NF or BCNF, which is why they are often labeled optional.",
+    "wrongAnswerExplanations": {
+      "Replacing 1NF, 2NF, and 3NF entirely.": "Higher normal forms build on the lower ones; they do not replace them.",
+      "Speeding up queries by removing all keys.": "Removing keys harms integrity and is not what 4NF/5NF do.",
+      "They are only used in NoSQL databases.": "Normal forms are a relational-model concept, not a NoSQL one."
+    },
+    "relatedConcept": "4NF / 5NF",
+    "reviewFile": "notes/03_normalization.md"
+  },
+  {
+    "id": "wb-join-001",
+    "topic": "Joins",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "An INNER JOIN between two tables returns:",
+    "choices": [
+      "Only the rows that have matching values in both tables.",
+      "All rows from both tables regardless of matches.",
+      "All rows from the left table only.",
+      "Only rows that do not match."
+    ],
+    "correctAnswers": [
+      "Only the rows that have matching values in both tables."
+    ],
+    "explanation": "An INNER JOIN returns the intersection — only rows where the join condition is satisfied in both tables.",
+    "wrongAnswerExplanations": {
+      "All rows from both tables regardless of matches.": "That describes a FULL OUTER JOIN, not an INNER JOIN.",
+      "All rows from the left table only.": "That describes a LEFT JOIN.",
+      "Only rows that do not match.": "Inner joins return matches, not non-matches."
+    },
+    "relatedConcept": "INNER JOIN",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-002",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "A LEFT JOIN (LEFT OUTER JOIN) returns:",
+    "choices": [
+      "All rows from the left table, plus matching rows from the right table (NULLs where there is no match).",
+      "Only rows matching in both tables.",
+      "All rows from the right table, plus matches from the left.",
+      "All rows from both tables."
+    ],
+    "correctAnswers": [
+      "All rows from the left table, plus matching rows from the right table (NULLs where there is no match)."
+    ],
+    "explanation": "A LEFT JOIN keeps every row from the left table; columns from the right table are NULL when no matching row exists.",
+    "wrongAnswerExplanations": {
+      "Only rows matching in both tables.": "That is an INNER JOIN, which drops unmatched left rows.",
+      "All rows from the right table, plus matches from the left.": "That describes a RIGHT JOIN.",
+      "All rows from both tables.": "That describes a FULL OUTER JOIN."
+    },
+    "relatedConcept": "LEFT JOIN",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-003",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "A RIGHT JOIN (RIGHT OUTER JOIN) returns:",
+    "choices": [
+      "All rows from the right table, plus matching rows from the left table (NULLs where there is no match).",
+      "All rows from the left table, plus matches from the right.",
+      "Only rows matching in both tables.",
+      "Only rows from the right table that have no match on the left."
+    ],
+    "correctAnswers": [
+      "All rows from the right table, plus matching rows from the left table (NULLs where there is no match)."
+    ],
+    "explanation": "A RIGHT JOIN keeps every row from the right table; columns from the left table are NULL when no match exists. It is the mirror image of a LEFT JOIN.",
+    "wrongAnswerExplanations": {
+      "All rows from the left table, plus matches from the right.": "That is a LEFT JOIN, the opposite side.",
+      "Only rows matching in both tables.": "That is an INNER JOIN.",
+      "Only rows from the right table that have no match on the left.": "A RIGHT JOIN returns all right rows, both matched and unmatched, not only the unmatched ones."
+    },
+    "relatedConcept": "RIGHT JOIN",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-004",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "A FULL OUTER JOIN returns:",
+    "choices": [
+      "All rows from both tables, matching them where possible and filling NULLs where there is no match.",
+      "Only rows that match in both tables.",
+      "Only rows that exist in the left table.",
+      "The Cartesian product of both tables."
+    ],
+    "correctAnswers": [
+      "All rows from both tables, matching them where possible and filling NULLs where there is no match."
+    ],
+    "explanation": "A FULL OUTER JOIN combines the results of LEFT and RIGHT joins: every row from both tables appears, with NULLs where a side has no match.",
+    "wrongAnswerExplanations": {
+      "Only rows that match in both tables.": "That is an INNER JOIN.",
+      "Only rows that exist in the left table.": "That is closer to a LEFT JOIN, and still incomplete.",
+      "The Cartesian product of both tables.": "That is a CROSS JOIN, which pairs every row with every other row."
+    },
+    "relatedConcept": "FULL OUTER JOIN",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-005",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is an EQUI JOIN?",
+    "choices": [
+      "A join whose condition uses the equality operator (=) to match column values between tables.",
+      "A join that uses only inequality operators such as < or >.",
+      "A join that always returns every row from both tables.",
+      "A join that requires no ON or WHERE condition."
+    ],
+    "correctAnswers": [
+      "A join whose condition uses the equality operator (=) to match column values between tables."
+    ],
+    "explanation": "An equi join matches rows using equality (e.g., ON a.id = b.a_id). It is the most common join type; most INNER JOINs on a key are equi joins.",
+    "wrongAnswerExplanations": {
+      "A join that uses only inequality operators such as < or >.": "That describes a non-equi (theta) join, the opposite of an equi join.",
+      "A join that always returns every row from both tables.": "Returning all rows describes a FULL OUTER JOIN, not an equi join.",
+      "A join that requires no ON or WHERE condition.": "A join with no condition is a CROSS JOIN; an equi join needs an equality condition."
+    },
+    "relatedConcept": "equi join",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-006",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which join condition is an equi join rather than a non-equi join?",
+    "choices": [
+      "ON employees.dept_id = departments.id",
+      "ON salaries.amount > grades.min_amount",
+      "ON orders.date BETWEEN promo.start AND promo.end",
+      "ON a.value <> b.value"
+    ],
+    "correctAnswers": [
+      "ON employees.dept_id = departments.id"
+    ],
+    "explanation": "An equi join uses the equality operator (=). The other conditions use range or inequality comparisons, which make them non-equi (theta) joins.",
+    "wrongAnswerExplanations": {
+      "ON salaries.amount > grades.min_amount": "This uses a greater-than comparison, making it a non-equi join.",
+      "ON orders.date BETWEEN promo.start AND promo.end": "BETWEEN is a range condition, so this is a non-equi join.",
+      "ON a.value <> b.value": "The not-equal operator makes this a non-equi join."
+    },
+    "relatedConcept": "equi vs non-equi join",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-007",
+    "topic": "Joins",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "You need to list customers who have placed NO orders. Which approach works?",
+    "choices": [
+      "LEFT JOIN orders ON customers.id = orders.customer_id, then WHERE orders.id IS NULL.",
+      "INNER JOIN orders ON customers.id = orders.customer_id.",
+      "CROSS JOIN customers and orders.",
+      "RIGHT JOIN orders, then WHERE customers.id IS NOT NULL."
+    ],
+    "correctAnswers": [
+      "LEFT JOIN orders ON customers.id = orders.customer_id, then WHERE orders.id IS NULL."
+    ],
+    "explanation": "A LEFT JOIN keeps all customers; customers with no orders get NULLs on the orders side. Filtering WHERE orders.id IS NULL isolates exactly those unmatched customers.",
+    "wrongAnswerExplanations": {
+      "INNER JOIN orders ON customers.id = orders.customer_id.": "An INNER JOIN only returns customers who DO have orders — the opposite of what you want.",
+      "CROSS JOIN customers and orders.": "A CROSS JOIN pairs every customer with every order, which does not identify customers without orders.",
+      "RIGHT JOIN orders, then WHERE customers.id IS NOT NULL.": "A RIGHT JOIN keeps all orders, so it cannot surface customers who have no orders at all."
+    },
+    "relatedConcept": "anti-join pattern",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-008",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What does a CROSS JOIN produce?",
+    "choices": [
+      "The Cartesian product — every row of the first table paired with every row of the second.",
+      "Only the matching rows between the two tables.",
+      "All rows from the left table with NULLs for the right.",
+      "An error, because CROSS JOIN is not valid SQL."
+    ],
+    "correctAnswers": [
+      "The Cartesian product — every row of the first table paired with every row of the second."
+    ],
+    "explanation": "A CROSS JOIN has no join condition and pairs each row of one table with each row of the other, producing m × n rows.",
+    "wrongAnswerExplanations": {
+      "Only the matching rows between the two tables.": "Matching-only results come from an INNER JOIN.",
+      "All rows from the left table with NULLs for the right.": "That describes a LEFT JOIN.",
+      "An error, because CROSS JOIN is not valid SQL.": "CROSS JOIN is valid standard SQL."
+    },
+    "relatedConcept": "cross join / Cartesian product",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-009",
+    "topic": "Joins",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which join returns ONLY rows that appear in both tables based on the join condition?",
+    "choices": [
+      "INNER JOIN",
+      "LEFT JOIN",
+      "RIGHT JOIN",
+      "FULL OUTER JOIN"
+    ],
+    "correctAnswers": [
+      "INNER JOIN"
+    ],
+    "explanation": "INNER JOIN returns the intersection of the two tables — rows that have a match on both sides.",
+    "wrongAnswerExplanations": {
+      "LEFT JOIN": "LEFT JOIN also returns unmatched rows from the left table.",
+      "RIGHT JOIN": "RIGHT JOIN also returns unmatched rows from the right table.",
+      "FULL OUTER JOIN": "FULL OUTER JOIN returns unmatched rows from both tables."
+    },
+    "relatedConcept": "INNER JOIN",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-010",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "How can a RIGHT JOIN always be rewritten as a LEFT JOIN?",
+    "choices": [
+      "By swapping the order of the two tables — A RIGHT JOIN B equals B LEFT JOIN A.",
+      "By removing the ON condition entirely.",
+      "By adding GROUP BY to the query.",
+      "It cannot; the two joins return fundamentally different data."
+    ],
+    "correctAnswers": [
+      "By swapping the order of the two tables — A RIGHT JOIN B equals B LEFT JOIN A."
+    ],
+    "explanation": "LEFT and RIGHT joins are mirror images. Reversing the table order converts one into the other, which is why many teams standardize on LEFT JOIN for readability.",
+    "wrongAnswerExplanations": {
+      "By removing the ON condition entirely.": "Removing the condition turns it into a CROSS JOIN, changing the result.",
+      "By adding GROUP BY to the query.": "GROUP BY aggregates rows; it does not convert join direction.",
+      "It cannot; the two joins return fundamentally different data.": "They are equivalent once the table order is swapped."
+    },
+    "relatedConcept": "LEFT vs RIGHT JOIN",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-011",
+    "topic": "Joins",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "Table A has 5 rows, table B has 8 rows. With a matching key, 3 rows of A match exactly one row each in B, and 2 rows of A have no match. How many rows does a LEFT JOIN A→B return?",
+    "choices": [
+      "5 — every row of A appears once (matched rows with B data, unmatched rows with NULLs).",
+      "3 — only the matching rows.",
+      "8 — every row of B appears.",
+      "40 — the Cartesian product."
+    ],
+    "correctAnswers": [
+      "5 — every row of A appears once (matched rows with B data, unmatched rows with NULLs)."
+    ],
+    "explanation": "A LEFT JOIN preserves all rows of the left table A. With 3 matched (one match each) and 2 unmatched, the result is 3 + 2 = 5 rows.",
+    "wrongAnswerExplanations": {
+      "3 — only the matching rows.": "That would be an INNER JOIN result; LEFT JOIN also keeps the 2 unmatched A rows.",
+      "8 — every row of B appears.": "A LEFT JOIN preserves A, not B; unmatched B rows are excluded.",
+      "40 — the Cartesian product.": "5 × 8 = 40 is a CROSS JOIN, which ignores the matching condition."
+    },
+    "relatedConcept": "join result cardinality",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-012",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "How does a NATURAL JOIN differ from a typical equi join written with ON?",
+    "choices": [
+      "A NATURAL JOIN automatically joins on all columns with the same name, without an explicit ON condition.",
+      "A NATURAL JOIN never matches any rows.",
+      "A NATURAL JOIN requires inequality operators.",
+      "A NATURAL JOIN always produces a Cartesian product."
+    ],
+    "correctAnswers": [
+      "A NATURAL JOIN automatically joins on all columns with the same name, without an explicit ON condition."
+    ],
+    "explanation": "A NATURAL JOIN implicitly matches on every identically named column. It is convenient but risky, because adding a same-named column later can silently change results — many teams prefer an explicit equi join with ON.",
+    "wrongAnswerExplanations": {
+      "A NATURAL JOIN never matches any rows.": "It does match rows, based on equal values in same-named columns.",
+      "A NATURAL JOIN requires inequality operators.": "It uses equality on matching column names, not inequality.",
+      "A NATURAL JOIN always produces a Cartesian product.": "It only produces a Cartesian product if the tables share no common column names."
+    },
+    "relatedConcept": "natural join vs equi join",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-keys-001",
+    "topic": "ERD & Keys",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which two properties must a PRIMARY KEY always have?",
+    "choices": [
+      "It must be unique and cannot be NULL.",
+      "It can repeat but cannot be NULL.",
+      "It must be NULL but unique.",
+      "It must be a text column."
+    ],
+    "correctAnswers": [
+      "It must be unique and cannot be NULL."
+    ],
+    "explanation": "A primary key uniquely identifies each row, so it must be unique and must never contain NULL values.",
+    "wrongAnswerExplanations": {
+      "It can repeat but cannot be NULL.": "Primary key values cannot repeat; uniqueness is required.",
+      "It must be NULL but unique.": "Primary keys can never be NULL.",
+      "It must be a text column.": "Primary keys can be any suitable data type, commonly integers."
+    },
+    "relatedConcept": "primary key",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-keys-002",
+    "topic": "ERD & Keys",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "What is a FOREIGN KEY?",
+    "choices": [
+      "A column (or columns) that references the primary key of another table to enforce a relationship.",
+      "A key that must be unique across every table in the database.",
+      "A column that is automatically generated and never references anything.",
+      "An index used only to speed up sorting."
+    ],
+    "correctAnswers": [
+      "A column (or columns) that references the primary key of another table to enforce a relationship."
+    ],
+    "explanation": "A foreign key links two tables by referencing the primary (or unique) key of a parent table, enforcing referential integrity.",
+    "wrongAnswerExplanations": {
+      "A key that must be unique across every table in the database.": "Foreign keys are not required to be unique and are scoped to a relationship, not the whole database.",
+      "A column that is automatically generated and never references anything.": "A foreign key's purpose is precisely to reference another table.",
+      "An index used only to speed up sorting.": "That describes an index, not a foreign key (though FKs are often indexed)."
+    },
+    "relatedConcept": "foreign key",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-keys-003",
+    "topic": "ERD & Keys",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is a COMPOSITE KEY?",
+    "choices": [
+      "A primary key made up of two or more columns combined to uniquely identify a row.",
+      "A key that is automatically encrypted.",
+      "A foreign key that references two databases at once.",
+      "Any single column marked as unique."
+    ],
+    "correctAnswers": [
+      "A primary key made up of two or more columns combined to uniquely identify a row."
+    ],
+    "explanation": "A composite key uses a combination of two or more columns as the key. It is common in junction tables, e.g., (student_id, course_id).",
+    "wrongAnswerExplanations": {
+      "A key that is automatically encrypted.": "Encryption is unrelated to what makes a key composite.",
+      "A foreign key that references two databases at once.": "Composite refers to multiple columns, not multiple databases.",
+      "Any single column marked as unique.": "A single column is not composite; composite requires two or more columns."
+    },
+    "relatedConcept": "composite key",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-keys-004",
+    "topic": "ERD & Keys",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is the main purpose of an INDEX on a column?",
+    "choices": [
+      "To speed up data retrieval (lookups and searches) on that column, at the cost of extra storage and slower writes.",
+      "To guarantee that the column's values are unique.",
+      "To permanently sort the table on disk by that column.",
+      "To enforce a relationship between two tables."
+    ],
+    "correctAnswers": [
+      "To speed up data retrieval (lookups and searches) on that column, at the cost of extra storage and slower writes."
+    ],
+    "explanation": "An index is an access structure that makes lookups faster, trading additional storage and slightly slower inserts/updates for quicker reads.",
+    "wrongAnswerExplanations": {
+      "To guarantee that the column's values are unique.": "Only a UNIQUE index/constraint enforces uniqueness; ordinary indexes do not.",
+      "To permanently sort the table on disk by that column.": "Only a clustered index affects physical order; a regular index does not reorder the table.",
+      "To enforce a relationship between two tables.": "Relationships are enforced by foreign keys, not by indexes."
+    },
+    "relatedConcept": "index",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-keys-005",
+    "topic": "ERD & Keys",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "How does a CANDIDATE KEY relate to a PRIMARY KEY?",
+    "choices": [
+      "A candidate key is any column or set of columns that could uniquely identify a row; the one chosen becomes the primary key, and the rest are alternate keys.",
+      "A candidate key and primary key are completely unrelated concepts.",
+      "A primary key is chosen first, and candidate keys are derived from it.",
+      "A candidate key must always allow NULLs."
+    ],
+    "correctAnswers": [
+      "A candidate key is any column or set of columns that could uniquely identify a row; the one chosen becomes the primary key, and the rest are alternate keys."
+    ],
+    "explanation": "A table can have several candidate keys (minimal unique identifiers). One is selected as the primary key; the remaining candidates are alternate keys.",
+    "wrongAnswerExplanations": {
+      "A candidate key and primary key are completely unrelated concepts.": "The primary key is chosen from the candidate keys, so they are directly related.",
+      "A primary key is chosen first, and candidate keys are derived from it.": "It is the reverse — candidate keys exist first, and one is promoted to primary key.",
+      "A candidate key must always allow NULLs.": "Candidate keys must uniquely identify rows, so they cannot rely on NULLs as identifiers."
+    },
+    "relatedConcept": "candidate vs primary key",
+    "reviewFile": "notes/01_core_database_concepts.md"
+  },
+  {
+    "id": "wb-keys-006",
+    "topic": "ERD & Keys",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Can a single table have more than one foreign key?",
+    "choices": [
+      "Yes — a table can have many foreign keys, each referencing a different parent table.",
+      "No — a table is limited to exactly one foreign key.",
+      "No — foreign keys are only allowed in junction tables.",
+      "Yes, but only if the table has no primary key."
+    ],
+    "correctAnswers": [
+      "Yes — a table can have many foreign keys, each referencing a different parent table."
+    ],
+    "explanation": "A table can hold multiple foreign keys. For example, an orders table may reference both a customers table and an employees table.",
+    "wrongAnswerExplanations": {
+      "No — a table is limited to exactly one foreign key.": "There is no such limit; tables commonly have several foreign keys.",
+      "No — foreign keys are only allowed in junction tables.": "Foreign keys appear in many table types, not only junction tables.",
+      "Yes, but only if the table has no primary key.": "Having a primary key does not prevent a table from having foreign keys."
+    },
+    "relatedConcept": "multiple foreign keys",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-keys-007",
+    "topic": "ERD & Keys",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is the difference between a SURROGATE key and a NATURAL key?",
+    "choices": [
+      "A surrogate key is a system-generated value (e.g., an auto-increment id) with no business meaning; a natural key is a real-world attribute that is already unique (e.g., email or SSN).",
+      "A surrogate key always comes from another table; a natural key never does.",
+      "A natural key is always an integer; a surrogate key is always text.",
+      "They are two names for the same thing."
+    ],
+    "correctAnswers": [
+      "A surrogate key is a system-generated value (e.g., an auto-increment id) with no business meaning; a natural key is a real-world attribute that is already unique (e.g., email or SSN)."
+    ],
+    "explanation": "Surrogate keys are artificial identifiers created by the system; natural keys are meaningful real-world values that happen to be unique. Surrogates are stable and avoid leaking business meaning.",
+    "wrongAnswerExplanations": {
+      "A surrogate key always comes from another table; a natural key never does.": "A key referencing another table is a foreign key; that is not the surrogate/natural distinction.",
+      "A natural key is always an integer; a surrogate key is always text.": "Data type does not define the distinction; meaning and origin do.",
+      "They are two names for the same thing.": "They are distinct concepts based on whether the value has business meaning."
+    },
+    "relatedConcept": "surrogate vs natural key",
+    "reviewFile": "notes/01_core_database_concepts.md"
+  },
+  {
+    "id": "wb-keys-008",
+    "topic": "ERD & Keys",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "In an enrollments junction table linking students and courses, what is the most appropriate primary key?",
+    "choices": [
+      "A composite key of (student_id, course_id), preventing the same student from enrolling in the same course twice.",
+      "student_id alone, so each student appears only once.",
+      "course_id alone, so each course appears only once.",
+      "No primary key is needed for a junction table."
+    ],
+    "correctAnswers": [
+      "A composite key of (student_id, course_id), preventing the same student from enrolling in the same course twice."
+    ],
+    "explanation": "A junction table resolving a many-to-many relationship typically uses the combination of both foreign keys as a composite primary key, which also enforces that each pairing is unique.",
+    "wrongAnswerExplanations": {
+      "student_id alone, so each student appears only once.": "That would limit each student to a single enrollment, breaking the many-to-many relationship.",
+      "course_id alone, so each course appears only once.": "That would limit each course to a single enrollment, which is also wrong.",
+      "No primary key is needed for a junction table.": "A primary key is needed to guarantee unique pairings and integrity."
+    },
+    "relatedConcept": "composite key in junction table",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-keys-009",
+    "topic": "ERD & Keys",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is one key difference between a UNIQUE constraint and a PRIMARY KEY?",
+    "choices": [
+      "A table can have many UNIQUE constraints but only one PRIMARY KEY, and a UNIQUE column may allow a NULL (in most databases) while a primary key cannot.",
+      "UNIQUE columns can repeat values, but primary keys cannot.",
+      "Only primary keys can be indexed; unique columns cannot.",
+      "There is no difference; they are identical."
+    ],
+    "correctAnswers": [
+      "A table can have many UNIQUE constraints but only one PRIMARY KEY, and a UNIQUE column may allow a NULL (in most databases) while a primary key cannot."
+    ],
+    "explanation": "Both enforce uniqueness, but a table has at most one primary key (never NULL), while it can have multiple unique constraints, which often permit a NULL value.",
+    "wrongAnswerExplanations": {
+      "UNIQUE columns can repeat values, but primary keys cannot.": "UNIQUE columns cannot repeat either; that is the point of the constraint.",
+      "Only primary keys can be indexed; unique columns cannot.": "Both are typically backed by indexes.",
+      "There is no difference; they are identical.": "They differ in count per table and NULL handling."
+    },
+    "relatedConcept": "unique vs primary key",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-keys-010",
+    "topic": "ERD & Keys",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which database feature enforces referential integrity between two related tables?",
+    "choices": [
+      "A FOREIGN KEY constraint.",
+      "An ORDER BY clause.",
+      "A scalar function.",
+      "A SELECT statement."
+    ],
+    "correctAnswers": [
+      "A FOREIGN KEY constraint."
+    ],
+    "explanation": "A foreign key constraint enforces referential integrity, ensuring a child row cannot reference a parent that does not exist.",
+    "wrongAnswerExplanations": {
+      "An ORDER BY clause.": "ORDER BY only sorts query results.",
+      "A scalar function.": "Scalar functions transform values; they do not enforce integrity between tables.",
+      "A SELECT statement.": "SELECT retrieves data and enforces nothing."
+    },
+    "relatedConcept": "referential integrity",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-001",
+    "topic": "Table Relationships",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "A single customer can place many orders, but each order belongs to exactly one customer. What type of relationship is this?",
+    "choices": [
+      "One-to-many",
+      "One-to-one",
+      "Many-to-many",
+      "No relationship"
+    ],
+    "correctAnswers": [
+      "One-to-many"
+    ],
+    "explanation": "One customer relates to many orders while each order relates back to one customer — the classic one-to-many relationship.",
+    "wrongAnswerExplanations": {
+      "One-to-one": "One-to-one means each side has at most one related row, which is not the case here.",
+      "Many-to-many": "Many-to-many would require each order to belong to multiple customers, which it does not.",
+      "No relationship": "There is clearly a relationship via the customer-orders link."
+    },
+    "relatedConcept": "one-to-many",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-002",
+    "topic": "Table Relationships",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Students can enroll in many courses, and each course can have many students. How is this many-to-many relationship implemented in a relational database?",
+    "choices": [
+      "With a junction (bridge) table that holds foreign keys to both students and courses.",
+      "By adding a multi-valued column to the students table.",
+      "By merging students and courses into one table.",
+      "It cannot be represented in a relational database."
+    ],
+    "correctAnswers": [
+      "With a junction (bridge) table that holds foreign keys to both students and courses."
+    ],
+    "explanation": "Relational databases resolve many-to-many relationships with a junction (bridge/associative) table containing foreign keys to both related tables.",
+    "wrongAnswerExplanations": {
+      "By adding a multi-valued column to the students table.": "A multi-valued column violates 1NF and cannot properly model many-to-many.",
+      "By merging students and courses into one table.": "Merging creates massive redundancy and still cannot model the relationship cleanly.",
+      "It cannot be represented in a relational database.": "It can — via a junction table, which is the standard approach."
+    },
+    "relatedConcept": "many-to-many / junction table",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-003",
+    "topic": "Table Relationships",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "A user has exactly one profile, and each profile belongs to exactly one user. How is this one-to-one relationship typically implemented?",
+    "choices": [
+      "Place a foreign key in one table that also has a UNIQUE constraint, so each parent row maps to at most one child row.",
+      "Create a junction table between the two tables.",
+      "Store both records in a single row with repeating columns.",
+      "Use a many-to-many bridge table."
+    ],
+    "correctAnswers": [
+      "Place a foreign key in one table that also has a UNIQUE constraint, so each parent row maps to at most one child row."
+    ],
+    "explanation": "A one-to-one relationship is enforced by a foreign key with a UNIQUE constraint (or a shared primary key), guaranteeing each side links to at most one row on the other side.",
+    "wrongAnswerExplanations": {
+      "Create a junction table between the two tables.": "Junction tables are for many-to-many, not one-to-one.",
+      "Store both records in a single row with repeating columns.": "That defeats the purpose of separate entities and risks redundancy.",
+      "Use a many-to-many bridge table.": "Many-to-many is the wrong cardinality for a one-to-one relationship."
+    },
+    "relatedConcept": "one-to-one",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-004",
+    "topic": "Table Relationships",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "In crow's-foot notation, what does the 'crow's foot' (a three-pronged symbol) at the end of a relationship line represent?",
+    "choices": [
+      "The 'many' side of the relationship.",
+      "The 'one' side of the relationship.",
+      "That the relationship is optional.",
+      "That the column is a primary key."
+    ],
+    "correctAnswers": [
+      "The 'many' side of the relationship."
+    ],
+    "explanation": "The splayed three-pronged 'crow's foot' marks the 'many' end of a relationship in entity-relationship diagrams.",
+    "wrongAnswerExplanations": {
+      "The 'one' side of the relationship.": "The 'one' side is shown by a single bar, not the crow's foot.",
+      "That the relationship is optional.": "Optionality is shown by a circle (zero), not the crow's foot.",
+      "That the column is a primary key.": "Crow's-foot symbols denote cardinality, not key type."
+    },
+    "relatedConcept": "crow's foot notation",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-005",
+    "topic": "Table Relationships",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "In crow's-foot notation, what do a circle (O) and a bar (|) near the end of a relationship line indicate?",
+    "choices": [
+      "The circle means 'zero/optional' and the bar means 'one/mandatory' — together they show the minimum participation.",
+      "The circle means 'many' and the bar means 'none'.",
+      "Both symbols indicate a primary key.",
+      "They indicate the data type of the joining column."
+    ],
+    "correctAnswers": [
+      "The circle means 'zero/optional' and the bar means 'one/mandatory' — together they show the minimum participation."
+    ],
+    "explanation": "Crow's-foot notation encodes both maximum and minimum cardinality: the inner marker (circle for zero/optional, bar for one/mandatory) shows the minimum participation, while the crow's foot or bar at the tip shows the maximum.",
+    "wrongAnswerExplanations": {
+      "The circle means 'many' and the bar means 'none'.": "This reverses the meanings; the crow's foot — not the circle — means many.",
+      "Both symbols indicate a primary key.": "These symbols describe cardinality/participation, not keys.",
+      "They indicate the data type of the joining column.": "Notation symbols carry no data-type information."
+    },
+    "relatedConcept": "crow's foot cardinality symbols",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-006",
+    "topic": "Table Relationships",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "An ERD shows AUTHORS and BOOKS connected by a line with a crow's foot at BOTH ends. What relationship does this represent, and what is needed to implement it?",
+    "choices": [
+      "Many-to-many — an author can write many books and a book can have many authors; it requires a junction table.",
+      "One-to-one — implemented with a shared primary key.",
+      "One-to-many — implemented with a single foreign key in BOOKS.",
+      "No relationship — crow's feet on both ends are invalid."
+    ],
+    "correctAnswers": [
+      "Many-to-many — an author can write many books and a book can have many authors; it requires a junction table."
+    ],
+    "explanation": "A crow's foot (many) at both ends signals a many-to-many relationship, which in a relational database is resolved with a junction table (e.g., book_authors).",
+    "wrongAnswerExplanations": {
+      "One-to-one — implemented with a shared primary key.": "One-to-one would show a single bar at each end, not crow's feet.",
+      "One-to-many — implemented with a single foreign key in BOOKS.": "One-to-many has a crow's foot on only one end.",
+      "No relationship — crow's feet on both ends are invalid.": "Crow's feet on both ends is the valid, standard way to depict many-to-many."
+    },
+    "relatedConcept": "reading crow's foot many-to-many",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-007",
+    "topic": "Table Relationships",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "In a one-to-many relationship between DEPARTMENTS (one) and EMPLOYEES (many), where does the foreign key go?",
+    "choices": [
+      "In the EMPLOYEES table (the 'many' side), referencing DEPARTMENTS.",
+      "In the DEPARTMENTS table (the 'one' side), referencing EMPLOYEES.",
+      "In a separate junction table.",
+      "In both tables simultaneously."
+    ],
+    "correctAnswers": [
+      "In the EMPLOYEES table (the 'many' side), referencing DEPARTMENTS."
+    ],
+    "explanation": "In a one-to-many relationship, the foreign key always lives on the 'many' side. Each employee row stores the department_id it belongs to.",
+    "wrongAnswerExplanations": {
+      "In the DEPARTMENTS table (the 'one' side), referencing EMPLOYEES.": "A single department relates to many employees, so it cannot hold one employee reference.",
+      "In a separate junction table.": "A junction table is only needed for many-to-many relationships.",
+      "In both tables simultaneously.": "Duplicating the foreign key in both tables creates redundancy and integrity problems."
+    },
+    "relatedConcept": "foreign key placement",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-008",
+    "topic": "Table Relationships",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which scenario is an example of a one-to-one relationship?",
+    "choices": [
+      "Each country has exactly one capital city, and each capital belongs to exactly one country.",
+      "A customer can place many orders.",
+      "Students enroll in many courses and courses have many students.",
+      "An author writes many books."
+    ],
+    "correctAnswers": [
+      "Each country has exactly one capital city, and each capital belongs to exactly one country."
+    ],
+    "explanation": "Country-to-capital is one-to-one: each side relates to exactly one row on the other side.",
+    "wrongAnswerExplanations": {
+      "A customer can place many orders.": "That is one-to-many.",
+      "Students enroll in many courses and courses have many students.": "That is many-to-many.",
+      "An author writes many books.": "That is one-to-many (or many-to-many if books can have multiple authors)."
+    },
+    "relatedConcept": "one-to-one example",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-rel-009",
+    "topic": "Table Relationships",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Why is a junction table required to model a many-to-many relationship in a relational database?",
+    "choices": [
+      "Because a relational table cannot store a variable list of related keys in one cell, so the junction table splits each pairing into its own row.",
+      "Because relational databases forbid foreign keys without a junction table.",
+      "Because junction tables make queries run faster than any other design.",
+      "Because primary keys are not allowed in many-to-many designs."
+    ],
+    "correctAnswers": [
+      "Because a relational table cannot store a variable list of related keys in one cell, so the junction table splits each pairing into its own row."
+    ],
+    "explanation": "Relational tables require atomic values (1NF), so a row cannot hold a list of related keys. A junction table represents each related pair as its own row, cleanly modeling many-to-many.",
+    "wrongAnswerExplanations": {
+      "Because relational databases forbid foreign keys without a junction table.": "Foreign keys are used in one-to-many relationships without any junction table.",
+      "Because junction tables make queries run faster than any other design.": "Performance is not the reason; correctness and the atomic-value rule are.",
+      "Because primary keys are not allowed in many-to-many designs.": "Junction tables typically do have a (composite) primary key."
+    },
+    "relatedConcept": "why junction tables exist",
+    "reviewFile": "notes/02_database_design_and_erd.md"
+  },
+  {
+    "id": "wb-proc-001",
+    "topic": "Stored Procedures & Functions",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "What is a stored procedure?",
+    "choices": [
+      "A named, reusable set of SQL statements stored in the database that can be executed on demand.",
+      "A temporary query that is discarded after one run.",
+      "A constraint that prevents invalid data.",
+      "An index that speeds up searches."
+    ],
+    "correctAnswers": [
+      "A named, reusable set of SQL statements stored in the database that can be executed on demand."
+    ],
+    "explanation": "A stored procedure is precompiled, reusable SQL logic saved in the database and invoked by name, often with parameters.",
+    "wrongAnswerExplanations": {
+      "A temporary query that is discarded after one run.": "Stored procedures persist in the database; they are not one-off queries.",
+      "A constraint that prevents invalid data.": "Preventing invalid data is the job of constraints, not stored procedures.",
+      "An index that speeds up searches.": "An index is an access structure, unrelated to stored procedures."
+    },
+    "relatedConcept": "stored procedure",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-proc-002",
+    "topic": "Stored Procedures & Functions",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is a key difference between a stored procedure and a user-defined function (UDF)?",
+    "choices": [
+      "A function must return a value and can be used inside a SELECT/expression; a stored procedure performs actions and is invoked with CALL/EXEC, not inside a SELECT.",
+      "A stored procedure must return a value; a function never can.",
+      "Functions can modify tables freely, but stored procedures cannot run any SQL.",
+      "There is no difference between them."
+    ],
+    "correctAnswers": [
+      "A function must return a value and can be used inside a SELECT/expression; a stored procedure performs actions and is invoked with CALL/EXEC, not inside a SELECT."
+    ],
+    "explanation": "Functions return a value and can be embedded in queries and expressions. Stored procedures are called separately (CALL/EXEC), can return multiple result sets or output parameters, and typically perform actions.",
+    "wrongAnswerExplanations": {
+      "A stored procedure must return a value; a function never can.": "This is reversed: functions return a value, procedures need not.",
+      "Functions can modify tables freely, but stored procedures cannot run any SQL.": "It is the opposite — procedures commonly modify data, while functions are usually restricted from side effects.",
+      "There is no difference between them.": "They differ in return behavior and how they are invoked."
+    },
+    "relatedConcept": "procedure vs function",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-proc-003",
+    "topic": "Stored Procedures & Functions",
+    "difficulty": "medium",
+    "type": "multiple-answer",
+    "question": "Select ALL genuine benefits of using stored procedures.",
+    "choices": [
+      "Reusable logic that reduces duplicated SQL across applications.",
+      "Can improve performance by reducing round trips and reusing execution plans.",
+      "Can centralize and tighten security by granting EXECUTE without exposing base tables.",
+      "They eliminate the need for any primary keys."
+    ],
+    "correctAnswers": [
+      "Reusable logic that reduces duplicated SQL across applications.",
+      "Can improve performance by reducing round trips and reusing execution plans.",
+      "Can centralize and tighten security by granting EXECUTE without exposing base tables."
+    ],
+    "explanation": "Stored procedures promote reuse, can improve performance via fewer round trips and cached plans, and support security by letting you grant EXECUTE rather than direct table access. They have nothing to do with whether tables need primary keys.",
+    "wrongAnswerExplanations": {
+      "They eliminate the need for any primary keys.": "Primary keys are a design requirement for entity integrity; stored procedures do not remove that need."
+    },
+    "relatedConcept": "stored procedure benefits",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-proc-004",
+    "topic": "Stored Procedures & Functions",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which can be used directly inside a SELECT statement, like SELECT id, my_thing(price) FROM products?",
+    "choices": [
+      "A user-defined function.",
+      "A stored procedure.",
+      "A trigger.",
+      "A CHECK constraint."
+    ],
+    "correctAnswers": [
+      "A user-defined function."
+    ],
+    "explanation": "Functions return a value and can be embedded in SELECT lists, WHERE clauses, and other expressions. Stored procedures cannot be used that way.",
+    "wrongAnswerExplanations": {
+      "A stored procedure.": "Stored procedures are invoked with CALL/EXEC, not embedded in a SELECT expression.",
+      "A trigger.": "Triggers fire automatically on events; they are never called inside a SELECT.",
+      "A CHECK constraint.": "A CHECK constraint validates data on write; it is not callable in a SELECT list."
+    },
+    "relatedConcept": "function in SELECT",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-proc-005",
+    "topic": "Stored Procedures & Functions",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement is used to create a stored procedure?",
+    "choices": [
+      "CREATE PROCEDURE",
+      "CREATE TABLE",
+      "CREATE INDEX",
+      "CREATE TRIGGER"
+    ],
+    "correctAnswers": [
+      "CREATE PROCEDURE"
+    ],
+    "explanation": "CREATE PROCEDURE defines a new stored procedure (some databases also allow the keyword PROC).",
+    "wrongAnswerExplanations": {
+      "CREATE TABLE": "CREATE TABLE defines a table, not a procedure.",
+      "CREATE INDEX": "CREATE INDEX builds an index, not a procedure.",
+      "CREATE TRIGGER": "CREATE TRIGGER defines a trigger, which is a different object."
+    },
+    "relatedConcept": "CREATE PROCEDURE",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-proc-006",
+    "topic": "Stored Procedures & Functions",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "A procedure is declared with an OUT (output) parameter. What does that mean?",
+    "choices": [
+      "The procedure can pass a value back to the caller through that parameter after it runs.",
+      "The parameter is read-only and cannot be changed.",
+      "The procedure cannot accept any input parameters.",
+      "The parameter automatically becomes a primary key."
+    ],
+    "correctAnswers": [
+      "The procedure can pass a value back to the caller through that parameter after it runs."
+    ],
+    "explanation": "An OUT parameter lets a procedure return a value to the caller via that argument. IN parameters supply input, OUT parameters return output, and INOUT does both.",
+    "wrongAnswerExplanations": {
+      "The parameter is read-only and cannot be changed.": "That describes an IN parameter, not an OUT parameter.",
+      "The procedure cannot accept any input parameters.": "A procedure can mix IN and OUT parameters freely.",
+      "The parameter automatically becomes a primary key.": "Parameters are call-time values and have nothing to do with keys."
+    },
+    "relatedConcept": "procedure parameters",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-trig-001",
+    "topic": "Triggers",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "What is a database trigger?",
+    "choices": [
+      "A block of code that automatically runs in response to an event such as INSERT, UPDATE, or DELETE on a table.",
+      "A query the user must call manually each time.",
+      "A constraint that enforces uniqueness.",
+      "An index that sorts data automatically."
+    ],
+    "correctAnswers": [
+      "A block of code that automatically runs in response to an event such as INSERT, UPDATE, or DELETE on a table."
+    ],
+    "explanation": "A trigger is procedural code bound to a table that fires automatically when a specified data-modification event occurs.",
+    "wrongAnswerExplanations": {
+      "A query the user must call manually each time.": "Triggers fire automatically; they are not manually called.",
+      "A constraint that enforces uniqueness.": "Uniqueness is enforced by UNIQUE/PRIMARY KEY constraints, not triggers.",
+      "An index that sorts data automatically.": "An index is a storage structure, not procedural event code."
+    },
+    "relatedConcept": "trigger definition",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-trig-002",
+    "topic": "Triggers",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is the difference between a BEFORE trigger and an AFTER trigger?",
+    "choices": [
+      "A BEFORE trigger fires before the row change is applied (useful for validating/adjusting data); an AFTER trigger fires once the change is committed to the table (useful for logging/cascading actions).",
+      "A BEFORE trigger runs only on SELECT; an AFTER trigger runs only on DROP.",
+      "They are identical and interchangeable.",
+      "A BEFORE trigger cannot access the new values being inserted."
+    ],
+    "correctAnswers": [
+      "A BEFORE trigger fires before the row change is applied (useful for validating/adjusting data); an AFTER trigger fires once the change is committed to the table (useful for logging/cascading actions)."
+    ],
+    "explanation": "BEFORE triggers run prior to the change, so they can validate or modify incoming values; AFTER triggers run once the change is in place, making them ideal for auditing or propagating changes.",
+    "wrongAnswerExplanations": {
+      "A BEFORE trigger runs only on SELECT; an AFTER trigger runs only on DROP.": "Triggers respond to INSERT/UPDATE/DELETE, not SELECT or DROP.",
+      "They are identical and interchangeable.": "Their timing differs, which changes what they can do.",
+      "A BEFORE trigger cannot access the new values being inserted.": "A BEFORE trigger can read and even alter the new values before they are written."
+    },
+    "relatedConcept": "BEFORE vs AFTER trigger",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-trig-003",
+    "topic": "Triggers",
+    "difficulty": "medium",
+    "type": "multiple-answer",
+    "question": "On which data-modification events can a trigger typically be defined?",
+    "choices": [
+      "INSERT",
+      "UPDATE",
+      "DELETE",
+      "SELECT"
+    ],
+    "correctAnswers": [
+      "INSERT",
+      "UPDATE",
+      "DELETE"
+    ],
+    "explanation": "Triggers fire on data-modification events: INSERT, UPDATE, and DELETE. Plain SELECT reads do not fire standard DML triggers.",
+    "wrongAnswerExplanations": {
+      "SELECT": "Reading data with SELECT does not modify rows, so standard DML triggers do not fire on it."
+    },
+    "relatedConcept": "trigger events",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-trig-004",
+    "topic": "Triggers",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which is a common, appropriate use case for a trigger?",
+    "choices": [
+      "Automatically writing an audit-log entry whenever a row in a sensitive table is updated.",
+      "Sorting the results of every SELECT query.",
+      "Defining the columns of a new table.",
+      "Choosing the primary key for a table."
+    ],
+    "correctAnswers": [
+      "Automatically writing an audit-log entry whenever a row in a sensitive table is updated."
+    ],
+    "explanation": "Triggers excel at automatic side effects like audit logging, enforcing complex business rules, or maintaining derived data whenever rows change.",
+    "wrongAnswerExplanations": {
+      "Sorting the results of every SELECT query.": "Sorting is done with ORDER BY in queries, and SELECT does not fire DML triggers.",
+      "Defining the columns of a new table.": "Defining columns is DDL (CREATE TABLE), not a trigger task.",
+      "Choosing the primary key for a table.": "Key selection is a design decision, unrelated to triggers."
+    },
+    "relatedConcept": "trigger use cases",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-trig-005",
+    "topic": "Triggers",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "How is a trigger executed?",
+    "choices": [
+      "Automatically by the database when its defined event occurs — it is not called manually.",
+      "Manually, by running CALL trigger_name each time.",
+      "Only when the database restarts.",
+      "Only when an index is rebuilt."
+    ],
+    "correctAnswers": [
+      "Automatically by the database when its defined event occurs — it is not called manually."
+    ],
+    "explanation": "Triggers are event-driven: the database invokes them automatically when the associated INSERT, UPDATE, or DELETE happens. You cannot call them directly like a procedure.",
+    "wrongAnswerExplanations": {
+      "Manually, by running CALL trigger_name each time.": "Triggers cannot be invoked with CALL; that is for stored procedures.",
+      "Only when the database restarts.": "Triggers respond to data events, not startup.",
+      "Only when an index is rebuilt.": "Index maintenance does not fire DML triggers."
+    },
+    "relatedConcept": "automatic execution",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-trig-006",
+    "topic": "Triggers",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "Inside a row-level trigger, what do the NEW and OLD references typically represent?",
+    "choices": [
+      "NEW holds the incoming/updated values of the row; OLD holds the previous values before the change.",
+      "NEW is always NULL, and OLD holds the table name.",
+      "NEW and OLD both refer to other tables in the database.",
+      "They store the trigger's name and creation date."
+    ],
+    "correctAnswers": [
+      "NEW holds the incoming/updated values of the row; OLD holds the previous values before the change."
+    ],
+    "explanation": "In row-level triggers, OLD exposes the pre-change column values (available for UPDATE/DELETE) and NEW exposes the post-change values (available for INSERT/UPDATE), enabling comparisons and auditing.",
+    "wrongAnswerExplanations": {
+      "NEW is always NULL, and OLD holds the table name.": "NEW carries the incoming row values; it is not a table name or always NULL.",
+      "NEW and OLD both refer to other tables in the database.": "They refer to the affected row's values, not separate tables.",
+      "They store the trigger's name and creation date.": "They hold row data, not trigger metadata."
+    },
+    "relatedConcept": "NEW and OLD in triggers",
+    "reviewFile": "notes/10_stored_procedures_functions_triggers.md"
+  },
+  {
+    "id": "wb-ddl-syn-001",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which is the correct syntax to create a table named products with two columns?",
+    "choices": [
+      "CREATE TABLE products (id INT PRIMARY KEY, name VARCHAR(50));",
+      "CREATE products TABLE (id INT, name VARCHAR(50));",
+      "CREATE TABLE products {id INT, name VARCHAR(50)};",
+      "NEW TABLE products (id INT, name VARCHAR(50));"
+    ],
+    "correctAnswers": [
+      "CREATE TABLE products (id INT PRIMARY KEY, name VARCHAR(50));"
+    ],
+    "explanation": "The correct form is CREATE TABLE <name> (column definitions in parentheses, separated by commas).",
+    "wrongAnswerExplanations": {
+      "CREATE products TABLE (id INT, name VARCHAR(50));": "The keyword order is wrong; it must be CREATE TABLE products, not CREATE products TABLE.",
+      "CREATE TABLE products {id INT, name VARCHAR(50)};": "Column definitions use parentheses (), not curly braces {}.",
+      "NEW TABLE products (id INT, name VARCHAR(50));": "NEW is not a valid SQL keyword for creating a table; use CREATE."
+    },
+    "relatedConcept": "CREATE TABLE syntax",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-syn-002",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement correctly adds a NOT NULL integer column 'age' with a default of 0 to an existing users table?",
+    "choices": [
+      "ALTER TABLE users ADD age INT NOT NULL DEFAULT 0;",
+      "ALTER users ADD COLUMN age INT NOT NULL DEFAULT 0;",
+      "ALTER TABLE users NEW COLUMN age INT DEFAULT 0;",
+      "UPDATE TABLE users ADD age INT NOT NULL DEFAULT 0;"
+    ],
+    "correctAnswers": [
+      "ALTER TABLE users ADD age INT NOT NULL DEFAULT 0;"
+    ],
+    "explanation": "ALTER TABLE <table> ADD <column> <type> <constraints> is the correct pattern for adding a column.",
+    "wrongAnswerExplanations": {
+      "ALTER users ADD COLUMN age INT NOT NULL DEFAULT 0;": "The TABLE keyword is required: ALTER TABLE users ...",
+      "ALTER TABLE users NEW COLUMN age INT DEFAULT 0;": "The keyword to introduce a column is ADD, not NEW COLUMN.",
+      "UPDATE TABLE users ADD age INT NOT NULL DEFAULT 0;": "UPDATE changes row data and cannot add columns; structural changes use ALTER TABLE."
+    },
+    "relatedConcept": "ALTER TABLE ADD syntax",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-syn-003",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement correctly removes an index named idx_email?",
+    "choices": [
+      "DROP INDEX idx_email;",
+      "DELETE INDEX idx_email;",
+      "DROP idx_email INDEX;",
+      "REMOVE INDEX idx_email;"
+    ],
+    "correctAnswers": [
+      "DROP INDEX idx_email;"
+    ],
+    "explanation": "DROP INDEX <name> removes an index. DROP is the DDL keyword for removing database objects.",
+    "wrongAnswerExplanations": {
+      "DELETE INDEX idx_email;": "DELETE removes rows, not schema objects; indexes are removed with DROP.",
+      "DROP idx_email INDEX;": "The object type keyword (INDEX) must come before the name.",
+      "REMOVE INDEX idx_email;": "REMOVE is not a valid SQL keyword."
+    },
+    "relatedConcept": "DROP INDEX syntax",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-ddl-syn-004",
+    "topic": "DDL - Data Definition Language",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "Which of these statements contains a SYNTAX error?",
+    "choices": [
+      "CREATE TABLE t (id INT PRIMARY KEY name VARCHAR(20));",
+      "CREATE TABLE t (id INT PRIMARY KEY, name VARCHAR(20));",
+      "ALTER TABLE t ADD email VARCHAR(50);",
+      "DROP TABLE t;"
+    ],
+    "correctAnswers": [
+      "CREATE TABLE t (id INT PRIMARY KEY name VARCHAR(20));"
+    ],
+    "explanation": "Column definitions must be separated by commas. The first statement is missing the comma between 'id INT PRIMARY KEY' and 'name VARCHAR(20)', so it is a syntax error.",
+    "wrongAnswerExplanations": {
+      "CREATE TABLE t (id INT PRIMARY KEY, name VARCHAR(20));": "This is correct — the columns are properly comma-separated.",
+      "ALTER TABLE t ADD email VARCHAR(50);": "This is valid syntax for adding a column.",
+      "DROP TABLE t;": "This is valid syntax for removing a table."
+    },
+    "relatedConcept": "DDL syntax errors",
+    "reviewFile": "notes/08_ddl_constraints_indexes.md"
+  },
+  {
+    "id": "wb-dml-syn-001",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which is the correct syntax to insert one row into students?",
+    "choices": [
+      "INSERT INTO students (id, name) VALUES (1, 'Ana');",
+      "INSERT students (id, name) VALUE (1, 'Ana');",
+      "INSERT INTO students SET VALUES (1, 'Ana');",
+      "ADD INTO students (id, name) VALUES (1, 'Ana');"
+    ],
+    "correctAnswers": [
+      "INSERT INTO students (id, name) VALUES (1, 'Ana');"
+    ],
+    "explanation": "The standard form is INSERT INTO <table> (columns) VALUES (values).",
+    "wrongAnswerExplanations": {
+      "INSERT students (id, name) VALUE (1, 'Ana');": "It is missing INTO, and the keyword is VALUES (plural) in standard SQL.",
+      "INSERT INTO students SET VALUES (1, 'Ana');": "SET is not combined with VALUES like this for a standard multi-column insert.",
+      "ADD INTO students (id, name) VALUES (1, 'Ana');": "The keyword is INSERT, not ADD."
+    },
+    "relatedConcept": "INSERT syntax",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-syn-002",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement correctly updates the name of the student whose id is 3?",
+    "choices": [
+      "UPDATE students SET name = 'Ben' WHERE id = 3;",
+      "UPDATE students name = 'Ben' WHERE id = 3;",
+      "UPDATE students SET name = 'Ben' IF id = 3;",
+      "MODIFY students SET name = 'Ben' WHERE id = 3;"
+    ],
+    "correctAnswers": [
+      "UPDATE students SET name = 'Ben' WHERE id = 3;"
+    ],
+    "explanation": "The pattern is UPDATE <table> SET <column> = <value> WHERE <condition>.",
+    "wrongAnswerExplanations": {
+      "UPDATE students name = 'Ben' WHERE id = 3;": "The SET keyword is required before the column assignment.",
+      "UPDATE students SET name = 'Ben' IF id = 3;": "Row conditions use WHERE, not IF.",
+      "MODIFY students SET name = 'Ben' WHERE id = 3;": "The keyword is UPDATE, not MODIFY."
+    },
+    "relatedConcept": "UPDATE syntax",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-syn-003",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement correctly deletes all orders whose total is 0?",
+    "choices": [
+      "DELETE FROM orders WHERE total = 0;",
+      "DELETE orders WHERE total = 0;",
+      "DELETE FROM orders IF total = 0;",
+      "REMOVE FROM orders WHERE total = 0;"
+    ],
+    "correctAnswers": [
+      "DELETE FROM orders WHERE total = 0;"
+    ],
+    "explanation": "The correct pattern is DELETE FROM <table> WHERE <condition>.",
+    "wrongAnswerExplanations": {
+      "DELETE orders WHERE total = 0;": "The FROM keyword is required: DELETE FROM orders ...",
+      "DELETE FROM orders IF total = 0;": "Conditions use WHERE, not IF.",
+      "REMOVE FROM orders WHERE total = 0;": "REMOVE is not a valid SQL keyword; use DELETE."
+    },
+    "relatedConcept": "DELETE syntax",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dml-syn-004",
+    "topic": "DML - Data Manipulation Language",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "What is the result of INSERT INTO students (id, name) VALUES (1); ?",
+    "choices": [
+      "An error, because the number of values does not match the number of listed columns.",
+      "It inserts 1 into both id and name.",
+      "It inserts a row with name set to 1.",
+      "It inserts a row and leaves name as NULL with no complaint."
+    ],
+    "correctAnswers": [
+      "An error, because the number of values does not match the number of listed columns."
+    ],
+    "explanation": "When you list two columns (id, name), you must supply two values. Providing one value raises a column/value count mismatch error.",
+    "wrongAnswerExplanations": {
+      "It inserts 1 into both id and name.": "Values are matched positionally to listed columns, not copied into every column.",
+      "It inserts a row with name set to 1.": "The single value maps to the first listed column (id), and the mismatch still errors.",
+      "It inserts a row and leaves name as NULL with no complaint.": "Because name was explicitly listed but no value was given, the database reports a count mismatch rather than silently inserting NULL."
+    },
+    "relatedConcept": "INSERT column/value mismatch",
+    "reviewFile": "notes/09_dml_transactions.md"
+  },
+  {
+    "id": "wb-dql-syn-001",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement correctly selects the name and email of active users?",
+    "choices": [
+      "SELECT name, email FROM users WHERE active = 1;",
+      "SELECT name, email WHERE active = 1 FROM users;",
+      "GET name, email FROM users WHERE active = 1;",
+      "SELECT FROM users name, email WHERE active = 1;"
+    ],
+    "correctAnswers": [
+      "SELECT name, email FROM users WHERE active = 1;"
+    ],
+    "explanation": "The clause order is SELECT <columns> FROM <table> WHERE <condition>.",
+    "wrongAnswerExplanations": {
+      "SELECT name, email WHERE active = 1 FROM users;": "FROM must come before WHERE, not after it.",
+      "GET name, email FROM users WHERE active = 1;": "The retrieval keyword is SELECT, not GET.",
+      "SELECT FROM users name, email WHERE active = 1;": "The column list must come immediately after SELECT, before FROM."
+    },
+    "relatedConcept": "SELECT syntax",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-dql-syn-002",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement lists all products sorted from highest price to lowest?",
+    "choices": [
+      "SELECT * FROM products ORDER BY price DESC;",
+      "SELECT * FROM products SORT BY price DESC;",
+      "SELECT * FROM products ORDER price DESC;",
+      "SELECT * FROM products ORDER BY price DOWN;"
+    ],
+    "correctAnswers": [
+      "SELECT * FROM products ORDER BY price DESC;"
+    ],
+    "explanation": "ORDER BY <column> DESC sorts in descending order; ASC (the default) sorts ascending.",
+    "wrongAnswerExplanations": {
+      "SELECT * FROM products SORT BY price DESC;": "The keyword is ORDER BY, not SORT BY.",
+      "SELECT * FROM products ORDER price DESC;": "BY is required: ORDER BY price.",
+      "SELECT * FROM products ORDER BY price DOWN;": "The descending keyword is DESC, not DOWN."
+    },
+    "relatedConcept": "ORDER BY syntax",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-dql-syn-003",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement counts products per category and keeps only categories with more than 5 products?",
+    "choices": [
+      "SELECT category, COUNT(*) FROM products GROUP BY category HAVING COUNT(*) > 5;",
+      "SELECT category, COUNT(*) FROM products HAVING COUNT(*) > 5 GROUP BY category;",
+      "SELECT category, COUNT(*) FROM products WHERE COUNT(*) > 5 GROUP BY category;",
+      "SELECT category, COUNT(*) FROM products GROUP COUNT(*) > 5;"
+    ],
+    "correctAnswers": [
+      "SELECT category, COUNT(*) FROM products GROUP BY category HAVING COUNT(*) > 5;"
+    ],
+    "explanation": "GROUP BY comes before HAVING, and HAVING is the clause that filters aggregated groups.",
+    "wrongAnswerExplanations": {
+      "SELECT category, COUNT(*) FROM products HAVING COUNT(*) > 5 GROUP BY category;": "HAVING must come after GROUP BY, not before it.",
+      "SELECT category, COUNT(*) FROM products WHERE COUNT(*) > 5 GROUP BY category;": "WHERE cannot use aggregate functions like COUNT(*); use HAVING.",
+      "SELECT category, COUNT(*) FROM products GROUP COUNT(*) > 5;": "GROUP BY requires the BY keyword and a grouping column, not a condition."
+    },
+    "relatedConcept": "GROUP BY / HAVING syntax",
+    "reviewFile": "notes/06_grouping_aggregation.md"
+  },
+  {
+    "id": "wb-dql-syn-004",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "What is the correct logical clause order for a SELECT query that groups, filters groups, and sorts?",
+    "choices": [
+      "SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY",
+      "FROM ... SELECT ... WHERE ... ORDER BY ... GROUP BY",
+      "SELECT ... WHERE ... FROM ... ORDER BY ... GROUP BY",
+      "WHERE ... SELECT ... FROM ... HAVING ... GROUP BY"
+    ],
+    "correctAnswers": [
+      "SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY"
+    ],
+    "explanation": "The written clause order is SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY. (Logically the database processes FROM and WHERE first, but this is the required writing order.)",
+    "wrongAnswerExplanations": {
+      "FROM ... SELECT ... WHERE ... ORDER BY ... GROUP BY": "SELECT is written first, and GROUP BY comes before ORDER BY.",
+      "SELECT ... WHERE ... FROM ... ORDER BY ... GROUP BY": "FROM must come before WHERE.",
+      "WHERE ... SELECT ... FROM ... HAVING ... GROUP BY": "A query must begin with SELECT, and HAVING comes after GROUP BY."
+    },
+    "relatedConcept": "clause order",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-dql-syn-005",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "easy",
+    "type": "single-choice",
+    "question": "Which statement returns users whose name starts with the letter 'A'?",
+    "choices": [
+      "SELECT name FROM users WHERE name LIKE 'A%';",
+      "SELECT name FROM users WHERE name = 'A%';",
+      "SELECT name FROM users WHERE name LIKE 'A_';",
+      "SELECT name FROM users WHERE name CONTAINS 'A';"
+    ],
+    "correctAnswers": [
+      "SELECT name FROM users WHERE name LIKE 'A%';"
+    ],
+    "explanation": "LIKE with the % wildcard matches any sequence of characters, so 'A%' matches any name beginning with A.",
+    "wrongAnswerExplanations": {
+      "SELECT name FROM users WHERE name = 'A%';": "= does an exact match, so it only finds the literal text 'A%'.",
+      "SELECT name FROM users WHERE name LIKE 'A_';": "The _ wildcard matches exactly one character, so this only finds two-letter names starting with A.",
+      "SELECT name FROM users WHERE name CONTAINS 'A';": "CONTAINS is not standard SQL for pattern matching; use LIKE."
+    },
+    "relatedConcept": "LIKE wildcards",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-dql-syn-006",
+    "topic": "DQL - Data Query Language",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement returns each distinct city only once from the customers table?",
+    "choices": [
+      "SELECT DISTINCT city FROM customers;",
+      "SELECT UNIQUE(city) FROM customers;",
+      "SELECT city FROM customers REMOVE DUPLICATES;",
+      "SELECT DEDUP city FROM customers;"
+    ],
+    "correctAnswers": [
+      "SELECT DISTINCT city FROM customers;"
+    ],
+    "explanation": "SELECT DISTINCT removes duplicate rows from the result, returning each unique value once.",
+    "wrongAnswerExplanations": {
+      "SELECT UNIQUE(city) FROM customers;": "UNIQUE as a function is not standard SQL for de-duplicating results; use DISTINCT.",
+      "SELECT city FROM customers REMOVE DUPLICATES;": "REMOVE DUPLICATES is not valid SQL.",
+      "SELECT DEDUP city FROM customers;": "DEDUP is not a SQL keyword."
+    },
+    "relatedConcept": "DISTINCT",
+    "reviewFile": "notes/04_sql_select_filter_sort.md"
+  },
+  {
+    "id": "wb-join-syn-001",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement correctly joins orders to customers using table aliases?",
+    "choices": [
+      "SELECT o.id, c.name FROM orders o INNER JOIN customers c ON o.customer_id = c.id;",
+      "SELECT o.id, c.name FROM orders o INNER JOIN customers c WHERE o.customer_id = c.id;",
+      "SELECT o.id, c.name FROM orders o INNER JOIN customers c ON o.customer_id;",
+      "SELECT o.id, c.name FROM orders o, customers c INNER JOIN ON o.customer_id = c.id;"
+    ],
+    "correctAnswers": [
+      "SELECT o.id, c.name FROM orders o INNER JOIN customers c ON o.customer_id = c.id;"
+    ],
+    "explanation": "An explicit join uses INNER JOIN <table> ON <left.col> = <right.col>. Aliases (o, c) make the column references clear.",
+    "wrongAnswerExplanations": {
+      "SELECT o.id, c.name FROM orders o INNER JOIN customers c WHERE o.customer_id = c.id;": "The join match condition belongs in ON, not WHERE, for an explicit JOIN.",
+      "SELECT o.id, c.name FROM orders o INNER JOIN customers c ON o.customer_id;": "The ON clause needs a full equality condition (= c.id), not a single column.",
+      "SELECT o.id, c.name FROM orders o, customers c INNER JOIN ON o.customer_id = c.id;": "You cannot mix the comma-join list with an INNER JOIN ... ON like this; the syntax is malformed."
+    },
+    "relatedConcept": "INNER JOIN ... ON syntax",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-syn-002",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which statement is the correct syntax for a LEFT JOIN?",
+    "choices": [
+      "SELECT * FROM a LEFT JOIN b ON a.id = b.a_id;",
+      "SELECT * FROM a LEFT JOIN b USING a.id = b.a_id;",
+      "SELECT * FROM a LEFT ON JOIN b a.id = b.a_id;",
+      "SELECT * FROM a JOIN LEFT b ON a.id = b.a_id;"
+    ],
+    "correctAnswers": [
+      "SELECT * FROM a LEFT JOIN b ON a.id = b.a_id;"
+    ],
+    "explanation": "The form is FROM <left> LEFT JOIN <right> ON <condition>. The keyword order is LEFT JOIN, and the match goes in ON.",
+    "wrongAnswerExplanations": {
+      "SELECT * FROM a LEFT JOIN b USING a.id = b.a_id;": "USING takes a shared column name in parentheses, e.g. USING (id); it is not used with a full equality expression.",
+      "SELECT * FROM a LEFT ON JOIN b a.id = b.a_id;": "ON must come after the joined table, and the keyword order LEFT ON JOIN is invalid.",
+      "SELECT * FROM a JOIN LEFT b ON a.id = b.a_id;": "The correct order is LEFT JOIN, not JOIN LEFT."
+    },
+    "relatedConcept": "LEFT JOIN syntax",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-syn-003",
+    "topic": "Joins",
+    "difficulty": "hard",
+    "type": "single-choice",
+    "question": "Which query will fail (or accidentally explode into a Cartesian product) because it is missing a match condition?",
+    "choices": [
+      "SELECT * FROM a INNER JOIN b;",
+      "SELECT * FROM a INNER JOIN b ON a.id = b.a_id;",
+      "SELECT * FROM a LEFT JOIN b ON a.id = b.a_id;",
+      "SELECT * FROM a CROSS JOIN b;"
+    ],
+    "correctAnswers": [
+      "SELECT * FROM a INNER JOIN b;"
+    ],
+    "explanation": "An INNER JOIN requires an ON condition. Omitting it is a syntax error in most databases (and where allowed it behaves like a Cartesian product). A deliberate all-combinations join should use CROSS JOIN.",
+    "wrongAnswerExplanations": {
+      "SELECT * FROM a INNER JOIN b ON a.id = b.a_id;": "This is correct — it has a proper ON condition.",
+      "SELECT * FROM a LEFT JOIN b ON a.id = b.a_id;": "This is correct — it has a proper ON condition.",
+      "SELECT * FROM a CROSS JOIN b;": "CROSS JOIN intentionally has no ON condition, so it is valid, not an accident."
+    },
+    "relatedConcept": "missing ON condition",
+    "reviewFile": "notes/05_joins.md"
+  },
+  {
+    "id": "wb-join-syn-004",
+    "topic": "Joins",
+    "difficulty": "medium",
+    "type": "single-choice",
+    "question": "Which FROM clause correctly joins three tables a, b, and c?",
+    "choices": [
+      "FROM a JOIN b ON a.id = b.a_id JOIN c ON b.id = c.b_id",
+      "FROM a JOIN b JOIN c ON a.id = b.a_id AND b.id = c.b_id",
+      "FROM a, b, c JOIN ON a.id = b.a_id = c.b_id",
+      "FROM a JOIN b ON a.id = b.a_id AND JOIN c ON b.id = c.b_id"
+    ],
+    "correctAnswers": [
+      "FROM a JOIN b ON a.id = b.a_id JOIN c ON b.id = c.b_id"
+    ],
+    "explanation": "Each JOIN gets its own ON condition, chained one after another: a JOIN b ON ... JOIN c ON ...",
+    "wrongAnswerExplanations": {
+      "FROM a JOIN b JOIN c ON a.id = b.a_id AND b.id = c.b_id": "Each JOIN needs its own ON clause; you cannot stack two JOINs before a single combined ON.",
+      "FROM a, b, c JOIN ON a.id = b.a_id = c.b_id": "Chained equality like a = b = c is invalid, and the comma list cannot be mixed with a single JOIN ON this way.",
+      "FROM a JOIN b ON a.id = b.a_id AND JOIN c ON b.id = c.b_id": "AND JOIN is invalid; the second JOIN starts a new clause, it is not joined with AND."
+    },
+    "relatedConcept": "multi-table join syntax",
+    "reviewFile": "notes/05_joins.md"
+  }
+]

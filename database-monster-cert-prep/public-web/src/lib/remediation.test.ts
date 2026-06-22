@@ -13,16 +13,16 @@ import type { AnswerReview, Question, TopicStat } from "@/lib/types";
 function question(overrides: Partial<Question> = {}): Question {
   return {
     id: "q1",
-    topic: "Advanced Queries",
+    topic: "Joins",
     difficulty: "hard",
     type: "single-choice",
-    question: "Which query uses a scalar subquery?",
+    question: "Which join returns only matching rows from both tables?",
     choices: ["A", "B"],
     correctAnswers: ["A"],
-    explanation: "Scalar subqueries return one value.",
+    explanation: "An inner join returns only matched rows.",
     wrongAnswerExplanations: {},
-    reviewFile: "notes/07_subqueries_views.md",
-    relatedConcept: "scalar subqueries",
+    reviewFile: "notes/05_joins.md",
+    relatedConcept: "inner join",
     ...overrides,
   };
 }
@@ -55,8 +55,8 @@ test("builds a focused untimed drill href for one weak topic", () => {
 test("maps missed questions to lessons and matching labs", () => {
   const missed = question();
 
-  assert.equal(hrefForQuestionLesson(missed), "/learn/advanced-queries/scalar-subqueries");
-  assert.equal(hrefForQuestionLab(missed, labs), "/labs#subqueries");
+  assert.equal(hrefForQuestionLesson(missed), "/learn/joins/inner-join");
+  assert.equal(hrefForQuestionLab(missed, labs), "/labs#joins");
 });
 
 test("falls back to the labs page filtered by topic when there is no clean lab match", () => {

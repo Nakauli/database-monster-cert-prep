@@ -2,17 +2,16 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { extremeQuestionPack } from "./extreme-question-pack.mjs";
 
-const questions = JSON.parse(await readFile(resolve("src/data/questions.json"), "utf8"));
+const questions = JSON.parse(await readFile(resolve("src/data/exam-whiteboard.json"), "utf8"));
 const sqlQuestionsSource = await readFile(resolve("src/data/sql-questions.ts"), "utf8");
 const labsSource = await readFile(resolve("src/data/labs.ts"), "utf8");
 const learnTopicsSource = await readFile(resolve("src/data/learn-topics.ts"), "utf8");
 const required = [
-  "id", "legacyId", "topic", "difficulty", "type", "question", "choices",
+  "id", "topic", "difficulty", "type", "question", "choices",
   "correctAnswers", "explanation", "wrongAnswerExplanations", "reviewFile",
 ];
 
 const ids = new Set();
-const legacyIds = new Set();
 const normalizedPrompts = new Map();
 const supplementalContextFields = ["schema", "sampleData", "code", "outputTable"];
 const prohibitedText = [
@@ -35,8 +34,6 @@ for (const question of questions) {
   }
   if (ids.has(question.id)) throw new Error(`Duplicate ID: ${question.id}`);
   ids.add(question.id);
-  if (legacyIds.has(question.legacyId)) throw new Error(`Duplicate legacy ID: ${question.legacyId}`);
-  legacyIds.add(question.legacyId);
   if (!Array.isArray(question.choices) || question.choices.length < 2) {
     throw new Error(`${question.id} needs choices`);
   }
@@ -120,21 +117,17 @@ const count = (predicate) => questions.filter(predicate).length;
 const metrics = {
   questions: questions.length,
   topics: new Set(questions.map((question) => question.topic)).size,
-  inlineCode: count((question) => /`[^`]+`/.test([question.question, ...question.choices].join(" "))),
   multipleAnswer: count((question) => question.type === "multiple-answer"),
-  triggersAndProcedures: count((question) => question.topic === "Triggers & Procedures"),
   normalization: count((question) => question.topic === "Normalization"),
-  security: count((question) => question.topic === "Security & Admin"),
+  joins: count((question) => question.topic === "Joins"),
 };
 
 const minimums = {
-  questions: 410,
-  topics: 12,
-  inlineCode: 200,
-  multipleAnswer: 20,
-  triggersAndProcedures: 10,
-  normalization: 10,
-  security: 10,
+  questions: 75,
+  topics: 9,
+  multipleAnswer: 5,
+  normalization: 6,
+  joins: 6,
 };
 
 for (const [name, minimum] of Object.entries(minimums)) {
@@ -146,8 +139,8 @@ for (const question of questions) {
   topicCounts.set(question.topic, (topicCounts.get(question.topic) ?? 0) + 1);
 }
 for (const [topic, topicQuestionCount] of topicCounts) {
-  if (topicQuestionCount < 30) {
-    throw new Error(`${topic}: expected at least 30 questions, found ${topicQuestionCount}`);
+  if (topicQuestionCount < 6) {
+    throw new Error(`${topic}: expected at least 6 questions, found ${topicQuestionCount}`);
   }
 }
 
@@ -193,8 +186,8 @@ const learnTopicBlocks = learnTopicsSource
   .slice(1)
   .map((block) => `title: ${block.split(/\r?\n  \},/)[0]}`);
 
-if (learnTopicBlocks.length !== 12) {
-  throw new Error(`Learn topics: expected 12, found ${learnTopicBlocks.length}`);
+if (learnTopicBlocks.length !== 9) {
+  throw new Error(`Learn topics: expected 9, found ${learnTopicBlocks.length}`);
 }
 
 const learnTopicSlugs = new Set();

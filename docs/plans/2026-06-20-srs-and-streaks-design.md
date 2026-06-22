@@ -155,9 +155,10 @@ read `node_modules/next/dist/docs/` before writing route/server code.
   intro → diagnostic → roadmap, with a new-user banner on the dashboard. Exam
   realism (countdown timer, per-question flag-for-review, review-before-submit
   screen) audited and confirmed already present in `ExamClient`.
-- **Phase 4 — Reminders (implemented; deploy/secrets pending):** opt-in email
-  reminders for due SRS cards via profile setting, scheduled pg_cron/pg_net Edge
-  Function invocation, and Resend function scaffold.
+- **Phase 4 — Reminders (implemented & deployed):** opt-in email reminders for due
+  SRS cards via profile setting, scheduled pg_cron/pg_net Edge Function invocation
+  (`send-due-reminders`, daily at 23:00 UTC), and Resend delivery. Smoke-tested
+  end-to-end (pg_net → Edge Function `200`).
 - **Phase 5 — Social & rewards (implemented):** computed achievement badges,
   dashboard next-badge guidance, and a weekly repair sprint on the existing
   opt-in leaderboard using public-safe aggregate fields only.

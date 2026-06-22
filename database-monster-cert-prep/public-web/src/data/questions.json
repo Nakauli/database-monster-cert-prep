@@ -2315,7 +2315,7 @@
     "topic": "SQL",
     "difficulty": "easy",
     "type": "single-choice",
-    "question": "What does `WHERE value LIKE 'A__'` request under ordinary SQL wildcard rules?",
+    "question": "What does `WHERE value LIKE 'A__'` (the letter A followed by two underscores) request under ordinary SQL wildcard rules?",
     "choices": [
       "is three characters and begins with `A`",
       "Only a literal match including percent/underscore characters",
@@ -2440,7 +2440,7 @@
     "topic": "SQL",
     "difficulty": "final boss",
     "type": "single-choice",
-    "question": "What does `WHERE value LIKE '____'` request under ordinary SQL wildcard rules?",
+    "question": "What does `WHERE value LIKE '____'` (four underscores) request under ordinary SQL wildcard rules?",
     "choices": [
       "has exactly four characters",
       "Only a literal match including percent/underscore characters",
