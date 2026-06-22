@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { LiveClassmatesPanel } from "@/components/leaderboard/LiveClassmatesPanel";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
 import { normalizeCourse } from "@/lib/courses";
 import { getPublicLeaderboard } from "@/lib/leaderboard";
+import { getPublicPresence } from "@/lib/presence";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Leaderboard" };
@@ -15,9 +17,10 @@ export default async function LeaderboardPage({
 }) {
   const { course } = await searchParams;
   const selectedCourse = normalizeCourse(course);
-  const [user, rows] = await Promise.all([
+  const [user, rows, presenceRows] = await Promise.all([
     getCurrentUser(),
     getPublicLeaderboard(selectedCourse).catch(() => []),
+    getPublicPresence().catch(() => []),
   ]);
 
   return (
@@ -35,11 +38,14 @@ export default async function LeaderboardPage({
         </div>
       </section>
 
-      <LeaderboardTable
-        currentUserId={user?.id}
-        rows={rows}
-        selectedCourse={selectedCourse}
-      />
+      <div className="leaderboard-content-grid">
+        <LeaderboardTable
+          currentUserId={user?.id}
+          rows={rows}
+          selectedCourse={selectedCourse}
+        />
+        <LiveClassmatesPanel rows={presenceRows} />
+      </div>
     </main>
   );
 }
