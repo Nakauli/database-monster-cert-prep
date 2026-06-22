@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Database } from "lucide-react";
 import type { ReactNode } from "react";
 import { AuthNav } from "@/components/auth/AuthNav";
+import { PresenceHeartbeat } from "@/components/PresenceHeartbeat";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { primaryNavigation } from "@/lib/navigation";
@@ -39,6 +40,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
+      <PresenceHeartbeat />
       <header className="sticky top-0 z-40 border-b bg-background/88 backdrop-blur-xl">
         <div className="app-container flex h-16 items-center justify-between gap-4">
           <Link className="group flex items-center gap-3 text-decoration-none" href="/" aria-label="Database Monster home">
