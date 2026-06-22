@@ -48,6 +48,7 @@ export interface ProfileRow {
   course: string | null;
   avatar_path: string | null;
   leaderboard_opt_in: boolean;
+  presence_opt_in: boolean;
   review_reminders_opt_in: boolean;
   review_reminders_last_sent_at: string | null;
   created_at: string;
@@ -95,7 +96,7 @@ export async function getDashboardData(userId: string) {
         .eq("user_id", userId),
       supabase
         .from("profiles")
-        .select("id, display_name, school, course, avatar_path, leaderboard_opt_in, review_reminders_opt_in, review_reminders_last_sent_at, created_at, updated_at")
+        .select("id, display_name, school, course, avatar_path, leaderboard_opt_in, presence_opt_in, review_reminders_opt_in, review_reminders_last_sent_at, created_at, updated_at")
         .eq("id", userId)
         .maybeSingle(),
       supabase
@@ -232,7 +233,7 @@ export async function getProfile(userId: string): Promise<ProfileRow | null> {
   if (!supabase) throw new Error("Supabase is not configured.");
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, display_name, school, course, avatar_path, leaderboard_opt_in, review_reminders_opt_in, review_reminders_last_sent_at, created_at, updated_at")
+    .select("id, display_name, school, course, avatar_path, leaderboard_opt_in, presence_opt_in, review_reminders_opt_in, review_reminders_last_sent_at, created_at, updated_at")
     .eq("id", userId)
     .maybeSingle();
   if (error) throw new Error(error.message);
