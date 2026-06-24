@@ -1,7 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const questions = JSON.parse(
+const activeQuestions = JSON.parse(
+  await readFile(resolve("src/data/exam-whiteboard.json"), "utf8"),
+);
+const archivedQuestions = JSON.parse(
   await readFile(resolve("src/data/questions.json"), "utf8"),
 );
 
@@ -32,49 +35,108 @@ function jaccard(left, right) {
   return intersection / (left.size + right.size - intersection);
 }
 
+function questionId(question) {
+  return question.id ?? question.legacyId ?? "unknown";
+}
+
+function normalizedPrompt(question) {
+  return question.question.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
 function signature(question) {
   return [
     question.question,
-    ...question.correctAnswers,
+    ...(question.correctAnswers ?? []),
     question.relatedConcept ?? "",
   ].join(" ");
 }
 
-const extreme = questions.filter((question) => question.legacyId.startsWith("XQ"));
-const core = questions.filter((question) => !question.legacyId.startsWith("XQ"));
-const matches = [];
+function collectPromptMatches(questions, threshold) {
+  const matches = [];
 
-for (let index = 0; index < extreme.length; index += 1) {
-  const question = extreme[index];
-  const candidates = [
-    ...core,
-    ...extreme.slice(0, index),
-  ];
-  const questionTokens = tokens(signature(question));
+  for (let index = 0; index < questions.length; index += 1) {
+    const question = questions[index];
+    const questionTokens = tokens(question.question);
 
-  for (const candidate of candidates) {
-    const score = jaccard(questionTokens, tokens(signature(candidate)));
-    if (score >= 0.2) {
-      matches.push({
-        score,
-        question: question.legacyId,
-        candidate: candidate.legacyId,
-        questionText: question.question,
-        candidateText: candidate.question,
-      });
+    for (const candidate of questions.slice(0, index)) {
+      const score = jaccard(questionTokens, tokens(candidate.question));
+      if (score >= threshold) {
+        matches.push({
+          score,
+          question: questionId(question),
+          candidate: questionId(candidate),
+          questionText: question.question,
+          candidateText: candidate.question,
+        });
+      }
     }
+  }
+
+  return matches.sort((left, right) => right.score - left.score);
+}
+
+function collectExtremeArchiveMatches(threshold) {
+  const extreme = archivedQuestions.filter((question) => question.legacyId?.startsWith("XQ"));
+  const core = archivedQuestions.filter((question) => !question.legacyId?.startsWith("XQ"));
+  const matches = [];
+
+  for (let index = 0; index < extreme.length; index += 1) {
+    const question = extreme[index];
+    const candidates = [
+      ...core,
+      ...extreme.slice(0, index),
+    ];
+    const questionTokens = tokens(signature(question));
+
+    for (const candidate of candidates) {
+      const score = jaccard(questionTokens, tokens(signature(candidate)));
+      if (score >= threshold) {
+        matches.push({
+          score,
+          question: questionId(question),
+          candidate: questionId(candidate),
+          questionText: question.question,
+          candidateText: candidate.question,
+        });
+      }
+    }
+  }
+
+  return matches.sort((left, right) => right.score - left.score);
+}
+
+const promptOwners = new Map();
+const exactPromptDuplicates = [];
+for (const question of activeQuestions) {
+  const prompt = normalizedPrompt(question);
+  if (promptOwners.has(prompt)) {
+    exactPromptDuplicates.push({
+      question: questionId(question),
+      candidate: promptOwners.get(prompt),
+      questionText: question.question,
+    });
+  } else {
+    promptOwners.set(prompt, questionId(question));
   }
 }
 
-matches.sort((left, right) => right.score - left.score);
+const activePromptMatches = collectPromptMatches(activeQuestions, 0.84);
+const archiveMatches = collectExtremeArchiveMatches(0.2);
+const blockingArchiveMatches = archiveMatches.filter((match) => match.score >= 0.72);
 
-const blockingMatches = matches.filter((match) => match.score >= 0.72);
-if (blockingMatches.length > 0) {
-  console.error("Potential repeated questions", blockingMatches);
+if (exactPromptDuplicates.length > 0 || activePromptMatches.length > 0 || blockingArchiveMatches.length > 0) {
+  console.error("Potential repeated questions", {
+    exactPromptDuplicates,
+    activePromptMatches,
+    blockingArchiveMatches,
+  });
   process.exitCode = 1;
 } else {
   console.log("Question similarity audit passed", {
-    extremeQuestions: extreme.length,
-    highestSimilarities: matches.slice(0, 12),
+    activeQuestions: activeQuestions.length,
+    archivedQuestions: archivedQuestions.length,
+    archiveExtremeQuestions: archivedQuestions.filter((question) => question.legacyId?.startsWith("XQ")).length,
+    highestActivePromptSimilarities: collectPromptMatches(activeQuestions, 0.4).slice(0, 8),
+    highestArchiveExtremeSimilarities: archiveMatches.slice(0, 8),
   });
 }

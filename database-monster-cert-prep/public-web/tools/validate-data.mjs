@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { extremeQuestionPack } from "./extreme-question-pack.mjs";
 
@@ -130,8 +130,20 @@ const minimums = {
   joins: 6,
 };
 
+const offlineReviewFiles = [
+  "public/downloads/certiport-databases-complete-study-guide-mock-exam.pdf",
+  "public/downloads/certiport-databases-hard-mode-stored-procedures-triggers.pdf",
+];
+
 for (const [name, minimum] of Object.entries(minimums)) {
   if (metrics[name] < minimum) throw new Error(`${name}: expected at least ${minimum}, found ${metrics[name]}`);
+}
+
+for (const file of offlineReviewFiles) {
+  const fileStat = await stat(resolve(file));
+  if (!fileStat.isFile() || fileStat.size < 1000) {
+    throw new Error(`${file}: expected a downloadable PDF study resource`);
+  }
 }
 
 const topicCounts = new Map();
