@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { sqlChallenges } from "@/data/sql-questions";
 import { secondaryNavigation } from "@/lib/navigation";
 import { getPracticeDrill } from "@/lib/practice-drills";
-import { difficulties, topics } from "@/lib/questions";
+import { difficulties, questions, topics } from "@/lib/questions";
 
 export function PracticeClient() {
   const router = useRouter();
@@ -21,6 +21,13 @@ export function PracticeClient() {
   const [difficulty, setDifficulty] = useState("all");
   const [count, setCount] = useState("15");
   const [selectedChallengeId, setSelectedChallengeId] = useState(sqlChallenges[0]?.id ?? "");
+  const questionCountsByTopic = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const question of questions) {
+      counts.set(question.topic, (counts.get(question.topic) ?? 0) + 1);
+    }
+    return counts;
+  }, []);
   const drill = useMemo(() => getPracticeDrill(topic), [topic]);
   const visibleChallenges = useMemo(
     () => sqlChallenges.filter((challenge) => challenge.topic === topic),
@@ -238,7 +245,9 @@ export function PracticeClient() {
             <Button className="h-auto justify-start rounded-xl p-4 text-left" key={item} type="button" variant={item === topic ? "secondary" : "outline"} onClick={() => setTopic(item)}>
               <span className="flex flex-col gap-1">
                 <span className="font-semibold">{item}</span>
-                <span className="text-xs text-muted-foreground">30 questions available</span>
+                <span className="text-xs text-muted-foreground">
+                  {questionCountsByTopic.get(item) ?? 0} questions available
+                </span>
               </span>
             </Button>
           ))}
