@@ -11,6 +11,21 @@ import { computeWeeklyChallengeScore, getEarnedAchievements, getNextAchievement,
 
 export const metadata: Metadata = { title: "Dashboard" };
 
+const offlineReviewResources = [
+  {
+    title: "Complete study guide + mock exam",
+    description: "A portable review packet for broad Certiport database exam practice.",
+    href: "/downloads/certiport-databases-complete-study-guide-mock-exam.pdf",
+    size: "407 KB",
+  },
+  {
+    title: "Hard mode: stored procedures + triggers",
+    description: "Extra-difficult practice for SQL routines, triggers, and advanced database logic.",
+    href: "/downloads/certiport-databases-hard-mode-stored-procedures-triggers.pdf",
+    size: "400 KB",
+  },
+];
+
 export default async function DashboardPage() {
   const user = await requireUser();
   const data = await getDashboardData(user.id);
@@ -86,6 +101,34 @@ export default async function DashboardPage() {
           <Link className="button secondary" href="/mistakes">Mistake notebook</Link>
           <Link className="button secondary" href="/practice">Topic practice</Link>
           <Link className="button secondary" href="/history">Exam history</Link>
+        </div>
+      </section>
+
+      <section className="dashboard-panel offline-review-pack">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">Offline review pack</p>
+            <h2>Download the PDFs for no-internet studying.</h2>
+          </div>
+          <Link href="/learn">Pair with lessons -&gt;</Link>
+        </div>
+        <p className="muted">
+          Save these files before class, commute, or review sessions. They are static public study materials only;
+          your private progress still stays in your account.
+        </p>
+        <div className="resource-download-grid">
+          {offlineReviewResources.map((resource) => (
+            <article className="resource-download-card" key={resource.href}>
+              <div>
+                <h3>{resource.title}</h3>
+                <p className="muted">{resource.description}</p>
+                <span>{resource.size} PDF</span>
+              </div>
+              <a className="button secondary" download href={resource.href}>
+                Download
+              </a>
+            </article>
+          ))}
         </div>
       </section>
 

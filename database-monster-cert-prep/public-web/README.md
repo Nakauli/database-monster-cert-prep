@@ -13,6 +13,7 @@ A premium, account-backed, unofficial Certiport-style database fundamentals prac
 - Diagnostic, 50-minute timed, Final Boss, Panic Review, and topic practice
 - 360 original questions with randomized question and choice order
 - SQL blocks, schemas, tables, and result grids
+- Dashboard PDF downloads for offline review packets
 - Review marking, unanswered warnings, and detailed result explanations
 - Public study roadmaps, SQL labs, landing page, and disclaimer
 - Dark-first theme with light mode
@@ -42,11 +43,16 @@ Verification:
 
 ```bash
 npm run test:data
+npm run test:similarity
 npm run lint
 npm run typecheck
 npm run build
 npm run audit
 ```
+
+## Offline study downloads
+
+Dashboard downloads live in `public/downloads/` and are served as public static PDFs. They are for offline review only and do not contain private user progress. `npm run test:data` verifies the files exist so dashboard links do not silently break.
 
 ## Supabase setup
 
