@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createExamQuestions, fixedExamPacks, questions, topics } from "./questions";
+import { createExamQuestions, fixedExamPacks, hydrateExamQuestions, questions, topics } from "./questions";
 
 const unsupportedContextFields = ["code", "outputTable"] as const;
 const tableContextFields = ["schema", "sampleData"] as const;
@@ -63,6 +63,23 @@ test("fixed exam packs can include verified table context", () => {
         table.rows.every((row) => row.length === table.columns.length))),
     "sample tables should have complete columns and row values",
   );
+});
+
+test("saved exam drafts hydrate table context from the latest question bank", () => {
+  const latestQuestion = questions.find((question) => question.id === "old-exam-mastery-002");
+
+  assert.ok(latestQuestion?.sampleData?.length, "fixture question should include PlayerStat table context");
+
+  const savedChoiceOrder = [...latestQuestion.choices].reverse();
+  const staleDraftQuestion = {
+    ...latestQuestion,
+    sampleData: undefined,
+    choices: savedChoiceOrder,
+  };
+  const [hydratedQuestion] = hydrateExamQuestions([staleDraftQuestion]);
+
+  assert.equal(hydratedQuestion.sampleData?.[0]?.table, "PlayerStat");
+  assert.deepEqual(hydratedQuestion.choices, savedChoiceOrder);
 });
 
 test("topic practice stays within its selected topic", () => {

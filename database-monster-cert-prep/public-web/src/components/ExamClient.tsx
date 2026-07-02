@@ -13,6 +13,7 @@ import {
   createExamQuestions,
   examDuration,
   examTitle,
+  hydrateExamQuestions,
   questions as questionBank,
   shuffle,
 } from "@/lib/questions";
@@ -57,10 +58,11 @@ export function ExamClient({ presetQuestionIds = [] }: { presetQuestionIds?: str
     const timer = window.setTimeout(() => {
       const draft = loadExamDraft(draftKey);
       if (draft?.questions.length) {
-        setQuestions(draft.questions);
+        const hydratedQuestions = hydrateExamQuestions(draft.questions);
+        setQuestions(hydratedQuestions);
         setAnswers(draft.answers);
         setMarked(draft.marked);
-        setCurrentIndex(Math.min(draft.currentIndex, draft.questions.length - 1));
+        setCurrentIndex(Math.min(draft.currentIndex, hydratedQuestions.length - 1));
         setSecondsLeft(draft.secondsLeft);
         setStartedAt(draft.startedAt);
       } else {

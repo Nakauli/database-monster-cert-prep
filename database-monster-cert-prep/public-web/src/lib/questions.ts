@@ -91,6 +91,20 @@ export function createExamQuestions(
     .map((question) => ({ ...question, choices: shuffle(question.choices) }));
 }
 
+export function hydrateExamQuestions(savedQuestions: ExamQuestion[]): ExamQuestion[] {
+  const latestQuestions = new Map(questions.map((question) => [question.id, question]));
+
+  return savedQuestions.map((savedQuestion) => {
+    const latestQuestion = latestQuestions.get(savedQuestion.id);
+    if (!latestQuestion) return savedQuestion;
+
+    return {
+      ...latestQuestion,
+      choices: [...savedQuestion.choices],
+    };
+  });
+}
+
 export function examTitle(mode: string, topic?: string): string {
   if (isFixedExamMode(mode)) return fixedExamPacks[mode].label;
   if (mode === "diagnostic") return "Diagnostic Exam";
