@@ -8,7 +8,7 @@ type RawQuestion = Omit<Question, "wrongAnswerExplanations"> & {
 
 export const fixedExamPacks = {
   "old-exam-mastery": {
-    label: "Old Exam Mastery",
+    label: "Old Certiport Actual Exam",
     description: "Priority Certiport-style old-exam practice set.",
   },
   "post-test-2026-07-02": {

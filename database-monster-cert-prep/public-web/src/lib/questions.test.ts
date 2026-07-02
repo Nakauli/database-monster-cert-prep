@@ -49,6 +49,14 @@ test("fixed exam packs use the source pack order without shuffling choices", () 
   }
 });
 
+test("old certiport pack uses learner-facing title without repeated prompt prefix", () => {
+  const oldExamQuestions = questions.filter((question) => question.examPack === "old-exam-mastery");
+
+  assert.equal(fixedExamPacks["old-exam-mastery"].label, "Old Certiport Actual Exam");
+  assert.ok(oldExamQuestions.length > 0);
+  assert.ok(oldExamQuestions.every((question) => !question.question.startsWith("Old exam mastery: ")));
+});
+
 test("fixed exam packs can include verified table context", () => {
   const fixedPackQuestions = questions.filter((question) => question.examPack);
   const tableQuestions = fixedPackQuestions.filter((question) =>
