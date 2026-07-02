@@ -23,6 +23,7 @@ export interface DataTable {
 export interface Question {
   id: string;
   legacyId?: string;
+  examPack?: string;
   topic: string;
   difficulty: Difficulty;
   type: QuestionType;
@@ -93,4 +94,3 @@ export interface ProgressData {
   }>;
   mistakes: StoredMistake[];
 }
-

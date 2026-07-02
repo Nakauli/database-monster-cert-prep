@@ -11,7 +11,7 @@ A premium, account-backed, unofficial Certiport-style database fundamentals prac
 - Row Level Security on every user-specific table
 - Atomic exam saving through the `save_exam_result` Postgres function
 - Diagnostic, 50-minute timed, Final Boss, Panic Review, and topic practice
-- 360 original questions with randomized question and choice order
+- 178 practice questions, including fixed-order post-test and old-exam mastery packs
 - SQL blocks, schemas, tables, and result grids
 - Dashboard PDF downloads for offline review packets
 - Review marking, unanswered warnings, and detailed result explanations

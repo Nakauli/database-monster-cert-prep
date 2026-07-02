@@ -2,7 +2,8 @@ import { readFile, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { extremeQuestionPack } from "./extreme-question-pack.mjs";
 
-const questions = JSON.parse(await readFile(resolve("src/data/exam-whiteboard.json"), "utf8"));
+const baseQuestions = JSON.parse(await readFile(resolve("src/data/exam-whiteboard.json"), "utf8"));
+const examPackQuestions = JSON.parse(await readFile(resolve("src/data/exam-packs.json"), "utf8"));
 const sqlQuestionsSource = await readFile(resolve("src/data/sql-questions.ts"), "utf8");
 const labsSource = await readFile(resolve("src/data/labs.ts"), "utf8");
 const learnTopicsSource = await readFile(resolve("src/data/learn-topics.ts"), "utf8");
@@ -25,6 +26,18 @@ const prohibitedText = [
 const sameMembers = (left, right) =>
   left.length === right.length &&
   [...left].sort().every((value, index) => value === [...right].sort()[index]);
+const withWrongAnswerExplanations = (question) => {
+  if (question.wrongAnswerExplanations) return question;
+  return {
+    ...question,
+    wrongAnswerExplanations: Object.fromEntries(
+      question.choices
+        .filter((choice) => !question.correctAnswers.includes(choice))
+        .map((choice) => [choice, "This option does not satisfy all requirements in the prompt."]),
+    ),
+  };
+};
+const questions = [...baseQuestions, ...examPackQuestions].map(withWrongAnswerExplanations);
 
 for (const question of questions) {
   for (const field of required) {

@@ -424,8 +424,8 @@ code, pre { font-family: var(--font-code), "Cascadia Code", Consolas, monospace;
 .home-hero-grid { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(320px, .72fr); gap: clamp(28px, 5vw, 68px); align-items: center; }
 .home-hero-copy { display: flex; max-width: 760px; flex-direction: column; gap: 20px; }
 .home-hero-copy .page-copy { max-width: 680px; }
-.home-action-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr); gap: 18px; margin-top: 28px; align-items: stretch; }
-.next-action-card { min-height: 100%; }
+.home-action-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(310px, .72fr); gap: 18px; margin-top: 28px; align-items: stretch; }
+.priority-exam-card, .next-action-card { min-height: 100%; }
 .guided-path-strip { min-height: 100%; overflow: hidden; }
 .guided-path-step { display: grid; grid-template-columns: 105px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid color-mix(in srgb, var(--primary-foreground) 20%, transparent); }
 .guided-path-step:first-child { border-top: 0; }

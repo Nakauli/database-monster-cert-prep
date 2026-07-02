@@ -1,7 +1,49 @@
+import examPackData from "@/data/exam-packs.json";
 import questionData from "@/data/exam-whiteboard.json";
 import type { Difficulty, ExamQuestion, Question } from "@/lib/types";
 
-export const questions = questionData as unknown as Question[];
+type RawQuestion = Omit<Question, "wrongAnswerExplanations"> & {
+  wrongAnswerExplanations?: Record<string, string>;
+};
+
+export const fixedExamPacks = {
+  "old-exam-mastery": {
+    label: "Old Exam Mastery",
+    description: "Priority Certiport-style old-exam practice set.",
+  },
+  "post-test-2026-07-02": {
+    label: "Post-Test 2026-07-02",
+    description: "Today's post-test practice set.",
+  },
+} as const;
+
+export type FixedExamMode = keyof typeof fixedExamPacks;
+
+function withWrongAnswerExplanations(question: RawQuestion): Question {
+  if (question.wrongAnswerExplanations) return question as Question;
+  return {
+    ...question,
+    wrongAnswerExplanations: Object.fromEntries(
+      question.choices
+        .filter((choice) => !question.correctAnswers.includes(choice))
+        .map((choice) => [choice, "This option does not satisfy all requirements in the prompt."]),
+    ),
+  };
+}
+
+export function isFixedExamMode(mode: string): mode is FixedExamMode {
+  return mode in fixedExamPacks;
+}
+
+export function examModeLabel(mode: string): string {
+  if (isFixedExamMode(mode)) return fixedExamPacks[mode].label;
+  return mode.replaceAll("_", " ").replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+export const questions = [
+  ...(questionData as unknown as RawQuestion[]),
+  ...(examPackData as unknown as RawQuestion[]),
+].map(withWrongAnswerExplanations);
 export const topics = [...new Set(questions.map((question) => question.topic))].sort();
 export const difficulties: Difficulty[] = ["easy", "medium", "hard", "final boss"];
 
@@ -21,6 +63,14 @@ export function createExamQuestions(
   requestedCount?: number,
 ): ExamQuestion[] {
   let pool = questions;
+
+  if (isFixedExamMode(mode)) {
+    pool = pool.filter((question) => question.examPack === mode);
+    const count = requestedCount ?? pool.length;
+    return pool
+      .slice(0, Math.min(count, pool.length))
+      .map((question) => ({ ...question, choices: [...question.choices] }));
+  }
 
   if (topic) {
     pool = pool.filter((question) => question.topic === topic);
@@ -42,6 +92,7 @@ export function createExamQuestions(
 }
 
 export function examTitle(mode: string, topic?: string): string {
+  if (isFixedExamMode(mode)) return fixedExamPacks[mode].label;
   if (mode === "diagnostic") return "Diagnostic Exam";
   if (mode === "final") return "Final Boss Exam";
   if (mode === "panic") return "Panic Review";

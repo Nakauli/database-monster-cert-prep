@@ -1,9 +1,6 @@
 import Link from "next/link";
 import type { ExamAttemptRow } from "@/lib/progress";
-
-function modeLabel(mode: string) {
-  return mode.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
+import { examModeLabel } from "@/lib/questions";
 
 export function ExamHistoryTable({ attempts }: { attempts: ExamAttemptRow[] }) {
   if (!attempts.length) {
@@ -32,7 +29,7 @@ export function ExamHistoryTable({ attempts }: { attempts: ExamAttemptRow[] }) {
         <tbody>
           {attempts.map((attempt) => (
             <tr key={attempt.id}>
-              <td><strong>{modeLabel(attempt.exam_mode)}</strong></td>
+              <td><strong>{examModeLabel(attempt.exam_mode)}</strong></td>
               <td>{new Date(attempt.created_at).toLocaleString()}</td>
               <td><b className={attempt.score >= 80 ? "pass-score" : "repair-score"}>{attempt.score}%</b></td>
               <td>{attempt.correct_count}/{attempt.total_questions}</td>

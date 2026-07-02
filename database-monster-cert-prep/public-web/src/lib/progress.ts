@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { questions } from "@/lib/questions";
+import { examModeLabel, questions } from "@/lib/questions";
 import { getWeeklyChallengeWindow } from "@/lib/rewards";
 import type { ExamResult, TopicStat } from "@/lib/types";
 
@@ -217,7 +217,7 @@ export async function getAttemptResult(userId: string, attemptId: string): Promi
   return {
     id: attempt.id,
     mode: attempt.exam_mode,
-    title: attempt.exam_mode.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()),
+    title: examModeLabel(attempt.exam_mode),
     completedAt: attempt.created_at,
     durationSeconds: attempt.time_spent_seconds ?? 0,
     score: Number(attempt.score),

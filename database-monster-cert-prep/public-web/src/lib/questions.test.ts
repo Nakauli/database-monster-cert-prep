@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createExamQuestions, questions, topics } from "./questions";
+import { createExamQuestions, fixedExamPacks, questions, topics } from "./questions";
 
 const unverifiedContextFields = ["schema", "sampleData", "code", "outputTable"] as const;
 
@@ -33,6 +33,17 @@ test("all exam modes select only verified questions from the shared bank", () =>
         unverifiedContextFields.every((field) => !(field in question))),
       `${mode} should not reintroduce unverified supplemental context`,
     );
+  }
+});
+
+test("fixed exam packs use the source pack order without shuffling choices", () => {
+  for (const mode of Object.keys(fixedExamPacks)) {
+    const source = questions.filter((question) => question.examPack === mode);
+    const selected = createExamQuestions(mode);
+
+    assert.equal(selected.length, source.length);
+    assert.deepEqual(selected.map((question) => question.id), source.map((question) => question.id));
+    assert.deepEqual(selected.map((question) => question.choices), source.map((question) => question.choices));
   }
 });
 

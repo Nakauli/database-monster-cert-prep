@@ -1,9 +1,6 @@
 import Link from "next/link";
 import type { ExamAttemptRow } from "@/lib/progress";
-
-function modeLabel(mode: string) {
-  return mode.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
+import { examModeLabel } from "@/lib/questions";
 
 export function RecentAttempts({ attempts }: { attempts: ExamAttemptRow[] }) {
   return (
@@ -21,7 +18,7 @@ export function RecentAttempts({ attempts }: { attempts: ExamAttemptRow[] }) {
         <div className="attempt-list">
           {attempts.slice(0, 6).map((attempt) => (
             <Link href={`/results?id=${attempt.id}`} className="attempt-row" key={attempt.id}>
-              <div><strong>{modeLabel(attempt.exam_mode)}</strong><span>{new Date(attempt.created_at).toLocaleDateString()}</span></div>
+              <div><strong>{examModeLabel(attempt.exam_mode)}</strong><span>{new Date(attempt.created_at).toLocaleDateString()}</span></div>
               <span>{attempt.correct_count}/{attempt.total_questions}</span>
               <b className={attempt.score >= 80 ? "pass-score" : "repair-score"}>{attempt.score}%</b>
             </Link>

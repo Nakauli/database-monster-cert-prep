@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { secondaryNavigation } from "@/lib/navigation";
+import { fixedExamPacks } from "@/lib/questions";
 import type { PublicLeaderboardRow } from "@/lib/leaderboard";
 import type { getDashboardData } from "@/lib/progress";
 import { computeWeeklyChallengeScore, getEarnedAchievements, getNextAchievement, type RewardSignals } from "@/lib/rewards";
@@ -89,6 +90,8 @@ export function HomeDashboard({
   userEmail?: string;
 }) {
   const nextAction = getNextAction(dashboardData);
+  const oldExamPack = fixedExamPacks["old-exam-mastery"];
+  const postTestPack = fixedExamPacks["post-test-2026-07-02"];
   const displayName = dashboardData?.profile?.display_name || userEmail?.split("@")[0];
   const secondaryCards = secondaryNavigation.filter((item) => ["/learn", "/labs", "/roadmap", "/about"].includes(item.href));
   const dueCount = dashboardData?.dueCount ?? 0;
@@ -136,6 +139,18 @@ export function HomeDashboard({
         </div>
 
         <div className="home-action-grid">
+          <Card className="priority-exam-card bg-card/95">
+            <CardHeader>
+              <Badge variant="secondary" className="w-fit">Priority mastery</Badge>
+              <CardTitle>{oldExamPack.label}</CardTitle>
+              <CardDescription>{oldExamPack.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-3">
+              <Button asChild><Link href="/exam?mode=old-exam-mastery">Master old exam</Link></Button>
+              <Button asChild variant="outline"><Link href="/exam?mode=post-test-2026-07-02">{postTestPack.label}</Link></Button>
+            </CardContent>
+          </Card>
+
           <Card className="next-action-card bg-card/90">
             <CardHeader>
               <Badge variant="secondary" className="w-fit">Next best action</Badge>
@@ -241,7 +256,7 @@ export function HomeDashboard({
       <section className="app-container page-section pt-0">
         <StatGrid
           stats={[
-            { value: "360", label: "original questions" },
+            { value: "178", label: "practice questions" },
             { value: "4", label: "live SQL challenges" },
             { value: "12", label: "tracked topic areas" },
             { value: "RLS", label: "private progress storage" },

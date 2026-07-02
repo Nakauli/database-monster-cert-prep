@@ -4,16 +4,20 @@ import { resolve } from "node:path";
 const activeQuestions = JSON.parse(
   await readFile(resolve("src/data/exam-whiteboard.json"), "utf8"),
 );
+const examPackQuestions = JSON.parse(
+  await readFile(resolve("src/data/exam-packs.json"), "utf8"),
+);
+const allActiveQuestions = [...activeQuestions, ...examPackQuestions];
 const archivedQuestions = JSON.parse(
   await readFile(resolve("src/data/questions.json"), "utf8"),
 );
 
 const stopWords = new Set([
   "about", "after", "again", "also", "among", "because", "before", "being",
-  "best", "between", "does", "each", "from", "have", "into", "most", "must",
-  "only", "other", "should", "than", "that", "their", "then", "there", "these",
-  "they", "this", "through", "uses", "using", "what", "when", "where", "which",
-  "while", "with", "would", "your",
+  "best", "between", "does", "each", "exam", "from", "have", "into", "mastery",
+  "most", "must", "old", "only", "other", "post", "should", "test", "than",
+  "that", "their", "then", "there", "these", "they", "this", "through", "uses",
+  "using", "what", "when", "where", "which", "while", "with", "would", "your",
 ]);
 
 function tokens(text) {
@@ -107,7 +111,7 @@ function collectExtremeArchiveMatches(threshold) {
 
 const promptOwners = new Map();
 const exactPromptDuplicates = [];
-for (const question of activeQuestions) {
+for (const question of allActiveQuestions) {
   const prompt = normalizedPrompt(question);
   if (promptOwners.has(prompt)) {
     exactPromptDuplicates.push({
@@ -120,7 +124,7 @@ for (const question of activeQuestions) {
   }
 }
 
-const activePromptMatches = collectPromptMatches(activeQuestions, 0.84);
+const activePromptMatches = collectPromptMatches(allActiveQuestions, 0.84);
 const archiveMatches = collectExtremeArchiveMatches(0.2);
 const blockingArchiveMatches = archiveMatches.filter((match) => match.score >= 0.72);
 
@@ -133,10 +137,10 @@ if (exactPromptDuplicates.length > 0 || activePromptMatches.length > 0 || blocki
   process.exitCode = 1;
 } else {
   console.log("Question similarity audit passed", {
-    activeQuestions: activeQuestions.length,
+    activeQuestions: allActiveQuestions.length,
     archivedQuestions: archivedQuestions.length,
     archiveExtremeQuestions: archivedQuestions.filter((question) => question.legacyId?.startsWith("XQ")).length,
-    highestActivePromptSimilarities: collectPromptMatches(activeQuestions, 0.4).slice(0, 8),
+    highestActivePromptSimilarities: collectPromptMatches(allActiveQuestions, 0.4).slice(0, 8),
     highestArchiveExtremeSimilarities: archiveMatches.slice(0, 8),
   });
 }
