@@ -14,7 +14,8 @@ const required = [
 
 const ids = new Set();
 const normalizedPrompts = new Map();
-const supplementalContextFields = ["schema", "sampleData", "code", "outputTable"];
+const examPackTableContextFields = ["schema", "sampleData"];
+const prohibitedContextFields = ["code", "outputTable"];
 const prohibitedText = [
   [/\b(companie|categorie|branche)\b/i, "misspelled entity name"],
   [/\bNone\b/, "Python None instead of SQL NULL"],
@@ -65,8 +66,19 @@ for (const question of questions) {
   if (!sameMembers(incorrectChoices, Object.keys(question.wrongAnswerExplanations))) {
     throw new Error(`${question.id} wrong-answer explanations do not match its incorrect choices`);
   }
-  if (supplementalContextFields.some((field) => field in question)) {
-    throw new Error(`${question.id} contains supplemental context that has not been question-specifically verified`);
+  if (prohibitedContextFields.some((field) => field in question)) {
+    throw new Error(`${question.id} contains unsupported supplemental context`);
+  }
+  if (examPackTableContextFields.some((field) => field in question) && !question.examPack) {
+    throw new Error(`${question.id} contains table context outside a verified exam pack`);
+  }
+  for (const table of question.sampleData ?? []) {
+    if (!Array.isArray(table.columns) || !Array.isArray(table.rows) || table.columns.length === 0) {
+      throw new Error(`${question.id} has invalid sample table structure`);
+    }
+    if (!table.rows.every((row) => Array.isArray(row) && row.length === table.columns.length)) {
+      throw new Error(`${question.id} has sample table rows that do not match its columns`);
+    }
   }
 
   const normalizedPrompt = question.question.trim().toLowerCase();

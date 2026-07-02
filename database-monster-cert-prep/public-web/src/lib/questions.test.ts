@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createExamQuestions, fixedExamPacks, questions, topics } from "./questions";
 
-const unverifiedContextFields = ["schema", "sampleData", "code", "outputTable"] as const;
+const unsupportedContextFields = ["code", "outputTable"] as const;
+const tableContextFields = ["schema", "sampleData"] as const;
 
 test("all exam modes select only verified questions from the shared bank", () => {
   // Requested defaults per mode; the actual selection is capped by how many
@@ -30,7 +31,8 @@ test("all exam modes select only verified questions from the shared bank", () =>
     );
     assert.ok(
       selected.every((question) =>
-        unverifiedContextFields.every((field) => !(field in question))),
+        unsupportedContextFields.every((field) => !(field in question)) &&
+        tableContextFields.every((field) => !(field in question) || Boolean(question.examPack))),
       `${mode} should not reintroduce unverified supplemental context`,
     );
   }
@@ -45,6 +47,22 @@ test("fixed exam packs use the source pack order without shuffling choices", () 
     assert.deepEqual(selected.map((question) => question.id), source.map((question) => question.id));
     assert.deepEqual(selected.map((question) => question.choices), source.map((question) => question.choices));
   }
+});
+
+test("fixed exam packs can include verified table context", () => {
+  const fixedPackQuestions = questions.filter((question) => question.examPack);
+  const tableQuestions = fixedPackQuestions.filter((question) =>
+    tableContextFields.some((field) => field in question));
+
+  assert.ok(tableQuestions.length >= 30, "fixed exam packs should include table-backed questions");
+  assert.ok(
+    tableQuestions.every((question) =>
+      question.sampleData?.every((table) =>
+        table.columns.length > 0 &&
+        table.rows.length > 0 &&
+        table.rows.every((row) => row.length === table.columns.length))),
+    "sample tables should have complete columns and row values",
+  );
 });
 
 test("topic practice stays within its selected topic", () => {
